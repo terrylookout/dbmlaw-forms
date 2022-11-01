@@ -5,7 +5,6 @@ interface FormButtonsProps {
     onFormSelected: (formType: FormType) => void;
 }
 
-
 const FormButtons = (props: FormButtonsProps): ReactElement => {
 
     return (
