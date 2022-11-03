@@ -1,5 +1,5 @@
 import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
-import { ClientInfo } from './Interfaces';
+import { ClientInfo } from './ClassesInterfaces';
 
 interface ClientProps {
     text: string;
@@ -117,7 +117,7 @@ const Client = (props: ClientProps): ReactElement => {
             <div className="row">
                 <div className="col mb-1 mt-4">
                     <h6>
-                        If you are not moving in, enter your mailing address
+                        Your current address
                     </h6>
                 </div>
             </div>
@@ -377,7 +377,7 @@ const Client = (props: ClientProps): ReactElement => {
                 <div className="col mb-3">
 
                     <div className="form-check">
-                        <input className="form-check-input" type="radio" name="citizentype" id="canadiancitizen"
+                        <input className="form-check-input" type="radio" name={`citizentype${props.num}`} id={`canadiancitizen${props.num}`}
                             checked={clientInfo.citizenShip === 'CANADIAN_CITIZEN'}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e.target.checked) {
@@ -385,13 +385,13 @@ const Client = (props: ClientProps): ReactElement => {
                                 }
                             }}
                         />
-                        <label className="form-check-label" htmlFor="canadiancitizen">
+                        <label className="form-check-label" htmlFor={`canadiancitizen${props.num}`}>
                             Canadian citizen
                         </label>
                     </div>
 
                     <div className="form-check">
-                        <input className="form-check-input" type="radio" name="citizentype" id="permresident"
+                        <input className="form-check-input" type="radio" name={`citizentype${props.num}`} id={`permresident${props.num}`}
                             checked={clientInfo.citizenShip === 'PERMANENT_RESIDENT'}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e.target.checked) {
@@ -399,13 +399,13 @@ const Client = (props: ClientProps): ReactElement => {
                                 }
                             }}
                         />
-                        <label className="form-check-label" htmlFor="permresident">
+                        <label className="form-check-label" htmlFor={`permresident${props.num}`}>
                             Permanent resident
                         </label>
                     </div>
 
                     <div className="form-check">
-                        <input className="form-check-input" type="radio" name="citizentype" id="bcprovincialnominee"
+                        <input className="form-check-input" type="radio" name={`citizentype${props.num}`} id={`bcprovincialnominee${props.num}`}
                             checked={clientInfo.citizenShip === 'BC_PROV_NOMINEE'}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e.target.checked) {
@@ -413,7 +413,7 @@ const Client = (props: ClientProps): ReactElement => {
                                 }
                             }}
                         />
-                        <label className="form-check-label" htmlFor="bcprovincialnominee">
+                        <label className="form-check-label" htmlFor={`bcprovincialnominee${props.num}`}>
                             B.C. Provincial Nominee (we will require a copy of your B.C. Provincial Nominee confirmation)
                         </label>
                     </div>
@@ -421,38 +421,160 @@ const Client = (props: ClientProps): ReactElement => {
                 </div>
             </div>
 
+
+
             <div className="row">
-                <div className="col mb-1 mt-4 border border-primary">
-
-                </div>
-            </div>
-
-
-            {/* <div className="row">
                 <div className="col mb-1 mt-4">
-                    <h6>
+                    <h6 className='pb-3'>
                         Are you a First-time Home Buyer?
                     </h6>
-                </div>
-            </div>
 
-            <div className="row">
-                <div className="col mb-3">
                     <div className="form-check">
-                        <input className="form-check-input" type="radio" name="firsttimehomebuyer" id="firsttimehomebuyer-yes" />
-                        <label className="form-check-label" htmlFor="firsttimehomebuyer-yes">
+                        <input className="form-check-input" type="radio" name={`firsttimehomebuyer${props.num}`} id={`firsttimehomebuyer-yes${props.num}`}
+                            checked={clientInfo.isFirstTimeHomeBuyer === 'YES'}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                if (e.target.checked) {
+                                    setClientInfo({ ...clientInfo, isFirstTimeHomeBuyer: 'YES' });
+                                }
+                            }} />
+                        <label className="form-check-label" htmlFor={`firsttimehomebuyer-yes${props.num}`}>
                             Yes
                         </label>
                     </div>
 
                     <div className="form-check">
-                        <input className="form-check-input" type="radio" name="firsttimehomebuyer" id="firsttimehomebuyer-no" />
-                        <label className="form-check-label" htmlFor="firsttimehomebuyer-no">
+                        <input className="form-check-input" type="radio" name={`firsttimehomebuyer${props.num}`} id={`firsttimehomebuyer-no${props.num}`}
+                            checked={clientInfo.isFirstTimeHomeBuyer === 'NO'}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                if (e.target.checked) {
+                                    setClientInfo({ ...clientInfo, isFirstTimeHomeBuyer: 'NO' });
+                                }
+                            }} />
+
+                        <label className="form-check-label" htmlFor={`firsttimehomebuyer-no${props.num}`}>
                             No
                         </label>
                     </div>
                 </div>
-            </div> */}
+
+
+
+                <div className="col mb-1 mt-4">
+                    <h6>
+                        Will you be living in the property within three months?
+                    </h6>
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name={`livewithinthreemonths${props.num}`} id={`livewithinthreemonths-yes${props.num}`}
+                            checked={clientInfo.willBeLivingInPropertyWithinThreeMonths === 'YES'}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                if (e.target.checked) {
+                                    setClientInfo({ ...clientInfo, willBeLivingInPropertyWithinThreeMonths: 'YES' });
+                                }
+                            }} />
+
+                        <label className="form-check-label" htmlFor={`livewithinthreemonths-yes${props.num}`}>
+                            Yes
+                        </label>
+                    </div>
+
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name={`livewithinthreemonths${props.num}`} id={`livewithinthreemonths-no${props.num}`}
+                            checked={clientInfo.willBeLivingInPropertyWithinThreeMonths === 'NO'}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                if (e.target.checked) {
+                                    setClientInfo({ ...clientInfo, willBeLivingInPropertyWithinThreeMonths: 'NO' });
+                                }
+                            }} />
+
+                        <label className="form-check-label" htmlFor={`livewithinthreemonths-no${props.num}`}>
+                            No
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+            <div className="row">
+                <div className="col mb-1 mt-4">
+                    <h6>
+                        Have you been a resident of BC for at least a year?
+                    </h6>
+
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name={`residentbc${props.num}`} id={`residentbc-yes${props.num}`}
+                            checked={clientInfo.isFirstTimeHomeBuyer === 'YES'}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                if (e.target.checked) {
+                                    setClientInfo({ ...clientInfo, hasBeenBCResidentForAYear: 'YES' });
+                                }
+                            }} />
+                        <label className="form-check-label" htmlFor={`residentbc-yes${props.num}`}>
+                            Yes
+                        </label>
+                    </div>
+
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name={`residentbc${props.num}`} id={`residentbc-no${props.num}`}
+                            checked={clientInfo.isFirstTimeHomeBuyer === 'NO'}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                if (e.target.checked) {
+                                    setClientInfo({ ...clientInfo, hasBeenBCResidentForAYear: 'NO' });
+                                }
+                            }} />
+
+                        <label className="form-check-label" htmlFor={`residentbc-no${props.num}`}>
+                            No
+                        </label>
+                    </div>
+                </div>
+
+
+
+                <div className="col mb-1 mt-4">
+                    <h6>
+                        Have you ever owned a principal residence anywhere in the world?
+                    </h6>
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name={`principalresidenceworld${props.num}`} id={`principalresidenceworld-yes${props.num}`}
+                            checked={clientInfo.hasOwnedPrincipalResidenceSomewhere === 'YES'}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                if (e.target.checked) {
+                                    setClientInfo({ ...clientInfo, hasOwnedPrincipalResidenceSomewhere: 'YES' });
+                                }
+                            }} />
+
+                        <label className="form-check-label" htmlFor={`principalresidenceworld-yes${props.num}`}>
+                            Yes
+                        </label>
+                    </div>
+
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name={`principalresidenceworld${props.num}`} id={`principalresidenceworld-no${props.num}`}
+                            checked={clientInfo.hasOwnedPrincipalResidenceSomewhere === 'NO'}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                if (e.target.checked) {
+                                    setClientInfo({ ...clientInfo, hasOwnedPrincipalResidenceSomewhere: 'NO' });
+                                }
+                            }} />
+
+                        <label className="form-check-label" htmlFor={`principalresidenceworld-no${props.num}`}>
+                            No
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+
+            <div className="row">
+                <div className="col mb-1 mt-4 border border-primary">
+
+                </div>
+            </div>
 
         </>
     )
