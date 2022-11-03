@@ -1,9 +1,8 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import './App.css';
 import DbmLogo from './images/dbm-logo.png';
 import FormButtons from './FormButtons';
 import PurchaseForm from './PurchaseForm';
-import GoBack from './GoBack';
 
 export type FormType =
   'NONE' | 'PURCHASE' | 'SALE' | 'REFINANCE' | 'PURCHASE_AND_SALE' | 'PROJECT_PURCHASE';
@@ -13,6 +12,15 @@ declare var bootstrap: any;
 const App = (): ReactElement => {
 
   const [selectedForm, setSelectedForm] = useState<FormType>('NONE');
+
+  useEffect(() => {
+    const modal = document.querySelector('#formModal');
+    if (modal) {
+      modal.addEventListener('hidden.bs.modal', () => {
+        setSelectedForm('NONE');
+      });
+    }
+  }, []);
 
   return (
     <div className="App">
@@ -49,7 +57,6 @@ const App = (): ReactElement => {
 
               // eslint-disable-next-line
               new bootstrap.Modal('#formModal').show();
-
             }} />
           </div>
         }
@@ -62,7 +69,7 @@ const App = (): ReactElement => {
                 <div className="modal-header">
                   <h1 className="modal-title fs-5" id="exampleModalLabel">
                     {
-                      (selectedForm && 'PURCHASE') &&
+                      (selectedForm === 'PURCHASE') &&
                       `Purchase`
                     }
 
@@ -70,7 +77,10 @@ const App = (): ReactElement => {
                   <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div className="modal-body">
-                  <PurchaseForm />
+                  {
+                    (selectedForm === 'PURCHASE') &&
+                    <PurchaseForm key={Math.random()} />
+                  }
                 </div>
 
               </div>
