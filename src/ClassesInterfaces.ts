@@ -1,4 +1,3 @@
-import { StringLiteral } from "typescript";
 
 export class ClientInfo {
 
@@ -25,12 +24,12 @@ export class ClientInfo {
     public employerProvinceTerritory: string;
     public employerPostalCode: string;
 
-    public isFirstTimeHomeBuyer: 'YES' | 'NO' | 'NA';
-    public hasBeenBCResidentForAYear: 'YES' | 'NO' | 'NA';
-    public willBeLivingInPropertyWithinThreeMonths: 'YES' | 'NO' | 'NA';
-    public hasOwnedPrincipalResidenceSomewhere: 'YES' | 'NO' | 'NA';
+    public isFirstTimeHomeBuyer: 'YES' | 'NO' | '** NOT PROVIDED';
+    public hasBeenBCResidentForAYear: 'YES' | 'NO' | '** NOT PROVIDED';
+    public willBeLivingInPropertyWithinThreeMonths: 'YES' | 'NO' | '** NOT PROVIDED';
+    public hasOwnedPrincipalResidenceSomewhere: 'YES' | 'NO' | '** NOT PROVIDED';
 
-    public citizenShip: 'NONE' | 'CANADIAN_CITIZEN' | 'PERMANENT_RESIDENT' | 'BC_PROV_NOMINEE';
+    public citizenShip: '** NOT PROVIDED' | 'CANADIAN_CITIZEN' | 'PERMANENT_RESIDENT' | 'BC_PROV_NOMINEE';
 
     constructor() {
         this.fullLegalName = '';
@@ -56,19 +55,19 @@ export class ClientInfo {
         this.employerProvinceTerritory = '';
         this.employerPostalCode = '';
 
-        this.isFirstTimeHomeBuyer = 'NA';
-        this.hasBeenBCResidentForAYear = 'NA';
-        this.willBeLivingInPropertyWithinThreeMonths = 'NA';
-        this.hasOwnedPrincipalResidenceSomewhere = 'NA';
+        this.isFirstTimeHomeBuyer = '** NOT PROVIDED';
+        this.hasBeenBCResidentForAYear = '** NOT PROVIDED';
+        this.willBeLivingInPropertyWithinThreeMonths = '** NOT PROVIDED';
+        this.hasOwnedPrincipalResidenceSomewhere = '** NOT PROVIDED';
 
-        this.citizenShip = 'NONE';
+        this.citizenShip = '** NOT PROVIDED';
     }
 
 }
 
 export class PurchaseInfo {
 
-    public clientInfo: ClientInfo[];
+    public clientsInfo: ClientInfo[];
 
     public completionDate: Date;
     public purchasePrice: number;
@@ -79,9 +78,9 @@ export class PurchaseInfo {
     public provinceTerritory: string;
     public postalCode: string;
 
-    public joinType: 'JOINT_TENANTS' | 'TENANTS_IN_COMMON' | 'NA';
+    public joinType: 'JOINT_TENANTS' | 'TENANTS_IN_COMMON' | '** NOT PROVIDED';
 
-    public buildingNewUsed: 'NEW' | 'USED' | 'NA';
+    public buildingNewUsed: 'NEW' | 'USED' | '** NOT PROVIDED';
 
     public realtorName: string;
     public realtorPhone: string;
@@ -98,19 +97,26 @@ export class PurchaseInfo {
     public insuranceAgentName: string;
     public insuranceAgentPhone: string;
 
-    public portionPropertyRentedOut: 'YES' | 'NO' | 'NA';;
+    public portionPropertyRentedOut: 'YES' | 'NO' | '** NOT PROVIDED';;
 
     public fundsSource: string;
     public fundsChequingSavingsSource: string;
 
     public nonPurchaserName: string;
     public nonPurchaserPhone: string;
+    public nonPurchaserStreet1: string;
+    public nonPurchaserStreet2: string;
+    public nonPurchaserCity: string;
+    public nonPurchaserProvinceTerritory: string;
+    public nonPurchaserPostalCode: string;
+    public nonPurchaserOccupation: string;
+    public nonPurchaserRelationship: string;
 
     public apptLocationPreference: 'VANCOUVER' | 'COQUITLAM' | 'LANGLEY';
 
     constructor() {
 
-        this.clientInfo = [];
+        this.clientsInfo = [];
 
         this.completionDate = new Date();
         this.purchasePrice = 0;
@@ -121,9 +127,9 @@ export class PurchaseInfo {
         this.provinceTerritory = '';
         this.postalCode = '';
 
-        this.buildingNewUsed = 'NA';
+        this.buildingNewUsed = '** NOT PROVIDED';
 
-        this.joinType = 'NA';
+        this.joinType = '** NOT PROVIDED';
 
         this.realtorName = '';
         this.realtorPhone = '';
@@ -141,17 +147,23 @@ export class PurchaseInfo {
         this.insuranceAgentName = '';
         this.insuranceAgentPhone = '';
 
-        this.portionPropertyRentedOut = 'NA';
+        this.portionPropertyRentedOut = '** NOT PROVIDED';
 
         this.fundsSource = '';
         this.fundsChequingSavingsSource = '';
 
-        this.nonPurchaserInfo = new ClientInfo();
+        this.nonPurchaserName = '';
+        this.nonPurchaserPhone = '';
+        this.nonPurchaserStreet1 = '';
+        this.nonPurchaserStreet2 = '';
+        this.nonPurchaserCity = '';
+        this.nonPurchaserProvinceTerritory = '';
+        this.nonPurchaserPostalCode = '';
+        this.nonPurchaserOccupation = '';
+        this.nonPurchaserRelationship = '';
 
         this.apptLocationPreference = 'COQUITLAM';
     }
-
-
 
 }
 

@@ -8,23 +8,14 @@ const PurchaseForm = (): ReactElement => {
 
     const [numberOfClients, setNumberOfClients] = useState(0);
 
-    const [clients, setClients] = useState<ClientInfo[]>([]);
+    //const [clients, setClients] = useState<ClientInfo[]>([]);
 
     const [currentPage, setCurrentPage] = useState(0);
 
-    const [newBuild, setNewBuild] = useState(false);
-
-    const [purchasePrice, setPurchasePrice] = useState(0);
-
-    const [belowNewLimit, setBelowNewLimit] = useState(false);
-
-    const [moveThreeMonths, setMoveThreeMonths] = useState(false);
-
     useEffect(() => {
-        const tempClients = [...clients];
+        const tempClients = [...purchaseInfo.clientsInfo];
         if (numberOfClients > tempClients.length) {
             do {
-
                 tempClients.push(
                     new ClientInfo()
                 );
@@ -36,7 +27,7 @@ const PurchaseForm = (): ReactElement => {
             } while (numberOfClients < tempClients.length);
         }
 
-        setClients(tempClients);
+        setPurchaseInfo({ ...purchaseInfo, clientsInfo: tempClients });
 
         // eslint-disable-next-line
     }, [numberOfClients]);
@@ -85,22 +76,22 @@ const PurchaseForm = (): ReactElement => {
                             numberOfClients > 0 &&
                             <>
                                 {
-                                    clients.map((c, i) => {
+                                    purchaseInfo.clientsInfo.map((c, i) => {
                                         return (
                                             <Client text='Purchaser' num={i}
                                                 key={i}
-                                                clientInfo={clients[i]}
+                                                clientInfo={purchaseInfo.clientsInfo[i]}
                                                 updated={(c: ClientInfo, idx: number) => {
                                                     const tempClients: ClientInfo[] = [];
-                                                    for (let t = 0; t < clients.length; t++) {
+                                                    for (let t = 0; t < purchaseInfo.clientsInfo.length; t++) {
                                                         if (t === idx) {
                                                             tempClients.push(c);
                                                         }
                                                         else {
-                                                            tempClients.push(clients[t]);
+                                                            tempClients.push(purchaseInfo.clientsInfo[t]);
                                                         }
                                                     }
-                                                    setClients(tempClients);
+                                                    setPurchaseInfo({ ...purchaseInfo, clientsInfo: tempClients });
                                                 }}
                                             />
                                         );
@@ -112,7 +103,24 @@ const PurchaseForm = (): ReactElement => {
                                         textAlign: 'right',
                                     }}>
                                         <input type='button' value='Next' className='btn btn-primary form-button'
-                                            onClick={() => setCurrentPage(1)} />
+                                            onClick={() => {
+
+                                                let errorMessage = '';
+
+                                                for (const client of purchaseInfo.clientsInfo) {
+                                                    if (client.fullLegalName.trim() === '') {
+                                                        errorMessage = `${purchaseInfo.clientsInfo.length > 1 ? 'All purchasers' : 'Purchaser'} must enter their name`;
+                                                    }
+                                                }
+
+                                                if (errorMessage) {
+                                                    alert(errorMessage);
+                                                }
+                                                else {
+                                                    setCurrentPage(1);
+                                                }
+
+                                            }} />
                                     </div>
                                 </div>
                             </>
@@ -155,7 +163,7 @@ const PurchaseForm = (): ReactElement => {
                                         }}
                                     />
                                     <label htmlFor='floatingInput'>
-                                        Purchase price
+                                        Purchase price (CAD)
                                     </label>
                                 </div>
                             </div>
@@ -233,12 +241,12 @@ const PurchaseForm = (): ReactElement => {
                         </div>
 
                         {
-                            clients.length > 1 &&
+                            purchaseInfo.clientsInfo.length > 1 &&
                             <>
                                 <div className="row">
                                     <div className="col mb-1 mt-4">
                                         <h6>
-                                            Do you want to own the property as Joint Tenants and or as Tenants-In-Common?
+                                            Do you want to own the property as Joint Tenants or as Tenants-In-Common?
                                         </h6>
                                     </div>
                                 </div>
@@ -273,13 +281,6 @@ const PurchaseForm = (): ReactElement => {
                                             />
                                             <label className="form-check-label" htmlFor="tenantsincommon">
                                                 Tenants-In-Common
-                                            </label>
-                                        </div>
-
-                                        <div className="form-check">
-                                            <input className="form-check-input" type="radio" name="ownertype" id="notapplicable" />
-                                            <label className="form-check-label" htmlFor="notapplicable">
-                                                Not applicable
                                             </label>
                                         </div>
 
@@ -584,7 +585,7 @@ const PurchaseForm = (): ReactElement => {
                                 <h6>
                                     If you will need to bring in funds to complete this transaction, please advise where
                                     the funds will be coming from (i.e. savings account, chequing account, Home Equity Line
-                                    of Credit, etc)
+                                    of Credit, other individual, etc)
                                 </h6>
                             </div>
                         </div>
@@ -605,44 +606,201 @@ const PurchaseForm = (): ReactElement => {
                             </div>
                         </div>
 
-
-                        <div className="row">
-                            <div className="col mb-1 mt-4">
-                                <h6>
-                                    If coming from your savings or chequing account, where was the funds come from
-                                    (i.e. savings, sale of property, gift, etc)
-                                </h6>
-                            </div>
-                        </div>
-
-                        <div className="row">
-                            <div className="col mb-3">
-                                <div className='form-floating mb-0'>
-                                    <input type='text' className='form-control' id='fundschequingsource' placeholder='Funds source'
-                                        value={purchaseInfo.fundsSource}
-                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                            setPurchaseInfo({ ...purchaseInfo, fundsSource: e.target.value });
-                                        }}
-                                    />
-                                    <label htmlFor='floatingInput'>
-                                        Savings, sale of property, gift, etc
-                                    </label>
+                        {
+                            (purchaseInfo.fundsSource && purchaseInfo.fundsSource.length > 0) &&
+                            <>
+                                <div className="row">
+                                    <div className="col mb-1 mt-4">
+                                        <h6>
+                                            If coming from your savings or chequing account, where was the funds come from
+                                            (i.e. savings, sale of property, gift, etc)
+                                        </h6>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
+
+                                <div className="row">
+                                    <div className="col mb-3">
+                                        <div className='form-floating mb-0'>
+                                            <input type='text' className='form-control' id='fundschequingsource' placeholder='Funds source'
+                                                value={purchaseInfo.fundsChequingSavingsSource}
+                                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                    setPurchaseInfo({ ...purchaseInfo, fundsChequingSavingsSource: e.target.value });
+                                                }}
+                                            />
+                                            <label htmlFor='floatingInput'>
+                                                Savings, sale of property, gift, etc
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
 
 
-                        <div className="row">
-                            <div className="col mb-1 mt-4">
-                                <h6>
-                                    If the funds came from someone else who is not a purchaser, please provide the
-                                    name, phone number, address and occupation, and relationship of that payer
-                                </h6>
-                            </div>
-                        </div>
+                                <div className="row">
+                                    <div className="col mb-1 mt-4">
+                                        <h6>
+                                            If the funds came from someone else who is not a purchaser, please provide the
+                                            name, phone number, address and occupation, and relationship of that payer
+                                        </h6>
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col mb-3">
+                                        <div className='form-floating mb-0'>
+                                            <input type='text' className='form-control' id='othername' placeholder='Name'
+                                                value={purchaseInfo.nonPurchaserName}
+                                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                    setPurchaseInfo({ ...purchaseInfo, nonPurchaserName: e.target.value });
+                                                }}
+                                            />
+                                            <label htmlFor='floatingInput'>
+                                                Name
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div className="col mb-3">
+                                        <div className='form-floating mb-0'>
+                                            <input type='tel' className='form-control' id='otherphone' placeholder='Phone number'
+                                                value={purchaseInfo.nonPurchaserPhone}
+                                                pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                    setPurchaseInfo({ ...purchaseInfo, nonPurchaserPhone: e.target.value });
+                                                }}
+                                            />
+                                            <label htmlFor='floatingInput'>
+                                                Phone number - format: 123-456-7890
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div className="row">
+                                    <div className="col mb-3">
+                                        <div className='form-floating mb-0'>
+                                            <input type='text' className='form-control' id='otheroccupation' placeholder='Occupation'
+                                                value={purchaseInfo.nonPurchaserOccupation}
+                                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                    setPurchaseInfo({ ...purchaseInfo, nonPurchaserOccupation: e.target.value });
+                                                }}
+                                            />
+                                            <label htmlFor='floatingInput'>
+                                                Occupation
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div className="col mb-3">
+                                        <div className='form-floating mb-0'>
+                                            <input type='text' className='form-control' id='otheroccupation' placeholder='Relationship'
+                                                value={purchaseInfo.nonPurchaserRelationship}
+                                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                    setPurchaseInfo({ ...purchaseInfo, nonPurchaserRelationship: e.target.value });
+                                                }}
+                                            />
+                                            <label htmlFor='floatingInput'>
+                                                Relationship to you
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div className="row">
+                                    <div className="col mb-3">
+                                        <div className='form-floating mb-0'>
+                                            <input type='text' className='form-control' id='otherstreet1' placeholder='Street address line 1'
+                                                value={purchaseInfo.nonPurchaserStreet1}
+                                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                    setPurchaseInfo({ ...purchaseInfo, nonPurchaserStreet1: e.target.value });
+                                                }}
+                                            />
+                                            <label htmlFor='floatingInput'>
+                                                Street address line 1
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col mb-3">
+                                        <div className='form-floating mb-0'>
+                                            <input type='text' className='form-control' id='otherstreet2' placeholder='Street address line 2'
+                                                value={purchaseInfo.nonPurchaserStreet2}
+                                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                    setPurchaseInfo({ ...purchaseInfo, nonPurchaserStreet2: e.target.value });
+                                                }}
+                                            />
+                                            <label htmlFor='floatingInput'>
+                                                Street address line 2
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
 
 
+                                <div className="row">
+                                    <div className="col mb-3">
+                                        <div className='form-floating mb-0'>
+                                            <input type='text' className='form-control' id='othercity' placeholder='City'
+                                                value={purchaseInfo.nonPurchaserCity}
+                                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                    setPurchaseInfo({ ...purchaseInfo, nonPurchaserCity: e.target.value });
+                                                }}
+                                            />
+                                            <label htmlFor='floatingInput'>
+                                                City
+                                            </label>
+                                        </div>
+                                    </div>
 
+                                    <div className="col mb-3">
+                                        <select className="form-select p-3" aria-label="Province or territory"
+                                            value={purchaseInfo.nonPurchaserProvinceTerritory}
+                                            onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                                                setPurchaseInfo({ ...purchaseInfo, nonPurchaserProvinceTerritory: e.target.value });
+                                            }}
+                                        >
+                                            <option value='0'>Province or territory</option>
+                                            <option value="Alberta">Alberta</option>
+                                            <option value="British Columbia">British Columbia</option>
+                                            <option value="Manitoba">Manitoba</option>
+                                            <option value="New Brunswick">New Brunswick</option>
+                                            <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+                                            <option value="Northwest Territories">Northwest Territories</option>
+                                            <option value="Nova Scotia">Nova Scotia</option>
+                                            <option value="Nunavut">Nunavut</option>
+                                            <option value="Ontario">Ontario</option>
+                                            <option value="Prince Edward Island">Prince Edward Island</option>
+                                            <option value="Quebec">Québec</option>
+                                            <option value="Saskatchewan">Saskatchewan</option>
+                                            <option value="Yukon">Yukon</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col mb-3">
+                                        <div className='form-floating mb-0'>
+                                            <input type='text' className='form-control' id='otherpostalcode' placeholder='Postal code'
+                                                value={purchaseInfo.postalCode}
+                                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                    setPurchaseInfo({ ...purchaseInfo, nonPurchaserPostalCode: e.target.value });
+                                                }}
+                                            />
+                                            <label htmlFor='floatingInput'>
+                                                Postal code
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div className="col mb-3">
+
+                                    </div>
+
+                                </div>
+                            </>
+                        }
 
                         <div className="row">
                             <div className="col mb-1 mt-4">
@@ -705,7 +863,10 @@ const PurchaseForm = (): ReactElement => {
                                     onClick={() => setCurrentPage(0)} />
 
                                 <input type='button' value='Submit' className='btn btn-primary form-button'
-                                    onClick={() => setCurrentPage(1)} />
+                                    onClick={() => {
+                                        const c = getOutput(purchaseInfo);
+                                        console.log(c);
+                                    }} />
                             </div>
                         </div>
 
@@ -719,5 +880,144 @@ const PurchaseForm = (): ReactElement => {
     )
 
 };
+
+const getOutput = (purchaseInfo: PurchaseInfo): string => {
+
+    const output: string[] = [];
+
+    output.push('PURCHASE');
+    output.push('--------\n');
+
+    for (let i = 0; i < purchaseInfo.clientsInfo.length; i++) {
+
+        const client = purchaseInfo.clientsInfo[i];
+        output.push(`PURCHASER ${(i + 1).toString()}`);
+        output.push(`Full Legal Name: ${client.fullLegalName}`);
+        output.push(`Phone Number: ${client.phoneNumber}`);
+        output.push(`Email: ${client.emailAddress}`);
+
+        output.push(`Date of Birth: ${client.dateOfBirth.toDateString() === (new Date()).toDateString()
+            ? '** NOT PROVIDED'
+            : client.dateOfBirth.toISOString().split('T')[0]}`);
+        output.push(`Social Insurance Number: ${client.sinViaPhone ? 'TO BE PROVIDED VIA PHONE' : client.socialInsNumber}\n`);
+
+        output.push('Current address');
+        output.push(`Street 1: ${client.mailingStreet1}`);
+        output.push(`Street 2: ${client.mailingStreet2}`);
+        output.push(`City: ${client.mailingCity}`);
+        output.push(`Province/Territory: ${client.mailingProvinceTerritory}`);
+        output.push(`Postal Code: ${client.mailingPostalCode}\n`);
+
+        output.push(`Occupation: ${client.occupation}`);
+        output.push(`Employer Name: ${client.employerName}`);
+        output.push(`Employer Phone Number: ${client.phoneNumber}`);
+        output.push(`Employer Street 1: ${client.employerStreet1}`);
+        output.push(`Employer Street 2: ${client.employerStreet2}`);
+        output.push(`Employer City: ${client.employerCity}`);
+        output.push(`Employer Province/Territory: ${client.employerProvinceTerritory}`);
+        output.push(`Employer Postal Code: ${client.employerPostalCode}\n`);
+
+        let citizenShip = '';
+        switch (client.citizenShip) {
+            case 'CANADIAN_CITIZEN':
+                citizenShip = 'Canadian citizen';
+                break;
+
+            case 'PERMANENT_RESIDENT':
+                citizenShip = 'Permanent resident';
+                break;
+
+            case 'BC_PROV_NOMINEE':
+                citizenShip = 'B.C. Provincial Nominee';
+                break;
+
+            default:
+                citizenShip = '** NOT PROVIDED';
+        }
+
+        output.push(`Citizenship: ${citizenShip}\n`);
+
+        output.push(`BC Resident for at least a year: ${client.hasBeenBCResidentForAYear}`);
+        output.push(`First Time Home Buyer: ${client.isFirstTimeHomeBuyer}`);
+        output.push(`Will live in property within three months: ${client.willBeLivingInPropertyWithinThreeMonths}`);
+        output.push(`Has owned principal residence elsewhere: ${client.hasOwnedPrincipalResidenceSomewhere}`);
+
+        output.push('\n');
+    }
+
+    // property details
+
+    output.push('PROPERTY DETAILS')
+    output.push(`Completion Date: ${purchaseInfo.completionDate.toISOString().split('T')[0]}`);
+    output.push(`Purchase Price (CAD): ${purchaseInfo.purchasePrice}\n`);
+    output.push(`Street 1: ${purchaseInfo.street1}`);
+    output.push(`Street 2: ${purchaseInfo.street2}`);
+    output.push(`City: ${purchaseInfo.city}`);
+    output.push(`Postal Code: ${purchaseInfo.postalCode}\n`);
+
+    let joinType = '';
+    if (purchaseInfo.clientsInfo.length === 1) {
+        joinType = 'NOT APPLICABLE AS ONLY ONE PURCHASER';
+    }
+    else {
+        switch (purchaseInfo.joinType) {
+            case 'JOINT_TENANTS':
+                joinType = 'Joint Tenants';
+                break;
+
+            case 'TENANTS_IN_COMMON':
+                joinType = 'Tenants-in-Common'
+                break;
+
+            default:
+                joinType = '** NOT PROVIDED';
+        }
+    }
+
+    output.push(`Join Type: ${joinType}`);
+
+    output.push(`Building New/Used: ${purchaseInfo.buildingNewUsed}\n`);
+
+    output.push(`Realtor Name: ${purchaseInfo.realtorName}`);
+    output.push(`Realtor Phone Number: ${purchaseInfo.realtorPhone}\n`);
+
+    output.push(`Lender Name: ${purchaseInfo.lenderName}`);
+    output.push(`Broker/Banker Name: ${purchaseInfo.brokerBankerName}`);
+    output.push(`Broker/Banker Phone Number: ${purchaseInfo.brokerBankerName}\n`);
+
+    output.push(`Strata Mgmt Company: ${purchaseInfo.strataName}\n`);
+
+    output.push(`Parking Stall(s): ${purchaseInfo.parkingStallNumbers}`);
+    output.push(`Storage Locker(s): ${purchaseInfo.storageLockerNumbers}\n`);
+
+    output.push(`House Insurance Agent Name: ${purchaseInfo.insuranceAgentName}`);
+    output.push(`House Insurance Agent Phone Number: ${purchaseInfo.insuranceAgentPhone}\n`);
+
+    output.push(`Portion of Property to be Rented Out: ${purchaseInfo.portionPropertyRentedOut}\n`);
+
+    output.push(`Funds Brought In Source: ${purchaseInfo.fundsSource}`);
+    output.push(`Chequing/Savings Source: ${purchaseInfo.fundsChequingSavingsSource}\n`);
+
+    output.push(`Other Funder Name: ${purchaseInfo.nonPurchaserName}`);
+    output.push(`Other Funder Phone Number: ${purchaseInfo.nonPurchaserPhone}`);
+    output.push(`Other Funder Relationship: ${purchaseInfo.nonPurchaserRelationship}`);
+    output.push(`Other Funder Occupation: ${purchaseInfo.nonPurchaserOccupation}`);
+    output.push(`Other Funder Street 1: ${purchaseInfo.nonPurchaserStreet1}`);
+    output.push(`Other Funder Street 2: ${purchaseInfo.nonPurchaserStreet2}`);
+    output.push(`Other Funder City: ${purchaseInfo.nonPurchaserCity}`);
+    output.push(`Other Funder Province/Territory: ${purchaseInfo.nonPurchaserProvinceTerritory}`);
+    output.push(`Other Funder Postal Code: ${purchaseInfo.nonPurchaserPostalCode}\n`);
+
+    output.push(`Appointment Location Preference: ${purchaseInfo.apptLocationPreference}`);
+
+
+
+
+
+    output.push('\n');
+
+    return output.join('\n');
+
+}
 
 export default PurchaseForm;

@@ -94,7 +94,8 @@ const Client = (props: ClientProps): ReactElement => {
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>
                         <input type='number' className='form-control' id='sin' placeholder='Social Insurance Number'
-                            value={clientInfo.socialInsNumber}
+                            disabled={clientInfo.sinViaPhone}
+                            value={clientInfo.sinViaPhone ? '' : clientInfo.socialInsNumber}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setClientInfo({ ...clientInfo, socialInsNumber: e.target.value });
                             }} />
@@ -105,7 +106,11 @@ const Client = (props: ClientProps): ReactElement => {
                     <div>
                         <input type='checkbox' id={`chksin${props.num.toString()}`} checked={clientInfo.sinViaPhone}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                console.log(e.target.checked);
                                 setClientInfo({ ...clientInfo, sinViaPhone: e.target.checked });
+                                // if (e.target.checked) {
+                                //     setClientInfo({ ...clientInfo, socialInsNumber: '' });
+                                // }
                             }} />
                         <label htmlFor={`chksin${props.num.toString()}`}>
                             &nbsp;&nbsp;I will provide later via phone
@@ -504,7 +509,7 @@ const Client = (props: ClientProps): ReactElement => {
 
                     <div className="form-check">
                         <input className="form-check-input" type="radio" name={`residentbc${props.num}`} id={`residentbc-yes${props.num}`}
-                            checked={clientInfo.isFirstTimeHomeBuyer === 'YES'}
+                            checked={clientInfo.hasBeenBCResidentForAYear === 'YES'}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e.target.checked) {
                                     setClientInfo({ ...clientInfo, hasBeenBCResidentForAYear: 'YES' });
@@ -517,7 +522,7 @@ const Client = (props: ClientProps): ReactElement => {
 
                     <div className="form-check">
                         <input className="form-check-input" type="radio" name={`residentbc${props.num}`} id={`residentbc-no${props.num}`}
-                            checked={clientInfo.isFirstTimeHomeBuyer === 'NO'}
+                            checked={clientInfo.hasBeenBCResidentForAYear === 'NO'}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e.target.checked) {
                                     setClientInfo({ ...clientInfo, hasBeenBCResidentForAYear: 'NO' });
