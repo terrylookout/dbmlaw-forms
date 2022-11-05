@@ -1,7 +1,6 @@
 import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
-import { ClientInfo } from './ClassesInterfaces';
 
-interface ClientProps {
+interface GuarantorProps {
     text: string;
     num: number;
     clientInfo: ClientInfo;
@@ -9,7 +8,7 @@ interface ClientProps {
     updated: (c: ClientInfo, idx: number) => void;
 }
 
-const Client = (props: ClientProps): ReactElement => {
+const Guarantor = (props: GuarantorProps): ReactElement => {
 
     const [clientInfo, setClientInfo] = useState(props.clientInfo);
 
@@ -689,4 +688,4 @@ const Client = (props: ClientProps): ReactElement => {
 
 };
 
-export default Client;
+export default Guarantor;

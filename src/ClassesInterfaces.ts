@@ -15,6 +15,7 @@ export class ClientInfo {
     public mailingProvinceTerritory: string;
     public mailingPostalCode: string;
 
+    public employment: 'EMPLOYED' | 'RETIRED' | 'STUDENT' | 'OTHER' | 'TBF';
     public occupation: string;
     public employerName: string;
     public employerPhone: string;
@@ -29,7 +30,7 @@ export class ClientInfo {
     public willBeLivingInPropertyWithinThreeMonths: 'YES' | 'NO' | '** NOT PROVIDED';
     public hasOwnedPrincipalResidenceSomewhere: 'YES' | 'NO' | '** NOT PROVIDED';
 
-    public citizenShip: '** NOT PROVIDED' | 'CANADIAN_CITIZEN' | 'PERMANENT_RESIDENT' | 'BC_PROV_NOMINEE';
+    public citizenShip: '** NOT PROVIDED' | 'CANADIAN_CITIZEN' | 'PERMANENT_RESIDENT' | 'BC_PROV_NOMINEE' | 'RESIDENT_OTHER_COUNTRY';
 
     constructor() {
         this.fullLegalName = '';
@@ -45,6 +46,9 @@ export class ClientInfo {
         this.mailingCity = '';
         this.mailingProvinceTerritory = '';
         this.mailingPostalCode = '';
+
+        // to be filled
+        this.employment = 'TBF';
 
         this.occupation = '';
         this.employerName = '';
@@ -65,11 +69,31 @@ export class ClientInfo {
 
 }
 
+export class Guarantor {
+    public fullLegalName: string;
+    public phoneNumber: string;
+    public emailAddress: string;
+    public relationship;
+
+    constructor() {
+        this.fullLegalName = '';
+        this.phoneNumber = '';
+        this.emailAddress = '';
+        this.relationship = '';
+    }
+}
+
 export class PurchaseInfo {
 
     public clientsInfo: ClientInfo[];
+    public guarantors: Guarantor[];
+
+    public forCompany: boolean;
+    public companyName: string;
+    public incorporationNumber: string;
 
     public completionDate: Date;
+    public completionDateTBD: boolean;
     public purchasePrice: number;
 
     public street1: string;
@@ -99,7 +123,7 @@ export class PurchaseInfo {
 
     public portionPropertyRentedOut: 'YES' | 'NO' | '** NOT PROVIDED';;
 
-    public fundsSource: string;
+    public fundsSource: 'SAVINGS_ACCOUNT' | 'CHEQUING_ACCOUNT' | 'HELOC' | 'ANOTHER_INDIVIDUAL' | 'OTHER' | 'NOT_SPECIFIED';
     public fundsChequingSavingsSource: string;
 
     public nonPurchaserName: string;
@@ -117,14 +141,20 @@ export class PurchaseInfo {
     constructor() {
 
         this.clientsInfo = [];
+        this.guarantors = [];
+
+        this.forCompany = false;
+        this.companyName = '';
+        this.incorporationNumber = '';
 
         this.completionDate = new Date();
+        this.completionDateTBD = false;
         this.purchasePrice = 0;
 
         this.street1 = '';
         this.street2 = '';
         this.city = '';
-        this.provinceTerritory = '';
+        this.provinceTerritory = 'British Columbia';
         this.postalCode = '';
 
         this.buildingNewUsed = '** NOT PROVIDED';
@@ -149,7 +179,7 @@ export class PurchaseInfo {
 
         this.portionPropertyRentedOut = '** NOT PROVIDED';
 
-        this.fundsSource = '';
+        this.fundsSource = 'NOT_SPECIFIED';
         this.fundsChequingSavingsSource = '';
 
         this.nonPurchaserName = '';

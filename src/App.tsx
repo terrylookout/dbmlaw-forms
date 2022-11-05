@@ -7,20 +7,23 @@ import PurchaseForm from './PurchaseForm';
 export type FormType =
   'NONE' | 'PURCHASE' | 'SALE' | 'REFINANCE' | 'PURCHASE_AND_SALE' | 'PROJECT_PURCHASE';
 
-declare var bootstrap: any;
-
 const App = (): ReactElement => {
 
   const [selectedForm, setSelectedForm] = useState<FormType>('NONE');
 
   useEffect(() => {
-    const modal = document.querySelector('#formModal');
-    if (modal) {
-      modal.addEventListener('hidden.bs.modal', () => {
-        setSelectedForm('NONE');
-      });
-    }
+
+    // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    if (selectedForm === 'NONE') {
+      const backdrop = document.querySelector('.modal-backdrop');
+      if (backdrop) {
+        backdrop.remove();
+      }
+    }
+  });
 
   return (
     <div className="App">
@@ -49,44 +52,18 @@ const App = (): ReactElement => {
         </div>
 
         {
-          //selectedPage === 'NONE' &&
-
           <div>
             <FormButtons onFormSelected={(formSelected) => {
               setSelectedForm(formSelected);
-
-              // eslint-disable-next-line
-              new bootstrap.Modal('#formModal').show();
             }} />
           </div>
         }
 
         {
-          <div className="modal fade" id="formModal" tabIndex={-1} aria-labelledby="formModalLabel" aria-hidden="true"
-            data-bs-backdrop="static" data-bs-keyboard="false">
-            <div className="modal-dialog modal-lg modal-dialog-scrollable">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h1 className="modal-title fs-5" id="exampleModalLabel">
-                    {
-                      (selectedForm === 'PURCHASE') &&
-                      `Purchase`
-                    }
-
-                  </h1>
-                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div className="modal-body">
-                  {
-                    (selectedForm === 'PURCHASE') &&
-                    <PurchaseForm key={Math.random()} />
-                  }
-                </div>
-
-              </div>
-            </div>
-          </div>
-
+          selectedForm === 'PURCHASE' &&
+          <PurchaseForm key={Math.random()}
+            dismissed={() => setSelectedForm('NONE')}
+          />
         }
 
       </div>
