@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/forms-submission/static/css/main.f95bde3d.css",
+    "main.js": "/forms-submission/static/js/main.0f6ef38b.js",
+    "static/js/787.2f548536.chunk.js": "/forms-submission/static/js/787.2f548536.chunk.js",
+    "static/media/dbm-logo.png": "/forms-submission/static/media/dbm-logo.11852e7e704d9f4e2a38.png",
+    "index.html": "/forms-submission/index.html",
+    "main.f95bde3d.css.map": "/forms-submission/static/css/main.f95bde3d.css.map",
+    "main.0f6ef38b.js.map": "/forms-submission/static/js/main.0f6ef38b.js.map",
+    "787.2f548536.chunk.js.map": "/forms-submission/static/js/787.2f548536.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.f95bde3d.css",
+    "static/js/main.0f6ef38b.js"
+  ]
+}
