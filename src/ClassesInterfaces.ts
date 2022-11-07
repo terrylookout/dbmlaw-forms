@@ -69,7 +69,7 @@ export class ClientInfo {
 
 }
 
-export class Guarantor {
+export class GuarantorInfo {
     public fullLegalName: string;
     public phoneNumber: string;
     public emailAddress: string;
@@ -86,7 +86,7 @@ export class Guarantor {
 export class PurchaseInfo {
 
     public clientsInfo: ClientInfo[];
-    public guarantors: Guarantor[];
+    public guarantorsInfo: GuarantorInfo[];
 
     public forCompany: boolean;
     public companyName: string;
@@ -138,10 +138,12 @@ export class PurchaseInfo {
 
     public apptLocationPreference: 'VANCOUVER' | 'COQUITLAM' | 'LANGLEY';
 
+    public additionalComments: string;
+
     constructor() {
 
         this.clientsInfo = [];
-        this.guarantors = [];
+        this.guarantorsInfo = [];
 
         this.forCompany = false;
         this.companyName = '';
@@ -193,6 +195,8 @@ export class PurchaseInfo {
         this.nonPurchaserRelationship = '';
 
         this.apptLocationPreference = 'COQUITLAM';
+
+        this.additionalComments = '';
     }
 
 }

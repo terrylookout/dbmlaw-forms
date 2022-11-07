@@ -4,6 +4,7 @@ import { ClientInfo } from './ClassesInterfaces';
 interface ClientProps {
     text: string;
     num: number;
+    client1Info: ClientInfo | null;
     clientInfo: ClientInfo;
     company: boolean;
     updated: (c: ClientInfo, idx: number) => void;
@@ -120,12 +121,33 @@ const Client = (props: ClientProps): ReactElement => {
                 </div>
 
             }
-            <div className="row">
-                <div className="col mb-1 mt-4">
+            <div className="row align-items-center mt-4">
+                <div className="col mb-1">
                     <h6>
                         Your current address
                     </h6>
                 </div>
+
+                {
+                    (props.num > 0 && props.client1Info !== null) &&
+                    <div className='col mb-1' style={{
+                        textAlign: 'right',
+                    }}>
+                        <input type='button' className='btn btn-secondary' value={`Same as ${props.text} 1`} onClick={() => {
+                            if (props.client1Info) {
+                                setClientInfo({
+                                    ...clientInfo,
+                                    mailingStreet1: props.client1Info.mailingStreet1,
+                                    mailingStreet2: props.client1Info.mailingStreet2,
+                                    mailingCity: props.client1Info.mailingCity,
+                                    mailingProvinceTerritory: props.client1Info.mailingProvinceTerritory,
+                                    mailingPostalCode: props.client1Info.mailingPostalCode,
+                                });
+                            }
+
+                        }} />
+                    </div>
+                }
             </div>
 
 

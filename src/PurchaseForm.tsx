@@ -1,6 +1,7 @@
 import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
 import Client from './Client';
-import { ClientInfo, Guarantor, PurchaseInfo } from './ClassesInterfaces';
+import { ClientInfo, GuarantorInfo, PurchaseInfo } from './ClassesInterfaces';
+import Guarantor from './Guarantor';
 
 
 declare var bootstrap: any;
@@ -15,14 +16,16 @@ const PurchaseForm = (props: FormProps): ReactElement => {
     const [missingInfo, setMissingInfo] = useState(false);
     const [numberOfClients, setNumberOfClients] = useState(0);
     const [numberOfGuarantors, setNumberOfGuarantors] = useState(0);
+    const [submitting, setSubmitting] = useState(true);
 
-    const [currentPage, setCurrentPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState<
+        'GET_PURCHASERS' | 'PROPERTY_INFO' | 'CONFIRM_SUBMIT' | 'SUBMIT_RESULT'
+    >('GET_PURCHASERS');
 
     const checkPage = () => {
         //
         // clients
-        if (currentPage === 0) {
-
+        if (currentPage === 'GET_PURCHASERS') {
             if (purchaseInfo.forCompany) {
                 if (!purchaseInfo.companyName.trim()) {
                     const el = document.querySelector(`#companyname`);
@@ -148,11 +151,24 @@ const PurchaseForm = (props: FormProps): ReactElement => {
             }
 
             setMissingInfo(false);
-            setCurrentPage(1)
+            setCurrentPage('PROPERTY_INFO')
             return;
         }
         else {
             // page 2
+            if (!purchaseInfo.purchasePrice) {
+                const el = document.querySelector(`#purchaseprice`);
+                if (el) {
+                    el.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center',
+                    });
+                    (el as HTMLInputElement).focus();
+                    setMissingInfo(true);
+                    return;
+                }
+            }
+
             if (purchaseInfo.buildingNewUsed === '** NOT PROVIDED') {
                 const el = document.querySelector(`.newused`);
                 if (el) {
@@ -166,12 +182,50 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                 return;
             }
 
-            // here we are good to sumbit
+            for (let t = 0; t < purchaseInfo.guarantorsInfo.length; t++) {
+                const guarantor = purchaseInfo.guarantorsInfo[t];
+                // check legal name
+                if (!guarantor.fullLegalName.trim()) {
+                    const el = document.querySelector(`#guarantorname${t}`);
+                    if (el) {
+                        el.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center',
+                        });
+                        (el as HTMLInputElement).focus();
+                        setMissingInfo(true);
+                        return;
+                    }
+                }
 
-            const c = getOutput(purchaseInfo);
-            console.log(c);
+                if (!guarantor.phoneNumber.trim()) {
+                    const el = document.querySelector(`#guarantorphone${t}`);
+                    if (el) {
+                        el.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center',
+                        });
+                        (el as HTMLInputElement).focus();
+                        setMissingInfo(true);
+                        return;
+                    }
+                }
+            }
+
+            // here we are good to submit
+            setCurrentPage('CONFIRM_SUBMIT');
         }
     };
+
+    const submitPurchaseForm = (purchaseInfo: PurchaseInfo) => {
+        const c = getOutput(purchaseInfo);
+        console.log(c);
+        console.log(purchaseInfo);
+
+        setSubmitting(false);
+        setCurrentPage('SUBMIT_RESULT');
+    };
+
 
     useEffect(() => {
         // eslint-disable-next-line
@@ -209,11 +263,11 @@ const PurchaseForm = (props: FormProps): ReactElement => {
     }, [numberOfClients]);
 
     useEffect(() => {
-        const tempGuarantors = [...purchaseInfo.guarantors];
+        const tempGuarantors = [...purchaseInfo.guarantorsInfo];
         if (numberOfGuarantors > tempGuarantors.length) {
             do {
                 tempGuarantors.push(
-                    new Guarantor()
+                    new GuarantorInfo()
                 );
             } while (numberOfGuarantors > tempGuarantors.length);
         }
@@ -223,7 +277,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
             } while (numberOfGuarantors < tempGuarantors.length);
         }
 
-        setPurchaseInfo({ ...purchaseInfo, guarantors: tempGuarantors });
+        setPurchaseInfo({ ...purchaseInfo, guarantorsInfo: tempGuarantors });
 
         // eslint-disable-next-line
     }, [numberOfGuarantors]);
@@ -239,7 +293,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
     }, [purchaseInfo.forCompany]);
 
     useEffect(() => {
-        if (currentPage === 1) {
+        if (currentPage === 'PROPERTY_INFO') {
             const top = document.querySelector('.top-second-page');
             if (top) {
                 top.scrollIntoView({
@@ -251,9 +305,10 @@ const PurchaseForm = (props: FormProps): ReactElement => {
 
     return (
 
+
         <div className="modal fade" id="formModal" tabIndex={-1} aria-labelledby="formModalLabel" aria-hidden="true"
             data-bs-backdrop="static" data-bs-keyboard="false">
-            <div className="modal-dialog modal-lg modal-dialog-scrollable">
+            <div className="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
                 <div className="modal-content">
                     <div className="modal-header">
                         <h1 className="modal-title fs-5" id="exampleModalLabel">
@@ -266,7 +321,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                             <div className='container'>
                                 <div className="container">
                                     {
-                                        currentPage === 0 &&
+                                        currentPage === 'GET_PURCHASERS' &&
                                         <>
                                             <div className="row">
                                                 <div className="col mb-3">
@@ -368,6 +423,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                                     num={i}
                                                                     key={i}
                                                                     clientInfo={purchaseInfo.clientsInfo[i]}
+                                                                    client1Info={purchaseInfo.clientsInfo.length > 1 ? purchaseInfo.clientsInfo[0] : null}
                                                                     company={purchaseInfo.forCompany}
                                                                     updated={(c: ClientInfo, idx: number) => {
                                                                         const tempClients: ClientInfo[] = [];
@@ -392,7 +448,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                     }
 
                                     {
-                                        currentPage === 1 &&
+                                        currentPage === 'PROPERTY_INFO' &&
                                         <>
                                             <div className="row">
                                                 <div className="col mb-3 top-second-page">
@@ -757,8 +813,6 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                 </div>
                                             </div>
 
-
-
                                             <div className="row">
                                                 <div className="col mb-1 mt-4">
                                                     <h6>
@@ -953,7 +1007,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                                     setPurchaseInfo({ ...purchaseInfo, fundsSource: 'ANOTHER_INDIVIDUAL' });
                                                                 }
                                                             }} />
-                                                        <label className="form-check-label" htmlFor={`fundsource-anther`}>
+                                                        <label className="form-check-label" htmlFor={`fundsource-another`}>
                                                             Another individual
                                                         </label>
                                                     </div>
@@ -1189,7 +1243,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
 
                                                 <div className="col mb-3">
                                                     <select className="form-select p-3" aria-label="Province or territory"
-                                                        value={purchaseInfo.guarantors.length}
+                                                        value={purchaseInfo.guarantorsInfo.length}
                                                         onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                                                             if (e && e.target && e.target.value) {
                                                                 setNumberOfGuarantors(parseInt(e.target.value));
@@ -1205,6 +1259,44 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                 </div>
                                             </div>
 
+                                            {
+                                                numberOfGuarantors > 0 &&
+                                                <>
+                                                    <div className="row">
+                                                        <div className="col mb-1 mt-4">
+                                                            <h6>
+                                                                IMPORTANT: All guarantors will be required to sign particular mortgage documents
+                                                                and attend appointment(s)
+                                                            </h6>
+                                                        </div>
+                                                    </div>
+                                                    {
+                                                        purchaseInfo.guarantorsInfo.map((c, i) => {
+                                                            return (
+                                                                <Guarantor text={'Guarantor/Co-signer'}
+                                                                    num={i}
+                                                                    key={i}
+                                                                    numberOfPurchasers={purchaseInfo.clientsInfo.length}
+                                                                    guarantorInfo={purchaseInfo.guarantorsInfo[i]}
+                                                                    updated={(c: GuarantorInfo, idx: number) => {
+                                                                        const tempGuarantors: GuarantorInfo[] = [];
+                                                                        for (let t = 0; t < purchaseInfo.guarantorsInfo.length; t++) {
+                                                                            if (t === idx) {
+                                                                                tempGuarantors.push(c);
+                                                                            }
+                                                                            else {
+                                                                                tempGuarantors.push(purchaseInfo.guarantorsInfo[t]);
+                                                                            }
+                                                                        }
+                                                                        setPurchaseInfo({ ...purchaseInfo, guarantorsInfo: tempGuarantors });
+                                                                    }}
+                                                                />
+                                                            );
+                                                        })
+                                                    }
+
+                                                </>
+                                            }
 
                                             <div className="row">
                                                 <div className="col mb-1 mt-4">
@@ -1257,6 +1349,61 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            <div className="row">
+                                                <div className="col mb-1 mt-4">
+                                                    <h6>
+                                                        Do you have any additional details, questions, or concerns?
+                                                    </h6>
+                                                </div>
+                                            </div>
+
+                                            <div className="row">
+                                                <div className="col mb-3">
+
+                                                    <textarea style={{
+                                                        width: '100%',
+                                                        padding: '5px',
+                                                    }}
+                                                        value={purchaseInfo.additionalComments}
+                                                        rows={6}
+                                                        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+                                                            setPurchaseInfo({ ...purchaseInfo, additionalComments: e.target.value });
+                                                        }}>
+                                                    </textarea>
+
+                                                </div>
+                                            </div>
+                                        </>
+                                    }
+
+                                    {
+                                        currentPage === 'SUBMIT_RESULT' &&
+                                        <>
+                                            <p>
+                                                {`${submitting ? 'Submitting...' : 'Done!'}`}
+                                            </p>
+                                            {
+                                                !submitting &&
+                                                <>
+                                                    <p>
+                                                        You will be contacted by Drysdale Bacon McStravick soon!
+                                                    </p>
+                                                    <p>
+                                                        If you have any questions or concerns, please feel free to call&nbsp;
+                                                        <a href="tel:1-604-939-8321">604 939 8321</a>
+                                                    </p>
+                                                </>
+                                            }
+                                        </>
+                                    }
+
+                                    {
+                                        currentPage === 'CONFIRM_SUBMIT' &&
+                                        <>
+                                            <p>
+                                                Submit your purchase information to Drysdale Bacon McStravick?
+                                            </p>
                                         </>
                                     }
                                 </div>
@@ -1265,18 +1412,17 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                     </div>
                     <div className="modal-footer">
                         {
-                            (currentPage === 0 && (purchaseInfo.forCompany || numberOfClients !== 0)) &&
+                            (currentPage === 'GET_PURCHASERS' && (purchaseInfo.forCompany || numberOfClients !== 0)) &&
                             <>
                                 <div className="row">
-                                    {
-                                        missingInfo &&
-                                        <div className="col mb-3 mt-4 text-danger fw-semibold error-label">
+                                    <div className="col mb-3 mt-4 text-danger fw-semibold error-label">
+                                        {
+                                            missingInfo &&
                                             <h6>
                                                 Please fill in all required information
                                             </h6>
-                                        </div>
-
-                                    }
+                                        }
+                                    </div>
                                     <div className="col mb-3 mt-4" style={{
                                         textAlign: 'right',
                                     }}>
@@ -1291,19 +1437,67 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                         }
 
                         {
-                            currentPage === 1 &&
+                            currentPage === 'PROPERTY_INFO' &&
                             <>
                                 <div className="row">
-                                    <div className="col mb-3" style={{
+                                    <div className="col mb-3 mt-4 text-danger fw-semibold error-label">
+                                        <h6 style={{
+                                            visibility: missingInfo ? 'visible' : 'hidden',
+                                        }}>
+                                            Please fill in all required information
+                                        </h6>
+                                    </div>
+                                    <div className="col mb-3 mt-4" style={{
                                         textAlign: 'right',
+                                        whiteSpace: 'nowrap',
                                     }}>
-                                        <input type='button' value='Back to Purchasers' className='btn btn-primary form-button me-5'
-                                            onClick={() => setCurrentPage(0)} />
+                                        <input type='button' value='Back to Purchasers' className='btn btn-secondary form-button me-2'
+                                            onClick={() => setCurrentPage('GET_PURCHASERS')} />
 
                                         <input type='button' value='Submit' className='btn btn-primary form-button'
                                             onClick={() => {
                                                 checkPage();
                                             }} />
+                                    </div>
+                                </div>
+                            </>
+                        }
+
+                        {
+                            currentPage === 'CONFIRM_SUBMIT' &&
+                            <>
+                                <div className="row">
+                                    <div className="col mb-3 mt-4" style={{
+                                        textAlign: 'right',
+                                        whiteSpace: 'nowrap',
+                                    }}>
+                                        <input type='button' value='Go back' className='btn btn-secondary form-button me-2'
+                                            onClick={() => setCurrentPage('PROPERTY_INFO')} />
+
+                                        <input type='button' value='Submit to DBM' className='btn btn-primary form-button'
+                                            onClick={() => {
+                                                submitPurchaseForm(purchaseInfo);
+                                            }} />
+                                    </div>
+                                </div>
+                            </>
+                        }
+
+                        {
+                            currentPage === 'SUBMIT_RESULT' &&
+                            <>
+                                <div className="row">
+                                    <div className="col mb-3 mt-4" style={{
+                                        textAlign: 'right',
+                                        whiteSpace: 'nowrap',
+                                    }}>
+                                        <input
+                                            style={{
+                                                visibility: submitting ? 'hidden' : 'visible',
+                                            }}
+                                            type='button' value='Finish' className='btn btn-primary form-button'
+                                            data-bs-dismiss="modal" aria-label="Close"
+                                        />
                                     </div>
                                 </div>
                             </>
@@ -1316,8 +1510,6 @@ const PurchaseForm = (props: FormProps): ReactElement => {
 
 };
 
-
-
 const getOutput = (purchaseInfo: PurchaseInfo): string => {
 
     const output: string[] = [];
@@ -1325,61 +1517,76 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
     output.push('PURCHASE');
     output.push('--------\n');
 
-    for (let i = 0; i < purchaseInfo.clientsInfo.length; i++) {
+    if (purchaseInfo.forCompany) {
+        output.push(`Company: ${purchaseInfo.companyName}`);
+        output.push(`Phone: ${purchaseInfo.incorporationNumber}`);
+        output.push(`Signatory Full Legal Name: ${purchaseInfo.clientsInfo[0].fullLegalName}`);
+        output.push(`Phone Number: ${purchaseInfo.clientsInfo[0].phoneNumber}`);
+        output.push(`Email: ${purchaseInfo.clientsInfo[0].emailAddress}`);
+        output.push(`Street 1: ${purchaseInfo.clientsInfo[0].mailingStreet1}`);
+        output.push(`Street 2: ${purchaseInfo.clientsInfo[0].mailingStreet2}`);
+        output.push(`City: ${purchaseInfo.clientsInfo[0].mailingCity}`);
+        output.push(`Province/Territory: ${purchaseInfo.clientsInfo[0].mailingProvinceTerritory}`);
+        output.push(`Postal Code: ${purchaseInfo.clientsInfo[0].mailingPostalCode}\n`);
 
-        const client = purchaseInfo.clientsInfo[i];
-        output.push(`PURCHASER ${(i + 1).toString()}`);
-        output.push(`Full Legal Name: ${client.fullLegalName}`);
-        output.push(`Phone Number: ${client.phoneNumber}`);
-        output.push(`Email: ${client.emailAddress}`);
+    }
+    else {
+        for (let i = 0; i < purchaseInfo.clientsInfo.length; i++) {
 
-        output.push(`Date of Birth: ${client.dateOfBirth.toDateString() === (new Date()).toDateString()
-            ? '** NOT PROVIDED'
-            : client.dateOfBirth.toISOString().split('T')[0]}`);
-        output.push(`Social Insurance Number: ${client.sinViaPhone ? 'TO BE PROVIDED VIA PHONE' : client.socialInsNumber}\n`);
+            const client = purchaseInfo.clientsInfo[i];
+            output.push(`PURCHASER ${(i + 1).toString()}`);
+            output.push(`Full Legal Name: ${client.fullLegalName}`);
+            output.push(`Phone Number: ${client.phoneNumber}`);
+            output.push(`Email: ${client.emailAddress}`);
 
-        output.push('Current address');
-        output.push(`Street 1: ${client.mailingStreet1}`);
-        output.push(`Street 2: ${client.mailingStreet2}`);
-        output.push(`City: ${client.mailingCity}`);
-        output.push(`Province/Territory: ${client.mailingProvinceTerritory}`);
-        output.push(`Postal Code: ${client.mailingPostalCode}\n`);
+            output.push(`Date of Birth: ${client.dateOfBirth.toDateString() === (new Date()).toDateString()
+                ? '** NOT PROVIDED'
+                : client.dateOfBirth.toISOString().split('T')[0]}`);
+            output.push(`Social Insurance Number: ${client.sinViaPhone ? 'TO BE PROVIDED VIA PHONE' : client.socialInsNumber}\n`);
 
-        output.push(`Occupation: ${client.occupation}`);
-        output.push(`Employer Name: ${client.employerName}`);
-        output.push(`Employer Phone Number: ${client.phoneNumber}`);
-        output.push(`Employer Street 1: ${client.employerStreet1}`);
-        output.push(`Employer Street 2: ${client.employerStreet2}`);
-        output.push(`Employer City: ${client.employerCity}`);
-        output.push(`Employer Province/Territory: ${client.employerProvinceTerritory}`);
-        output.push(`Employer Postal Code: ${client.employerPostalCode}\n`);
+            output.push('Current address');
+            output.push(`Street 1: ${client.mailingStreet1}`);
+            output.push(`Street 2: ${client.mailingStreet2}`);
+            output.push(`City: ${client.mailingCity}`);
+            output.push(`Province/Territory: ${client.mailingProvinceTerritory}`);
+            output.push(`Postal Code: ${client.mailingPostalCode}\n`);
 
-        let citizenShip = '';
-        switch (client.citizenShip) {
-            case 'CANADIAN_CITIZEN':
-                citizenShip = 'Canadian citizen';
-                break;
+            output.push(`Occupation: ${client.occupation}`);
+            output.push(`Employer Name: ${client.employerName}`);
+            output.push(`Employer Phone Number: ${client.phoneNumber}`);
+            output.push(`Employer Street 1: ${client.employerStreet1}`);
+            output.push(`Employer Street 2: ${client.employerStreet2}`);
+            output.push(`Employer City: ${client.employerCity}`);
+            output.push(`Employer Province/Territory: ${client.employerProvinceTerritory}`);
+            output.push(`Employer Postal Code: ${client.employerPostalCode}\n`);
 
-            case 'PERMANENT_RESIDENT':
-                citizenShip = 'Permanent resident';
-                break;
+            let citizenShip = '';
+            switch (client.citizenShip) {
+                case 'CANADIAN_CITIZEN':
+                    citizenShip = 'Canadian citizen';
+                    break;
 
-            case 'BC_PROV_NOMINEE':
-                citizenShip = 'B.C. Provincial Nominee';
-                break;
+                case 'PERMANENT_RESIDENT':
+                    citizenShip = 'Permanent resident';
+                    break;
 
-            default:
-                citizenShip = '** NOT PROVIDED';
+                case 'BC_PROV_NOMINEE':
+                    citizenShip = 'B.C. Provincial Nominee';
+                    break;
+
+                default:
+                    citizenShip = '** NOT PROVIDED';
+            }
+
+            output.push(`Citizenship: ${citizenShip}\n`);
+
+            output.push(`BC Resident for at least a year: ${client.hasBeenBCResidentForAYear}`);
+            output.push(`First Time Home Buyer: ${client.isFirstTimeHomeBuyer}`);
+            output.push(`Will live in property within three months: ${client.willBeLivingInPropertyWithinThreeMonths}`);
+            output.push(`Has owned principal residence elsewhere: ${client.hasOwnedPrincipalResidenceSomewhere}`);
+
+            output.push('\n');
         }
-
-        output.push(`Citizenship: ${citizenShip}\n`);
-
-        output.push(`BC Resident for at least a year: ${client.hasBeenBCResidentForAYear}`);
-        output.push(`First Time Home Buyer: ${client.isFirstTimeHomeBuyer}`);
-        output.push(`Will live in property within three months: ${client.willBeLivingInPropertyWithinThreeMonths}`);
-        output.push(`Has owned principal residence elsewhere: ${client.hasOwnedPrincipalResidenceSomewhere}`);
-
-        output.push('\n');
     }
 
     // property details
@@ -1432,29 +1639,113 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
 
     output.push(`Portion of Property to be Rented Out: ${purchaseInfo.portionPropertyRentedOut}\n`);
 
-    output.push(`Funds Brought In Source: ${purchaseInfo.fundsSource}`);
-    output.push(`Chequing/Savings Source: ${purchaseInfo.fundsChequingSavingsSource}\n`);
+    let fundsSource = 'NOT_SPECIFIED';
+    switch (purchaseInfo.fundsSource) {
+        case 'ANOTHER_INDIVIDUAL':
+            fundsSource = 'Another Individual';
+            break;
 
-    output.push(`Other Funder Name: ${purchaseInfo.nonPurchaserName}`);
-    output.push(`Other Funder Phone Number: ${purchaseInfo.nonPurchaserPhone}`);
-    output.push(`Other Funder Relationship: ${purchaseInfo.nonPurchaserRelationship}`);
-    output.push(`Other Funder Occupation: ${purchaseInfo.nonPurchaserOccupation}`);
-    output.push(`Other Funder Street 1: ${purchaseInfo.nonPurchaserStreet1}`);
-    output.push(`Other Funder Street 2: ${purchaseInfo.nonPurchaserStreet2}`);
-    output.push(`Other Funder City: ${purchaseInfo.nonPurchaserCity}`);
-    output.push(`Other Funder Province/Territory: ${purchaseInfo.nonPurchaserProvinceTerritory}`);
-    output.push(`Other Funder Postal Code: ${purchaseInfo.nonPurchaserPostalCode}\n`);
+        case 'CHEQUING_ACCOUNT':
+            fundsSource = 'Chequing Account';
+            break;
 
-    output.push(`Appointment Location Preference: ${purchaseInfo.apptLocationPreference}`);
+        case 'HELOC':
+            fundsSource = 'Home Equity Line of Credit';
+            break;
 
+        case 'OTHER':
+            fundsSource = 'Other';
+            break;
 
+        case 'SAVINGS_ACCOUNT':
+            fundsSource = 'Savings Account';
+            break;
+    }
 
+    output.push(`Funds Brought In Source: ${fundsSource}\n`);
 
+    if (purchaseInfo.fundsSource === 'ANOTHER_INDIVIDUAL') {
+        output.push(`Other Funder Name: ${purchaseInfo.nonPurchaserName}`);
+        output.push(`Other Funder Phone Number: ${purchaseInfo.nonPurchaserPhone}`);
+        output.push(`Other Funder Relationship: ${purchaseInfo.nonPurchaserRelationship}`);
+        output.push(`Other Funder Occupation: ${purchaseInfo.nonPurchaserOccupation}`);
+        output.push(`Other Funder Street 1: ${purchaseInfo.nonPurchaserStreet1}`);
+        output.push(`Other Funder Street 2: ${purchaseInfo.nonPurchaserStreet2}`);
+        output.push(`Other Funder City: ${purchaseInfo.nonPurchaserCity}`);
+        output.push(`Other Funder Province/Territory: ${purchaseInfo.nonPurchaserProvinceTerritory}`);
+        output.push(`Other Funder Postal Code: ${purchaseInfo.nonPurchaserPostalCode}\n`);
+    }
+    else if (purchaseInfo.fundsSource === 'CHEQUING_ACCOUNT' || purchaseInfo.fundsSource === 'SAVINGS_ACCOUNT') {
+        output.push(`Chequing/Savings Source: ${purchaseInfo.fundsChequingSavingsSource}\n`);
+    }
 
+    for (let i = 0; i < purchaseInfo.guarantorsInfo.length; i++) {
+
+        const guarantor = purchaseInfo.guarantorsInfo[i];
+        output.push(`GUARANTOR ${(i + 1).toString()}`);
+        output.push(`Full Legal Name: ${guarantor.fullLegalName}`);
+        output.push(`Phone Number: ${guarantor.phoneNumber}`);
+        output.push(`Email: ${guarantor.emailAddress}`);
+        output.push(`Relationship: ${guarantor.relationship}`);
+        //output.push(`Email: ${client.emailAddress}`);
+
+        // output.push(`Date of Birth: ${client.dateOfBirth.toDateString() === (new Date()).toDateString()
+        //     ? '** NOT PROVIDED'
+        //     : client.dateOfBirth.toISOString().split('T')[0]}`);
+        // output.push(`Social Insurance Number: ${client.sinViaPhone ? 'TO BE PROVIDED VIA PHONE' : client.socialInsNumber}\n`);
+
+        // output.push('Current address');
+        // output.push(`Street 1: ${client.mailingStreet1}`);
+        // output.push(`Street 2: ${client.mailingStreet2}`);
+        // output.push(`City: ${client.mailingCity}`);
+        // output.push(`Province/Territory: ${client.mailingProvinceTerritory}`);
+        // output.push(`Postal Code: ${client.mailingPostalCode}\n`);
+
+        // output.push(`Occupation: ${client.occupation}`);
+        // output.push(`Employer Name: ${client.employerName}`);
+        // output.push(`Employer Phone Number: ${client.phoneNumber}`);
+        // output.push(`Employer Street 1: ${client.employerStreet1}`);
+        // output.push(`Employer Street 2: ${client.employerStreet2}`);
+        // output.push(`Employer City: ${client.employerCity}`);
+        // output.push(`Employer Province/Territory: ${client.employerProvinceTerritory}`);
+        // output.push(`Employer Postal Code: ${client.employerPostalCode}\n`);
+
+        // let citizenShip = '';
+        // switch (client.citizenShip) {
+        //     case 'CANADIAN_CITIZEN':
+        //         citizenShip = 'Canadian citizen';
+        //         break;
+
+        //     case 'PERMANENT_RESIDENT':
+        //         citizenShip = 'Permanent resident';
+        //         break;
+
+        //     case 'BC_PROV_NOMINEE':
+        //         citizenShip = 'B.C. Provincial Nominee';
+        //         break;
+
+        //     default:
+        //         citizenShip = '** NOT PROVIDED';
+        // }
+
+        // output.push(`Citizenship: ${citizenShip}\n`);
+
+        // output.push(`BC Resident for at least a year: ${client.hasBeenBCResidentForAYear}`);
+        // output.push(`First Time Home Buyer: ${client.isFirstTimeHomeBuyer}`);
+        // output.push(`Will live in property within three months: ${client.willBeLivingInPropertyWithinThreeMonths}`);
+        // output.push(`Has owned principal residence elsewhere: ${client.hasOwnedPrincipalResidenceSomewhere}`);
+
+        output.push('\n');
+    }
+
+    output.push(`Appointment Location Preference: ${purchaseInfo.apptLocationPreference}\n`);
+
+    output.push('Additional Comments:');
+    output.push(purchaseInfo.additionalComments);
     output.push('\n');
 
     return output.join('\n');
-
 }
+
 
 export default PurchaseForm;
