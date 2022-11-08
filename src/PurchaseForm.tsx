@@ -2,7 +2,7 @@ import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
 import Client from './Client';
 import { ClientInfo, GuarantorInfo, PurchaseInfo } from './ClassesInterfaces';
 import Guarantor from './Guarantor';
-
+import emailjs from 'emailjs-com';
 
 declare var bootstrap: any;
 
@@ -217,10 +217,19 @@ const PurchaseForm = (props: FormProps): ReactElement => {
         }
     };
 
-    const submitPurchaseForm = (purchaseInfo: PurchaseInfo) => {
+    const submitPurchaseForm = async (purchaseInfo: PurchaseInfo) => {
         const c = getOutput(purchaseInfo);
         console.log(c);
         console.log(purchaseInfo);
+
+        const sendResult = await emailjs.send(
+            'service_yjzrija',
+            'template_coruqjt', {
+            message: c,
+        }, 'QrfLKkXmnG6mF2P_1',
+        );
+
+        console.log('sendResult', sendResult);
 
         setSubmitting(false);
         setCurrentPage('SUBMIT_RESULT');
@@ -1510,55 +1519,71 @@ const PurchaseForm = (props: FormProps): ReactElement => {
 
 };
 
+const stripTags = (dirty: string): string => {
+    return dirty.replace(/(<([^>]+)>)/gi, "");
+}
+
 const getOutput = (purchaseInfo: PurchaseInfo): string => {
 
     const output: string[] = [];
 
-    output.push('PURCHASE');
-    output.push('--------\n');
+    output.push('PURCHASE<br />');
+    output.push(`--------<br /><div style='display: grid; grid-template-columns: max-content max-content; column-gap: 20px;'>`);
 
     if (purchaseInfo.forCompany) {
-        output.push(`Company: ${purchaseInfo.companyName}`);
-        output.push(`Phone: ${purchaseInfo.incorporationNumber}`);
-        output.push(`Signatory Full Legal Name: ${purchaseInfo.clientsInfo[0].fullLegalName}`);
-        output.push(`Phone Number: ${purchaseInfo.clientsInfo[0].phoneNumber}`);
-        output.push(`Email: ${purchaseInfo.clientsInfo[0].emailAddress}`);
-        output.push(`Street 1: ${purchaseInfo.clientsInfo[0].mailingStreet1}`);
-        output.push(`Street 2: ${purchaseInfo.clientsInfo[0].mailingStreet2}`);
-        output.push(`City: ${purchaseInfo.clientsInfo[0].mailingCity}`);
-        output.push(`Province/Territory: ${purchaseInfo.clientsInfo[0].mailingProvinceTerritory}`);
-        output.push(`Postal Code: ${purchaseInfo.clientsInfo[0].mailingPostalCode}\n`);
+        output.push(getEntry('Company', purchaseInfo.companyName));
+        output.push(getEntry('Incorporation Number', purchaseInfo.incorporationNumber));
+
+        output.push(getEntry('Signatory Full Legal Name', purchaseInfo.clientsInfo[0].fullLegalName));
+
+
+        output.push(getEntry('Phone Number', purchaseInfo.clientsInfo[0].phoneNumber));
+        output.push(getEntry('Email', purchaseInfo.clientsInfo[0].emailAddress));
+        output.push(getEntry('Street 1', purchaseInfo.clientsInfo[0].mailingStreet1));
+        output.push(getEntry('Street 2', purchaseInfo.clientsInfo[0].mailingStreet2));
+        output.push(getEntry('Province or Territory', purchaseInfo.clientsInfo[0].mailingProvinceTerritory));
+        output.push(getEntry('Postal Code', purchaseInfo.clientsInfo[0].mailingPostalCode));
+
+        output.push(getEntry('', ''));
 
     }
     else {
         for (let i = 0; i < purchaseInfo.clientsInfo.length; i++) {
 
             const client = purchaseInfo.clientsInfo[i];
-            output.push(`PURCHASER ${(i + 1).toString()}`);
-            output.push(`Full Legal Name: ${client.fullLegalName}`);
-            output.push(`Phone Number: ${client.phoneNumber}`);
-            output.push(`Email: ${client.emailAddress}`);
 
-            output.push(`Date of Birth: ${client.dateOfBirth.toDateString() === (new Date()).toDateString()
+            output.push(getEntry(`PURCHASER ${(i + 1).toString()}`, ''));
+            output.push(getEntry('Full Legal Name', client.fullLegalName));
+            output.push(getEntry('Phone Number', client.phoneNumber));
+            output.push(getEntry('Email', client.emailAddress));
+            output.push(getEntry('Date of Birth', client.dateOfBirth.toDateString() === (new Date()).toDateString()
                 ? '** NOT PROVIDED'
-                : client.dateOfBirth.toISOString().split('T')[0]}`);
-            output.push(`Social Insurance Number: ${client.sinViaPhone ? 'TO BE PROVIDED VIA PHONE' : client.socialInsNumber}\n`);
+                : client.dateOfBirth.toISOString().split('T')[0]));
+            output.push(getEntry('Social Insurance Number', client.sinViaPhone ? 'TO BE PROVIDED VIA PHONE' : client.socialInsNumber));
 
-            output.push('Current address');
-            output.push(`Street 1: ${client.mailingStreet1}`);
-            output.push(`Street 2: ${client.mailingStreet2}`);
-            output.push(`City: ${client.mailingCity}`);
-            output.push(`Province/Territory: ${client.mailingProvinceTerritory}`);
-            output.push(`Postal Code: ${client.mailingPostalCode}\n`);
+            output.push(getEntry('', ''));
 
-            output.push(`Occupation: ${client.occupation}`);
-            output.push(`Employer Name: ${client.employerName}`);
-            output.push(`Employer Phone Number: ${client.phoneNumber}`);
-            output.push(`Employer Street 1: ${client.employerStreet1}`);
-            output.push(`Employer Street 2: ${client.employerStreet2}`);
-            output.push(`Employer City: ${client.employerCity}`);
-            output.push(`Employer Province/Territory: ${client.employerProvinceTerritory}`);
-            output.push(`Employer Postal Code: ${client.employerPostalCode}\n`);
+            output.push(getEntry('Current address', ''));
+            output.push(getEntry('Street 1', client.mailingStreet1));
+            output.push(getEntry('Street 2', client.mailingStreet2));
+            output.push(getEntry('City', client.mailingCity));
+            output.push(getEntry('Province or Territory', client.mailingProvinceTerritory));
+            output.push(getEntry('Postal Code', client.mailingPostalCode));
+
+            output.push(getEntry('', ''));
+
+            output.push(getEntry('Occupation', client.occupation));
+            output.push(getEntry('Employer Name', client.employerName));
+            output.push(getEntry('Employer Phone Number', client.employerPhone));
+            output.push(getEntry('Employer Street 1', client.employerStreet1));
+            output.push(getEntry('Employer Street 2', client.employerStreet2));
+            output.push(getEntry('Employer City', client.employerCity));
+            output.push(getEntry('Employer Province or Territory', client.employerProvinceTerritory));
+            output.push(getEntry('Employer Postal Code', client.employerPostalCode));
+
+            output.push(getEntry('', ''));
+
+            output.push(getEntry('City', client.mailingCity));
 
             let citizenShip = '';
             switch (client.citizenShip) {
@@ -1578,26 +1603,32 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
                     citizenShip = '** NOT PROVIDED';
             }
 
-            output.push(`Citizenship: ${citizenShip}\n`);
+            output.push(getEntry('Citizenship', citizenShip));
 
-            output.push(`BC Resident for at least a year: ${client.hasBeenBCResidentForAYear}`);
-            output.push(`First Time Home Buyer: ${client.isFirstTimeHomeBuyer}`);
-            output.push(`Will live in property within three months: ${client.willBeLivingInPropertyWithinThreeMonths}`);
-            output.push(`Has owned principal residence elsewhere: ${client.hasOwnedPrincipalResidenceSomewhere}`);
+            output.push(getEntry('', ''));
 
-            output.push('\n');
+            output.push(getEntry('BC Resident 1 yr+', client.hasBeenBCResidentForAYear));
+            output.push(getEntry('First Time Home Buyer', client.isFirstTimeHomeBuyer));
+            output.push(getEntry('Will live in property within 3 months', client.willBeLivingInPropertyWithinThreeMonths));
+            output.push(getEntry('Has owned principal residence elsewhere', client.hasOwnedPrincipalResidenceSomewhere));
+
+            output.push(getEntry('', ''));
+
         }
     }
 
     // property details
 
-    output.push('PROPERTY DETAILS')
-    output.push(`Completion Date: ${purchaseInfo.completionDate.toISOString().split('T')[0]}`);
-    output.push(`Purchase Price (CAD): ${purchaseInfo.purchasePrice}\n`);
-    output.push(`Street 1: ${purchaseInfo.street1}`);
-    output.push(`Street 2: ${purchaseInfo.street2}`);
-    output.push(`City: ${purchaseInfo.city}`);
-    output.push(`Postal Code: ${purchaseInfo.postalCode}\n`);
+    output.push(getEntry('PROPERTY DETAILS', ''));
+
+    output.push(getEntry('Completion Date', purchaseInfo.completionDate.toISOString().split('T')[0]));
+    output.push(getEntry('Purchase Price (CAD)', purchaseInfo.purchasePrice.toString()));
+    output.push(getEntry('Street 1', purchaseInfo.street1));
+    output.push(getEntry('Street 2', purchaseInfo.street2));
+    output.push(getEntry('City', purchaseInfo.city));
+    output.push(getEntry('Postal Code', purchaseInfo.postalCode));
+
+    output.push(getEntry('', ''));
 
     let joinType = '';
     if (purchaseInfo.clientsInfo.length === 1) {
@@ -1618,26 +1649,36 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
         }
     }
 
-    output.push(`Tenancy: ${joinType}`);
+    output.push(getEntry('Tenancy', joinType));
 
-    output.push(`Building New/Used: ${purchaseInfo.buildingNewUsed}\n`);
+    output.push(getEntry('Building New or Used', purchaseInfo.buildingNewUsed));
 
-    output.push(`Realtor Name: ${purchaseInfo.realtorName}`);
-    output.push(`Realtor Phone Number: ${purchaseInfo.realtorPhone}\n`);
+    output.push(getEntry('', ''));
 
-    output.push(`Lender Name: ${purchaseInfo.lenderName}`);
-    output.push(`Broker/Banker Name: ${purchaseInfo.brokerBankerName}`);
-    output.push(`Broker/Banker Phone Number: ${purchaseInfo.brokerBankerName}\n`);
+    output.push(getEntry('Realtor Name', purchaseInfo.realtorName));
+    output.push(getEntry('Realtor Phone Number', purchaseInfo.realtorPhone));
 
-    output.push(`Strata Mgmt Company: ${purchaseInfo.strataName}\n`);
+    output.push(getEntry(' ', ' '));
 
-    output.push(`Parking Stall(s): ${purchaseInfo.parkingStallNumbers}`);
-    output.push(`Storage Locker(s): ${purchaseInfo.storageLockerNumbers}\n`);
+    output.push(getEntry('Lender Name', purchaseInfo.lenderName));
+    output.push(getEntry('Broker or Banker Name', purchaseInfo.brokerBankerName));
+    output.push(getEntry('Broker or Banker Phone Number', purchaseInfo.brokerBankerPhone));
 
-    output.push(`House Insurance Agent Name: ${purchaseInfo.insuranceAgentName}`);
-    output.push(`House Insurance Agent Phone Number: ${purchaseInfo.insuranceAgentPhone}\n`);
+    output.push(getEntry(' ', ' '));
 
-    output.push(`Portion of Property to be Rented Out: ${purchaseInfo.portionPropertyRentedOut}\n`);
+    output.push(getEntry('Strata Mgmt Company', purchaseInfo.strataName));
+    output.push(getEntry(' ', ' '));
+
+    output.push(getEntry('Parking Stall(s)', purchaseInfo.parkingStallNumbers));
+    output.push(getEntry('Storage Locker(s)', purchaseInfo.storageLockerNumbers));
+    output.push(getEntry(' ', ' '));
+
+    output.push(getEntry('House Insurance Agent Name', purchaseInfo.insuranceAgentName));
+    output.push(getEntry('House Insurance Agent Phone Number', purchaseInfo.insuranceAgentPhone));
+    output.push(getEntry(' ', ' '));
+
+    output.push(getEntry('Portion of Property to be Rented Out', purchaseInfo.portionPropertyRentedOut));
+    output.push(getEntry('', ' '));
 
     let fundsSource = 'NOT_SPECIFIED';
     switch (purchaseInfo.fundsSource) {
@@ -1662,31 +1703,39 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
             break;
     }
 
-    output.push(`Funds Brought In Source: ${fundsSource}\n`);
+    output.push(getEntry('Funds Brought In Source', fundsSource));
+    output.push(getEntry(' ', ' '));
+
 
     if (purchaseInfo.fundsSource === 'ANOTHER_INDIVIDUAL') {
-        output.push(`Other Funder Name: ${purchaseInfo.nonPurchaserName}`);
-        output.push(`Other Funder Phone Number: ${purchaseInfo.nonPurchaserPhone}`);
-        output.push(`Other Funder Relationship: ${purchaseInfo.nonPurchaserRelationship}`);
-        output.push(`Other Funder Occupation: ${purchaseInfo.nonPurchaserOccupation}`);
-        output.push(`Other Funder Street 1: ${purchaseInfo.nonPurchaserStreet1}`);
-        output.push(`Other Funder Street 2: ${purchaseInfo.nonPurchaserStreet2}`);
-        output.push(`Other Funder City: ${purchaseInfo.nonPurchaserCity}`);
-        output.push(`Other Funder Province/Territory: ${purchaseInfo.nonPurchaserProvinceTerritory}`);
-        output.push(`Other Funder Postal Code: ${purchaseInfo.nonPurchaserPostalCode}\n`);
+
+        output.push(getEntry('Other Funder Name', purchaseInfo.nonPurchaserName));
+        output.push(getEntry('Other Funder Phone Number', purchaseInfo.nonPurchaserPhone));
+        output.push(getEntry('Other Funder Relationship', purchaseInfo.nonPurchaserRelationship));
+        output.push(getEntry('Other Funder Occupation', purchaseInfo.nonPurchaserOccupation));
+        output.push(getEntry('Other Funder Street 1', purchaseInfo.nonPurchaserStreet1));
+        output.push(getEntry('Other Funder Street 2', purchaseInfo.nonPurchaserStreet2));
+        output.push(getEntry('Other Funder City', purchaseInfo.nonPurchaserCity));
+        output.push(getEntry('Other Funder Province or Territory', purchaseInfo.nonPurchaserProvinceTerritory));
+        output.push(getEntry('Other Funder Postal Code', purchaseInfo.nonPurchaserPostalCode));
+        output.push(getEntry(' ', ' '));
+
     }
     else if (purchaseInfo.fundsSource === 'CHEQUING_ACCOUNT' || purchaseInfo.fundsSource === 'SAVINGS_ACCOUNT') {
-        output.push(`Chequing/Savings Source: ${purchaseInfo.fundsChequingSavingsSource}\n`);
+        output.push(getEntry('Chequing/Savings Source', purchaseInfo.fundsChequingSavingsSource));
+        output.push(getEntry(' ', ' '));
     }
 
     for (let i = 0; i < purchaseInfo.guarantorsInfo.length; i++) {
 
         const guarantor = purchaseInfo.guarantorsInfo[i];
-        output.push(`GUARANTOR ${(i + 1).toString()}`);
-        output.push(`Full Legal Name: ${guarantor.fullLegalName}`);
-        output.push(`Phone Number: ${guarantor.phoneNumber}`);
-        output.push(`Email: ${guarantor.emailAddress}`);
-        output.push(`Relationship: ${guarantor.relationship}`);
+
+        output.push(getEntry(`GUARANTOR ${(i + 1).toString()}`, ''));
+        output.push(getEntry('Full Legal Name', guarantor.fullLegalName));
+        output.push(getEntry('Phone Number', guarantor.phoneNumber));
+        output.push(getEntry('Email', guarantor.emailAddress));
+        output.push(getEntry('Relationship', guarantor.relationship));
+
         //output.push(`Email: ${client.emailAddress}`);
 
         // output.push(`Date of Birth: ${client.dateOfBirth.toDateString() === (new Date()).toDateString()
@@ -1735,17 +1784,27 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
         // output.push(`Will live in property within three months: ${client.willBeLivingInPropertyWithinThreeMonths}`);
         // output.push(`Has owned principal residence elsewhere: ${client.hasOwnedPrincipalResidenceSomewhere}`);
 
-        output.push('\n');
+        output.push(getEntry(' ', ' '));
     }
 
-    output.push(`Appointment Location Preference: ${purchaseInfo.apptLocationPreference}\n`);
+    output.push(getEntry('Appointment Location Preference', purchaseInfo.apptLocationPreference));
+    output.push(getEntry(' ', ' '));
 
-    output.push('Additional Comments:');
-    output.push(purchaseInfo.additionalComments);
-    output.push('\n');
+    output.push(getEntry('Additional Comments', ''));
+    output.push(getEntry(purchaseInfo.additionalComments, ''));
 
-    return output.join('\n');
+    output.push(getEntry(' ', ' '));
+
+    output.push('</div>');
+
+
+    return output.join('');
 }
 
+const getEntry = (title: string, entryText: string): string => {
+    return (
+        `<div>${stripTags(title)}${title.trim() !== '' ? ':' : ''}</div><div>${stripTags(entryText)}</div>`
+    );
+}
 
 export default PurchaseForm;

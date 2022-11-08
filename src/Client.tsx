@@ -1,5 +1,6 @@
 import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
 import { ClientInfo } from './ClassesInterfaces';
+import DateInput from './DateInput';
 
 interface ClientProps {
     text: string;
@@ -64,7 +65,7 @@ const Client = (props: ClientProps): ReactElement => {
                 </div>
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>
-                        <input type='email' className='form-control' id='email' placeholder='Email address'
+                        <input type='email' className='form-control' id={`email${props.num}`} placeholder='Email address'
                             value={clientInfo.emailAddress}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setClientInfo({ ...clientInfo, emailAddress: e.target.value });
@@ -82,20 +83,24 @@ const Client = (props: ClientProps): ReactElement => {
                 <div className="row">
                     <div className="col mb-3">
                         <div className='form-floating mb-0'>
-                            <input type='date' className='form-control' id='dob' placeholder='Date of birth'
-                                value={clientInfo.dateOfBirth.toISOString().split('T')[0]}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                    setClientInfo({ ...clientInfo, dateOfBirth: new Date(e.target.value) });
-                                }}
-                            />
-                            <label htmlFor='floatingInput'>
-                                Date of birth
-                            </label>
+                            <DateInput
+                                className='form-control'
+                                id={`dob${props.num}`}
+                                value={clientInfo.dateOfBirth}
+                                max={new Date()}
+                                label='Date of birth'
+                                onChange={(e) => {
+                                    if (e) {
+                                        setClientInfo({ ...clientInfo, dateOfBirth: e })
+                                    }
+
+                                }} />
+
                         </div>
                     </div>
                     <div className="col mb-3">
                         <div className='form-floating mb-0'>
-                            <input type='number' className='form-control' id='sin' placeholder='Social Insurance Number'
+                            <input type='number' className='form-control' id={`sin${props.num}`} placeholder='Social Insurance Number'
                                 disabled={clientInfo.sinViaPhone}
                                 value={clientInfo.sinViaPhone ? '' : clientInfo.socialInsNumber}
                                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
