@@ -44,7 +44,7 @@ const FormButtons = (props: FormButtonsProps): ReactElement => {
                 <div style={{
                     flexGrow: '1',
                 }}>
-                    <input type='button' value='Purchase and Sale' className='btn btn-primary form-button' onClick={() => props.onFormSelected('PURCHASE_AND_SALE')} />
+                    <input type='button' value='Sale and Purchase' className='btn btn-primary form-button' onClick={() => props.onFormSelected('SALE_AND_PURCHASE')} />
                 </div>
 
                 <div style={{

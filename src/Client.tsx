@@ -1,4 +1,5 @@
 import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
+import CircleBullet from './CircleBullet';
 import { ClientInfo } from './ClassesInterfaces';
 import DateInput from './DateInput';
 
@@ -25,7 +26,7 @@ const Client = (props: ClientProps): ReactElement => {
             <div className="row">
                 <div className="col mb-1 mt-4">
                     <h6>
-                        Contact information - {props.text} {props.num + 1}
+                        <CircleBullet />Contact information - {props.text} {props.num + 1}
                     </h6>
                 </div>
             </div>
@@ -129,7 +130,7 @@ const Client = (props: ClientProps): ReactElement => {
             <div className="row align-items-center mt-4">
                 <div className="col mb-1">
                     <h6>
-                        Your current address
+                        <CircleBullet />Your current address
                     </h6>
                 </div>
 
@@ -256,6 +257,7 @@ const Client = (props: ClientProps): ReactElement => {
                     <div className="row">
                         <div className={`col mb-1 mt-4 employment-header${props.num}`} >
                             <h6>
+                                <CircleBullet />
                                 Employment Information (required)
                             </h6>
                         </div>
@@ -481,6 +483,7 @@ const Client = (props: ClientProps): ReactElement => {
                     <div className="row">
                         <div className={`col mb-1 mt-4 citizenship-header${props.num}`}>
                             <h6>
+                                <CircleBullet />
                                 Citizenship (required)
                             </h6>
                         </div>
@@ -553,6 +556,7 @@ const Client = (props: ClientProps): ReactElement => {
                     <div className="row">
                         <div className="col mb-1 mt-4">
                             <h6>
+                                <CircleBullet />
                                 Are you a First-Time Home Buyer?
                             </h6>
 
@@ -596,6 +600,7 @@ const Client = (props: ClientProps): ReactElement => {
                             <div className="row">
                                 <div className="col mb-1 mt-4">
                                     <h6>
+                                        <CircleBullet />
                                         Have you been a resident of BC for at least a year?
                                     </h6>
 
@@ -629,6 +634,7 @@ const Client = (props: ClientProps): ReactElement => {
 
                                 <div className="col mb-1 mt-4">
                                     <h6>
+                                        <CircleBullet />
                                         Have you ever owned a principal residence anywhere in the world?
                                     </h6>
                                     <div className="form-check">
@@ -668,6 +674,7 @@ const Client = (props: ClientProps): ReactElement => {
                     <div className="row">
                         <div className="col mb-1 mt-4">
                             <h6>
+                                <CircleBullet />
                                 Will you be living in the property within three months?
                             </h6>
                             <div className="form-check">

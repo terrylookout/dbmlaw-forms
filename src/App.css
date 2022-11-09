@@ -38,6 +38,12 @@
 }
 
 .form-control, .form-select {
-  background-color: #eee !important;
+  background-color: #ddd !important;  
+  font-weight: 600 !important;
+  border-radius: 10px;
+}
+
+.modal-near-top {
+  top: 15%;
 }
 

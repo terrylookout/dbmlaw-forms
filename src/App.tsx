@@ -3,9 +3,10 @@ import './App.css';
 import DbmLogo from './images/dbm-logo.png';
 import FormButtons from './FormButtons';
 import PurchaseForm from './PurchaseForm';
+import SaleAndPurchaseForm from './SaleAndPurchaseForm';
 
 export type FormType =
-  'NONE' | 'PURCHASE' | 'SALE' | 'REFINANCE' | 'PURCHASE_AND_SALE' | 'PROJECT_PURCHASE';
+  'NONE' | 'PURCHASE' | 'SALE' | 'REFINANCE' | 'SALE_AND_PURCHASE' | 'PROJECT_PURCHASE';
 
 const App = (): ReactElement => {
 
@@ -62,6 +63,13 @@ const App = (): ReactElement => {
         {
           selectedForm === 'PURCHASE' &&
           <PurchaseForm key={Math.random()}
+            dismissed={() => setSelectedForm('NONE')}
+          />
+        }
+
+        {
+          selectedForm === 'SALE_AND_PURCHASE' &&
+          <SaleAndPurchaseForm key={Math.random()}
             dismissed={() => setSelectedForm('NONE')}
           />
         }

@@ -25,12 +25,13 @@ export class ClientInfo {
     public employerProvinceTerritory: string;
     public employerPostalCode: string;
 
-    public isFirstTimeHomeBuyer: 'YES' | 'NO' | '** NOT PROVIDED';
-    public hasBeenBCResidentForAYear: 'YES' | 'NO' | '** NOT PROVIDED';
-    public willBeLivingInPropertyWithinThreeMonths: 'YES' | 'NO' | '** NOT PROVIDED';
-    public hasOwnedPrincipalResidenceSomewhere: 'YES' | 'NO' | '** NOT PROVIDED';
+    public isFirstTimeHomeBuyer: 'YES' | 'NO' | '';
+    public hasBeenBCResidentForAYear: 'YES' | 'NO' | '';
+    public willBeLivingInPropertyWithinThreeMonths: 'YES' | 'NO' | '';
+    public hasOwnedPrincipalResidenceSomewhere: 'YES' | 'NO' | '';
+    public residentOfCanada: 'YES' | 'NO' | '';
 
-    public citizenShip: '** NOT PROVIDED' | 'CANADIAN_CITIZEN' | 'PERMANENT_RESIDENT' | 'BC_PROV_NOMINEE' | 'RESIDENT_OTHER_COUNTRY';
+    public citizenShip: '' | 'CANADIAN_CITIZEN' | 'PERMANENT_RESIDENT' | 'BC_PROV_NOMINEE' | 'RESIDENT_OTHER_COUNTRY';
 
     constructor() {
         this.fullLegalName = '';
@@ -59,12 +60,13 @@ export class ClientInfo {
         this.employerProvinceTerritory = '';
         this.employerPostalCode = '';
 
-        this.isFirstTimeHomeBuyer = '** NOT PROVIDED';
-        this.hasBeenBCResidentForAYear = '** NOT PROVIDED';
-        this.willBeLivingInPropertyWithinThreeMonths = '** NOT PROVIDED';
-        this.hasOwnedPrincipalResidenceSomewhere = '** NOT PROVIDED';
+        this.isFirstTimeHomeBuyer = '';
+        this.hasBeenBCResidentForAYear = '';
+        this.willBeLivingInPropertyWithinThreeMonths = '';
+        this.hasOwnedPrincipalResidenceSomewhere = '';
+        this.residentOfCanada = '';
 
-        this.citizenShip = '** NOT PROVIDED';
+        this.citizenShip = '';
     }
 
 }
@@ -82,6 +84,73 @@ export class GuarantorInfo {
         this.relationship = '';
     }
 }
+
+export class SaleInfo {
+    public clientsInfo: ClientInfo[];
+
+    public forCompany: boolean;
+    public companyName: string;
+    public incorporationNumber: string;
+
+    public closingDate: Date;
+    public closingDateTBD: boolean;
+
+    public sellingPrice: number;
+
+    public street1: string;
+    public street2: string;
+    public city: string;
+    public provinceTerritory: string;
+    public postalCode: string;
+
+    public mortgageOrLoCOnTitle: 'YES' | 'NO' | '';
+    public mortgageOrLoCOnTitleReferenceNumber: string;
+    public mortgageOrLoCOnTitleBankBranch: string;
+
+    public realtorName: string;
+    public realtorPhone: string;
+
+    public involvesSeparationDivorce: 'YES' | 'NO' | '';
+
+    public paidPropertyTaxesOrClaimedHownOwnersGrant: 'YES' | 'NO' | '';
+
+    public emptyHomesDeclaration: 'OCCUPIED' | 'VACANT' | 'NOT_APPLICABLE' | 'NOT_COMPLETED' | '';
+
+    constructor() {
+
+        this.clientsInfo = [];
+
+        this.forCompany = false;
+        this.companyName = '';
+        this.incorporationNumber = '';
+
+        this.sellingPrice = 0;
+
+        this.closingDate = new Date();
+        this.closingDateTBD = false;
+
+        this.street1 = '';
+        this.street2 = '';
+        this.city = '';
+        this.provinceTerritory = '';
+        this.postalCode = '';
+
+        this.mortgageOrLoCOnTitle = '';
+        this.mortgageOrLoCOnTitleReferenceNumber = '';
+        this.mortgageOrLoCOnTitleBankBranch = '';
+
+        this.realtorName = '';
+        this.realtorPhone = '';
+
+        this.involvesSeparationDivorce = '';
+
+        this.paidPropertyTaxesOrClaimedHownOwnersGrant = '';
+
+        this.emptyHomesDeclaration = '';
+
+    }
+}
+
 
 export class PurchaseInfo {
 
@@ -102,9 +171,9 @@ export class PurchaseInfo {
     public provinceTerritory: string;
     public postalCode: string;
 
-    public joinType: 'JOINT_TENANTS' | 'TENANTS_IN_COMMON' | '** NOT PROVIDED';
+    public joinType: 'JOINT_TENANTS' | 'TENANTS_IN_COMMON' | '';
 
-    public buildingNewUsed: 'NEW' | 'USED' | '** NOT PROVIDED';
+    public buildingNewUsed: 'NEW' | 'USED' | '';
 
     public realtorName: string;
     public realtorPhone: string;
@@ -121,9 +190,9 @@ export class PurchaseInfo {
     public insuranceAgentName: string;
     public insuranceAgentPhone: string;
 
-    public portionPropertyRentedOut: 'YES' | 'NO' | '** NOT PROVIDED';;
+    public portionPropertyRentedOut: 'YES' | 'NO' | '';;
 
-    public fundsSource: 'SAVINGS_ACCOUNT' | 'CHEQUING_ACCOUNT' | 'HELOC' | 'ANOTHER_INDIVIDUAL' | 'OTHER' | 'NOT_SPECIFIED';
+    public fundsSource: 'SAVINGS_ACCOUNT' | 'CHEQUING_ACCOUNT' | 'HELOC' | 'ANOTHER_INDIVIDUAL' | 'OTHER' | '';
     public fundsChequingSavingsSource: string;
 
     public nonPurchaserName: string;
@@ -159,9 +228,9 @@ export class PurchaseInfo {
         this.provinceTerritory = 'British Columbia';
         this.postalCode = '';
 
-        this.buildingNewUsed = '** NOT PROVIDED';
+        this.buildingNewUsed = '';
 
-        this.joinType = '** NOT PROVIDED';
+        this.joinType = '';
 
         this.realtorName = '';
         this.realtorPhone = '';
@@ -179,9 +248,9 @@ export class PurchaseInfo {
         this.insuranceAgentName = '';
         this.insuranceAgentPhone = '';
 
-        this.portionPropertyRentedOut = '** NOT PROVIDED';
+        this.portionPropertyRentedOut = '';
 
-        this.fundsSource = 'NOT_SPECIFIED';
+        this.fundsSource = '';
         this.fundsChequingSavingsSource = '';
 
         this.nonPurchaserName = '';

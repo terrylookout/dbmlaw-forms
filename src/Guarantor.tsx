@@ -1,4 +1,5 @@
 import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
+import CircleBullet from './CircleBullet';
 import { GuarantorInfo } from './ClassesInterfaces';
 
 interface GuarantorProps {
@@ -23,6 +24,7 @@ const Guarantor = (props: GuarantorProps): ReactElement => {
             <div className="row">
                 <div className="col mb-1 mt-4">
                     <h6>
+                        <CircleBullet />
                         Guarantor information - {props.text} {props.num + 1}
                     </h6>
                 </div>

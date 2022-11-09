@@ -1,4 +1,4 @@
-import { ChangeEvent, ReactElement, useState } from "react";
+import { ChangeEvent, ReactElement, useEffect, useState } from "react";
 
 
 interface DateInputProps {
@@ -16,6 +16,13 @@ const DateInput = (props: DateInputProps): ReactElement => {
     const [dateValue, setDateValue] = useState<null | Date>(props.value);
     const [invalid, setInvalid] = useState(false);
 
+    useEffect(() => {
+        if (dateValue) {
+            props.onChange(dateValue);
+        }
+        // eslint-disable-next-line
+    }, [dateValue,]);
+
     return (
         <>
             <input
@@ -26,6 +33,7 @@ const DateInput = (props: DateInputProps): ReactElement => {
                 min={props.min ? props.min.toISOString().split('T')[0] : undefined}
                 max={props.max ? props.max.toISOString().split('T')[0] : undefined}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
+
                     if (e && e.target && e.target.value) {
                         const date = new Date(e.target.value);
                         if (date instanceof Date) {
