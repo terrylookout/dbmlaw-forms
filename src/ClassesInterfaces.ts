@@ -116,6 +116,8 @@ export class SaleInfo {
 
     public emptyHomesDeclaration: 'OCCUPIED' | 'VACANT' | 'NOT_APPLICABLE' | 'NOT_COMPLETED' | '';
 
+    public additionalComments: string;
+
     constructor() {
 
         this.clientsInfo = [];
@@ -148,6 +150,7 @@ export class SaleInfo {
 
         this.emptyHomesDeclaration = '';
 
+        this.additionalComments = '';
     }
 }
 

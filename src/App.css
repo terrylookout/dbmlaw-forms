@@ -37,10 +37,15 @@
   }
 }
 
-.form-control, .form-select {
+.form-control, .form-select, .dbm-textarea {
   background-color: #ddd !important;  
   font-weight: 600 !important;
   border-radius: 10px;
+}
+
+.dbm-textarea {
+  padding: 10px;
+  border: none;
 }
 
 .modal-near-top {

@@ -100,29 +100,6 @@ const Seller = (props: SellerProps): ReactElement => {
                         </div>
                     </div>
                     <div className="col mb-3">
-                        <div className='form-floating mb-0'>
-                            <input type='number' className='form-control' id={`sin${props.num}`} placeholder='Social Insurance Number'
-                                disabled={clientInfo.sinViaPhone}
-                                value={clientInfo.sinViaPhone ? '' : clientInfo.socialInsNumber}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                    setClientInfo({ ...clientInfo, socialInsNumber: e.target.value });
-                                }} />
-                            <label htmlFor='floatingInput'>
-                                Social Insurance Number
-                            </label>
-                        </div>
-                        <div>
-                            <input type='checkbox' id={`chksin${props.num.toString()}`} checked={clientInfo.sinViaPhone}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                    setClientInfo({ ...clientInfo, sinViaPhone: e.target.checked });
-                                    // if (e.target.checked) {
-                                    //     setClientInfo({ ...clientInfo, socialInsNumber: '' });
-                                    // }
-                                }} />
-                            <label htmlFor={`chksin${props.num.toString()}`}>
-                                &nbsp;&nbsp;I will provide later via phone
-                            </label>
-                        </div>
                     </div>
                 </div>
 

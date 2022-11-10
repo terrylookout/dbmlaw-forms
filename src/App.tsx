@@ -4,6 +4,7 @@ import DbmLogo from './images/dbm-logo.png';
 import FormButtons from './FormButtons';
 import PurchaseForm from './PurchaseForm';
 import SaleAndPurchaseForm from './SaleAndPurchaseForm';
+import SaleForm from './SaleForm';
 
 export type FormType =
   'NONE' | 'PURCHASE' | 'SALE' | 'REFINANCE' | 'SALE_AND_PURCHASE' | 'PROJECT_PURCHASE';
@@ -63,6 +64,13 @@ const App = (): ReactElement => {
         {
           selectedForm === 'PURCHASE' &&
           <PurchaseForm key={Math.random()}
+            dismissed={() => setSelectedForm('NONE')}
+          />
+        }
+
+        {
+          selectedForm === 'SALE' &&
+          <SaleForm key={Math.random()}
             dismissed={() => setSelectedForm('NONE')}
           />
         }

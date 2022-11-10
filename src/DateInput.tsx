@@ -29,7 +29,7 @@ const DateInput = (props: DateInputProps): ReactElement => {
                 id={props.id}
                 type='date'
                 className={props.className}
-                value={dateValue ? dateValue.toISOString().split('T')[0] : ''}
+                value={dateValue && dateValue.getFullYear() < 9999 ? dateValue.toISOString().split('T')[0] : ''}
                 min={props.min ? props.min.toISOString().split('T')[0] : undefined}
                 max={props.max ? props.max.toISOString().split('T')[0] : undefined}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -37,18 +37,21 @@ const DateInput = (props: DateInputProps): ReactElement => {
                     if (e && e.target && e.target.value) {
                         const date = new Date(e.target.value);
                         if (date instanceof Date) {
-                            if (props.max && date.getTime() > props.max.getTime()) {
-                                setInvalid(true);
-                                return false;
-                            }
-
-                            if (props.min && date.getTime() < props.min.getTime()) {
-                                setInvalid(true);
-                                return false;
-                            }
-
                             setInvalid(false);
                             setDateValue(date);
+                        }
+                    }
+                }}
+                onBlur={(e) => {
+                    if (e && e.target && e.target.value) {
+                        const date = new Date(e.target.value);
+                        if (date instanceof Date) {
+                            if ((props.max && date.getTime() > props.max.getTime()) ||
+                                (props.min && date.getTime() < props.min.getTime())) {
+                                setInvalid(true);
+                                setDateValue(props.value);
+                            }
+
                         }
                     }
                 }}

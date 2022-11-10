@@ -7,6 +7,7 @@ import CircleBullet from './CircleBullet';
 import { FormProps, getEntry, getHeader, sendEmail } from './Helpers';
 import { SubmitConfirm, SubmitDone, Submitting } from './SubmitConfirm';
 import Seller from './Seller';
+import DateInput from './DateInput';
 
 declare var bootstrap: any;
 
@@ -20,6 +21,8 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
     const [numberOfSellers, setNumberOfSellers] = useState(0);
     const [numberOfClients, setNumberOfClients] = useState(0);
     const [numberOfGuarantors, setNumberOfGuarantors] = useState(0);
+
+    const [sellersArePurchasers, setSellersArePurchasers] = useState(false);
 
     const [currentPage, setCurrentPage] = useState<
         'GET_SELLERS' | 'GET_SALE_DETAILS' |
@@ -71,6 +74,7 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
 
             for (let t = 0; t < purchaseInfo.clientsInfo.length; t++) {
                 const client = purchaseInfo.clientsInfo[t];
+
                 // check legal name
                 if (!client.fullLegalName.trim()) {
                     const el = document.querySelector(`#clientname${t}`);
@@ -232,8 +236,8 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
         }
     };
 
-    const submitPurchaseForm = async (purchaseInfo: PurchaseInfo) => {
-        const c = getOutput(purchaseInfo);
+    const submitSaleAndPurchaseForm = async (purchaseInfo: PurchaseInfo) => {
+        const c = getOutput(purchaseInfo, saleInfo);
 
         await sendEmail('Sale and Purchase submission', c);
 
@@ -255,6 +259,25 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
         // eslint-disable-next-line
     }, []);
 
+
+    useEffect(() => {
+        if (sellersArePurchasers) {
+            setNumberOfClients(saleInfo.clientsInfo.length);
+        }
+        // eslint-disable-next-line
+    }, [sellersArePurchasers]);
+
+
+    useEffect(() => {
+        if (sellersArePurchasers && saleInfo.clientsInfo.length <= purchaseInfo.clientsInfo.length) {
+            for (let i = 0; i < saleInfo.clientsInfo.length; i++) {
+                purchaseInfo.clientsInfo[i] = { ...saleInfo.clientsInfo[i] };
+            }
+            setSellersArePurchasers(false);
+        }
+        // eslint-disable-next-line
+    }, [purchaseInfo.clientsInfo]);
+
     useEffect(() => {
         const tempClients = [...purchaseInfo.clientsInfo];
         if (numberOfClients > tempClients.length) {
@@ -268,6 +291,12 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
             do {
                 tempClients.pop();
             } while (numberOfClients < tempClients.length);
+        }
+
+        if (sellersArePurchasers && saleInfo.clientsInfo.length <= tempClients.length) {
+            for (let i = 0; i < saleInfo.clientsInfo.length; i++) {
+                tempClients[i] = { ...saleInfo.clientsInfo[i] };
+            }
         }
 
         setPurchaseInfo({ ...purchaseInfo, clientsInfo: tempClients });
@@ -327,6 +356,16 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
     }, [purchaseInfo.forCompany]);
 
     useEffect(() => {
+        if (saleInfo.forCompany) {
+            setNumberOfSellers(1);
+        }
+        else {
+            setNumberOfSellers(0);
+        }
+
+    }, [saleInfo.forCompany]);
+
+    useEffect(() => {
         //if (currentPage !== 'PROPERTY_INFO') {
         const top = document.querySelector('.top-second-page');
         if (top) {
@@ -367,6 +406,21 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                 <span>Property Details</span>
                             }
 
+                            {
+                                currentPage === 'CONFIRM_SUBMIT' &&
+                                <span>Ready to Submit</span>
+                            }
+
+                            {
+                                currentPage === 'SUBMITTING' &&
+                                <span>Please Wait</span>
+                            }
+
+                            {
+                                currentPage === 'SUBMIT_RESULT' &&
+                                <span>Success!</span>
+                            }
+
                         </h1>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -395,7 +449,7 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
 
                                                 <div className="col mb-3">
                                                     <select className="form-select p-3" aria-label="Sellers"
-                                                        value={numberOfClients}
+                                                        value={numberOfSellers}
                                                         onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                                                             if (e && e.target && e.target.value) {
                                                                 setNumberOfSellers(parseInt(e.target.value));
@@ -523,19 +577,20 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                             <div className="row">
                                                 <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
-                                                        <input type='date' className='form-control' id='closingdate' placeholder='Closing date'
-                                                            disabled={saleInfo.closingDateTBD}
-                                                            value={saleInfo.closingDateTBD ? '' : saleInfo.closingDate.toISOString().split('T')[0]}
-                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                setSaleInfo({ ...saleInfo, closingDate: new Date(e.target.value) });
-                                                            }}
-                                                        />
-                                                        <label htmlFor='closingdate'>
-                                                            Closing date
-                                                        </label>
+                                                        <DateInput
+                                                            className='form-control'
+                                                            id={`closingdate`}
+                                                            value={saleInfo.closingDateTBD ? null : saleInfo.closingDate}
+                                                            min={new Date((new Date()).setFullYear(new Date().getFullYear() - 5))}
+                                                            label='Closing date'
+                                                            onChange={(e) => {
+                                                                if (e) {
+                                                                    setSaleInfo({ ...saleInfo, closingDate: e });
+                                                                }
+                                                            }} />
                                                     </div>
                                                     <div className='mt-1'>
-                                                        <input type='checkbox' id='chkclosingdatetbd' checked={purchaseInfo.completionDateTBD}
+                                                        <input type='checkbox' id='chkclosingdatetbd' checked={saleInfo.closingDateTBD}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 setSaleInfo({ ...saleInfo, closingDateTBD: e.target.checked });
                                                             }} />
@@ -860,7 +915,7 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                                 <div className="col mb-1 mt-4">
                                                     <h6>
                                                         <CircleBullet />
-                                                        If applicable, have you filed your Empty Homes Declaration?
+                                                        If applicable, have you filed your Empty Homes Declaration (Vancouver property)?
                                                     </h6>
                                                 </div>
                                             </div>
@@ -941,7 +996,7 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                                 </div>
                                             </div>
 
-                                            <div className="row align-items-center">
+                                            <div className="row mt-2">
                                                 <div className="col mb-3">
                                                     <h6>
                                                         How many purchasers are there?
@@ -972,6 +1027,20 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                                         <label htmlFor='iscompany' className='pt-2'>
                                                             &nbsp;&nbsp;This is for a company
                                                         </label>
+                                                    </div>
+                                                    <div className='mt-5'>
+                                                        OR
+                                                    </div>
+                                                    <div className='mt-5'>
+                                                        <input type='button' value='Sellers are also the Purchasers'
+                                                            className='btn btn-primary'
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+
+                                                                setSellersArePurchasers(!sellersArePurchasers);
+                                                            }}
+                                                        />
                                                     </div>
                                                 </div>
                                             </div>
@@ -1045,6 +1114,7 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                                                                 tempClients.push(purchaseInfo.clientsInfo[t]);
                                                                             }
                                                                         }
+
                                                                         setPurchaseInfo({ ...purchaseInfo, clientsInfo: tempClients });
                                                                     }}
                                                                 />
@@ -1078,16 +1148,18 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                             <div className="row">
                                                 <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
-                                                        <input type='date' className='form-control' id='completiondate' placeholder='Completion date'
-                                                            disabled={purchaseInfo.completionDateTBD}
-                                                            value={purchaseInfo.completionDateTBD ? '' : purchaseInfo.completionDate.toISOString().split('T')[0]}
-                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                setPurchaseInfo({ ...purchaseInfo, completionDate: new Date(e.target.value) });
-                                                            }}
-                                                        />
-                                                        <label htmlFor='floatingInput'>
-                                                            Completion date
-                                                        </label>
+                                                        <DateInput
+                                                            className='form-control'
+                                                            id={`completiondate`}
+                                                            value={purchaseInfo.completionDateTBD ? null : purchaseInfo.completionDate}
+                                                            min={new Date((new Date()).setFullYear(new Date().getFullYear() - 5))}
+                                                            label='Completion date'
+                                                            onChange={(e) => {
+                                                                if (e) {
+                                                                    setPurchaseInfo({ ...purchaseInfo, completionDate: e });
+                                                                }
+
+                                                            }} />
                                                     </div>
                                                     <div className='mt-1'>
                                                         <input type='checkbox' id='chkdatetbd' checked={purchaseInfo.completionDateTBD}
@@ -2004,10 +2076,11 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                             <div className="row">
                                                 <div className="col mb-3">
 
-                                                    <textarea style={{
-                                                        width: '100%',
-                                                        padding: '5px',
-                                                    }}
+                                                    <textarea
+                                                        className='dbm-textarea'
+                                                        style={{
+                                                            width: '100%',
+                                                        }}
                                                         value={purchaseInfo.additionalComments}
                                                         rows={6}
                                                         onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -2033,7 +2106,7 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                     {
                                         currentPage === 'CONFIRM_SUBMIT' &&
                                         <SubmitConfirm
-                                            text='Submit your purchase information to Drysdale Bacon McStravick?'
+                                            text='Submit your sale and purchase information to Drysdale Bacon McStravick?'
                                         />
                                     }
                                 </div>
@@ -2168,7 +2241,7 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                             onClick={() => {
                                                 setCurrentPage('SUBMITTING');
                                                 setTimeout(() => {
-                                                    submitPurchaseForm(purchaseInfo);
+                                                    submitSaleAndPurchaseForm(purchaseInfo);
                                                 }, 250);
                                             }} />
                                     </div>
@@ -2200,20 +2273,87 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
 
 };
 
-const getOutput = (purchaseInfo: PurchaseInfo): string => {
+const getOutput = (purchaseInfo: PurchaseInfo, saleInfo: SaleInfo): string => {
 
     const output: string[] = [];
 
-    output.push('<html><b>SALE AND PURCHASE</b><br />');
+    output.push('<html><b>SALE AND PURCHASE</b><br /><br />');
 
-    output.push('<b>Sale Information</b><br />');
+    output.push('<b>SELLERS</b><br />');
 
     output.push('<table>');
+    if (saleInfo.forCompany) {
+        output.push(getEntry('Company', saleInfo.companyName));
+        output.push(getEntry('Incorporation Number', saleInfo.incorporationNumber));
 
+        output.push(getEntry('Signatory Full Legal Name', saleInfo.clientsInfo[0].fullLegalName));
+
+        output.push(getEntry('Phone Number', saleInfo.clientsInfo[0].phoneNumber));
+        output.push(getEntry('Email', saleInfo.clientsInfo[0].emailAddress));
+        output.push(getEntry('Street 1', saleInfo.clientsInfo[0].mailingStreet1));
+        output.push(getEntry('Street 2', saleInfo.clientsInfo[0].mailingStreet2));
+        output.push(getEntry('Province or Territory', saleInfo.clientsInfo[0].mailingProvinceTerritory));
+        output.push(getEntry('Postal Code', saleInfo.clientsInfo[0].mailingPostalCode, true));
+
+        output.push(getEntry('Resident of Canada at completion', saleInfo.clientsInfo[0].residentOfCanada, true));
+    }
+    else {
+        for (let i = 0; i < saleInfo.clientsInfo.length; i++) {
+
+            const client = saleInfo.clientsInfo[i];
+
+            output.push(getHeader(`SELLER ${(i + 1).toString()}`));
+            output.push(getEntry('Full Legal Name', client.fullLegalName));
+            output.push(getEntry('Phone Number', client.phoneNumber));
+            output.push(getEntry('Email', client.emailAddress));
+            output.push(getEntry('Date of Birth', client.dateOfBirth.toDateString() === (new Date()).toDateString()
+                ? ''
+                : client.dateOfBirth.toISOString().split('T')[0]));
+
+            output.push(getHeader('Mailing or Forwarding Address'))
+
+            output.push(getEntry('Street 1', client.mailingStreet1));
+            output.push(getEntry('Street 2', client.mailingStreet2));
+            output.push(getEntry('City', client.mailingCity));
+            output.push(getEntry('Province or Territory', client.mailingProvinceTerritory));
+            output.push(getEntry('Postal Code', client.mailingPostalCode, true));
+
+            output.push(getEntry('Resident of Canada at completion', client.residentOfCanada, true));
+        }
+    }
+
+    output.push(getHeader('SALE PROPERTY INFORMATION'));
+
+    output.push(getEntry('Closing Date', saleInfo.closingDateTBD ? 'TBD' : saleInfo.closingDate ? saleInfo.closingDate.toISOString().split('T')[0] : ''));
+
+    output.push(getEntry('Sale Price (CAD)', saleInfo.sellingPrice.toString()));
+
+    output.push(getEntry('Street 1', saleInfo.street1));
+    output.push(getEntry('Street 2', saleInfo.street2));
+    output.push(getEntry('City', saleInfo.city));
+    output.push(getEntry('Province or Territory', saleInfo.provinceTerritory));
+    output.push(getEntry('Postal Code', saleInfo.postalCode, true));
+
+    output.push(getEntry('Realtor Name', saleInfo.realtorName));
+    output.push(getEntry('Realtor Phone', saleInfo.realtorPhone, true));
+
+    output.push(getEntry('Mortgage or LOC on title', saleInfo.mortgageOrLoCOnTitle));
+    output.push(getEntry('Reference Number', saleInfo.mortgageOrLoCOnTitleReferenceNumber));
+    output.push(getEntry('Bank and Branch', saleInfo.mortgageOrLoCOnTitleBankBranch, true));
+
+    output.push(getEntry('Separation or Divorce Involved', saleInfo.involvesSeparationDivorce, true));
+
+    output.push('</table><table>');
+
+    output.push(getEntry(`Property Taxes Paid and or Home Owners Grant Claimed for ${(new Date().getFullYear())}`, saleInfo.paidPropertyTaxesOrClaimedHownOwnersGrant, true));
+
+    output.push('</table><table>');
+
+    output.push(getEntry('Empty Homes Declaration filed (Vancouver property)', saleInfo.emptyHomesDeclaration, true));
 
     output.push('</table>');
 
-    output.push('<br /><b>Purchase Information</b><br />');
+    output.push('<br /><b>PURCHASERS</b><br />');
 
     output.push('<table>');
     if (purchaseInfo.forCompany) {
@@ -2221,7 +2361,6 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
         output.push(getEntry('Incorporation Number', purchaseInfo.incorporationNumber));
 
         output.push(getEntry('Signatory Full Legal Name', purchaseInfo.clientsInfo[0].fullLegalName));
-
 
         output.push(getEntry('Phone Number', purchaseInfo.clientsInfo[0].phoneNumber));
         output.push(getEntry('Email', purchaseInfo.clientsInfo[0].emailAddress));
@@ -2290,9 +2429,10 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
 
     // property details
 
-    output.push(getHeader('PROPERTY DETAILS'));
+    output.push(getHeader('PURCHASE PROPERTY DETAILS'));
 
-    output.push(getEntry('Completion Date', purchaseInfo.completionDate.toISOString().split('T')[0]));
+    output.push(getEntry('Completion Date', purchaseInfo.completionDateTBD ? 'TBD' : purchaseInfo.completionDate ? purchaseInfo.completionDate.toISOString().split('T')[0] : ''));
+
     output.push(getEntry('Purchase Price (CAD)', purchaseInfo.purchasePrice.toString()));
     output.push(getEntry('Street 1', purchaseInfo.street1));
     output.push(getEntry('Street 2', purchaseInfo.street2));
