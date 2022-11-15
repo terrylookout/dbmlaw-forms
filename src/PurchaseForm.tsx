@@ -370,7 +370,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                                 setNumberOfClients(parseInt(e.target.value));
                                                             }
                                                         }}>
-                                                        <option value='0'>Please choose...</option>
+                                                        <option value='0'>Please choose</option>
                                                         <option value='1'>1</option>
                                                         <option value='2'>2</option>
                                                         <option value='3'>3</option>
@@ -378,13 +378,13 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                         <option value='5'>5</option>
                                                         <option value='6'>6</option>
                                                     </select>
-                                                    <div>
+                                                    <div className='d-flex flex-nowrap pt-2'>
                                                         <input type='checkbox' id='iscompany' checked={purchaseInfo.forCompany}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 setPurchaseInfo({ ...purchaseInfo, forCompany: e.target.checked });
                                                             }} />
-                                                        <label htmlFor='iscompany' className='pt-2'>
-                                                            &nbsp;&nbsp;This is for a company
+                                                        <label htmlFor='iscompany' className='ps-2'>
+                                                            This is for a company
                                                         </label>
                                                     </div>
                                                 </div>
@@ -496,7 +496,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                         <DateInput
                                                             className='form-control'
                                                             id={`completiondate`}
-                                                            value={purchaseInfo.completionDateTBD ? null : purchaseInfo.completionDate}
+                                                            value={purchaseInfo.completionDateTBD ? new Date() : purchaseInfo.completionDate}
                                                             min={new Date((new Date()).setFullYear(new Date().getFullYear() - 5))}
                                                             label='Completion date'
                                                             onChange={(e) => {

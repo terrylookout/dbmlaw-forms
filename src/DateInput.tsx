@@ -1,9 +1,9 @@
-import { ChangeEvent, ReactElement, useEffect, useState } from "react";
-
+import { ReactElement, useEffect, useState } from "react";
+import { DayPicker } from 'react-day-picker';
 
 interface DateInputProps {
     id?: string;
-    value: null | Date;
+    value: Date;
     onChange: (e: Date) => void;
     className?: string;
     min?: Date;
@@ -13,8 +13,8 @@ interface DateInputProps {
 
 const DateInput = (props: DateInputProps): ReactElement => {
 
-    const [dateValue, setDateValue] = useState<null | Date>(props.value);
-    const [invalid, setInvalid] = useState(false);
+    const [dateValue, setDateValue] = useState<Date>(props.value);
+    const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
         if (dateValue) {
@@ -23,52 +23,59 @@ const DateInput = (props: DateInputProps): ReactElement => {
         // eslint-disable-next-line
     }, [dateValue,]);
 
+    useEffect(() => {
+        if (isOpen) {
+            const d = document.querySelector('.rdp');
+            if (d) {
+                d.scrollIntoView(false);
+            }
+        }
+    }, [isOpen]);
+
     return (
         <>
-            <input
-                id={props.id}
-                type='date'
-                className={props.className}
-                value={dateValue && dateValue.getFullYear() < 9999 ? dateValue.toISOString().split('T')[0] : ''}
-                min={props.min ? props.min.toISOString().split('T')[0] : undefined}
-                max={props.max ? props.max.toISOString().split('T')[0] : undefined}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-
-                    if (e && e.target && e.target.value) {
-                        const date = new Date(e.target.value);
-                        if (date instanceof Date) {
-                            setInvalid(false);
-                            setDateValue(date);
-                        }
-                    }
-                }}
-                onBlur={(e) => {
-                    if (e && e.target && e.target.value) {
-                        const date = new Date(e.target.value);
-                        if (date instanceof Date) {
-                            if ((props.max && date.getTime() > props.max.getTime()) ||
-                                (props.min && date.getTime() < props.min.getTime())) {
-                                setInvalid(true);
-                                setDateValue(props.value);
-                            }
-
-                        }
-                    }
-                }}
-            />
-            {
-                props.label &&
-                <label htmlFor={props.id}
-                    style={{
-                        color: invalid ? '#990000' : undefined,
+            <div className='form-floating mb-0'>
+                <input type='text' className='form-control' id={`${props.id}`}
+                    value={dateValue ? dateValue.toISOString().split('T')[0] : ''}
+                    onClick={() => {
+                        setIsOpen(!isOpen);
                     }}
-                >
-                    {
-                        `${props.label}${invalid ? ' - date is invalid' : ''}`
-                    }
-                </label>
+                    onChange={() => {
+                        //
+                    }}
+                />
+                {
+                    props.label &&
+                    <label htmlFor='floatingInput'>
+                        {`${props.label}`}
+                    </label>
+                }
+                {
+                    isOpen &&
+                    <DayPicker
+                        selected={dateValue}
+                        mode='single'
+                        captionLayout='dropdown'
+                        fromYear={1900}
+                        toYear={2030}
+                        onSelect={(e) => {
+                            setIsOpen(!isOpen);
+                            if (e) {
+                                setDateValue(e);
+                            }
+                        }
+                        }
+                        style={{
+                            position: 'absolute',
+                            zIndex: '1',
+                            backgroundColor: '#fff',
+                            border: '1px solid #bbb',
+                            borderRadius: '12px',
+                        }}
+                    />
 
-            }
+                }
+            </div>
         </>
     )
 };

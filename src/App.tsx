@@ -5,6 +5,7 @@ import FormButtons from './FormButtons';
 import PurchaseForm from './PurchaseForm';
 import SaleAndPurchaseForm from './SaleAndPurchaseForm';
 import SaleForm from './SaleForm';
+import 'react-day-picker/dist/style.css';
 
 export type FormType =
   'NONE' | 'PURCHASE' | 'SALE' | 'REFINANCE' | 'SALE_AND_PURCHASE' | 'PROJECT_PURCHASE';
@@ -40,6 +41,7 @@ const App = (): ReactElement => {
             style={{
               height: '80px',
             }}
+            title='11-15-2022 1'
             src={DbmLogo} alt='DBM Law' />
         </div>
 

@@ -368,13 +368,13 @@ const SaleForm = (props: FormProps): ReactElement => {
                                                         <option value="5">5</option>
                                                         <option value="6">6</option>
                                                     </select>
-                                                    <div>
+                                                    <div className='d-flex flex-nowrap pt-2'>
                                                         <input type='checkbox' id='iscompanyseller' checked={saleInfo.forCompany}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 setSaleInfo({ ...saleInfo, forCompany: e.target.checked });
                                                             }} />
-                                                        <label htmlFor='iscompanyseller' className='pt-2'>
-                                                            &nbsp;&nbsp;This is for a company
+                                                        <label htmlFor='iscompanyseller' className='ps-2'>
+                                                            This is for a company
                                                         </label>
                                                     </div>
                                                 </div>
@@ -485,7 +485,7 @@ const SaleForm = (props: FormProps): ReactElement => {
                                                         <DateInput
                                                             className='form-control'
                                                             id={`closingdate`}
-                                                            value={saleInfo.closingDateTBD ? null : saleInfo.closingDate}
+                                                            value={saleInfo.closingDateTBD ? new Date() : saleInfo.closingDate}
                                                             min={new Date((new Date()).setFullYear(new Date().getFullYear() - 5))}
                                                             label='Closing date'
                                                             onChange={(e) => {
