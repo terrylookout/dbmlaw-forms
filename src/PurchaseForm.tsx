@@ -306,7 +306,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
 
         <div className='modal fade' id='formModal' tabIndex={-1} aria-labelledby='formModalLabel' aria-hidden='true'
             data-bs-backdrop='static' data-bs-keyboard='false'>
-            <div className={`modal-dialog modal-lg ${currentPage === 'PROPERTY_INFO' || (currentPage === 'GET_PURCHASERS' && purchaseInfo.clientsInfo.length !== 0) ? 'modal-dialog-centered' : 'modal-near-top'} modal-dialog-scrollable`}>
+            <div className={`modal-dialog modal-lg modal-fullscreen-sm-down ${currentPage === 'PROPERTY_INFO' || (currentPage === 'GET_PURCHASERS' && purchaseInfo.clientsInfo.length !== 0) ? 'modal-dialog-centered' : 'modal-near-top'} modal-dialog-scrollable`}>
                 <div className='modal-content'>
                     <div className='modal-header'>
                         <h1 className='modal-title fs-5' id='exampleModalLabel'>

@@ -111,7 +111,7 @@ const Client = (props: ClientProps): ReactElement => {
                                 Social Insurance Number
                             </label>
                         </div>
-                        <div>
+                        <div className='d-flex flex-nowrap pt-2'>
                             <input type='checkbox' id={`chksin${props.num.toString()}`} checked={clientInfo.sinViaPhone}
                                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                     setClientInfo({ ...clientInfo, sinViaPhone: e.target.checked });
@@ -119,8 +119,8 @@ const Client = (props: ClientProps): ReactElement => {
                                     //     setClientInfo({ ...clientInfo, socialInsNumber: '' });
                                     // }
                                 }} />
-                            <label htmlFor={`chksin${props.num.toString()}`}>
-                                &nbsp;&nbsp;I will provide later via phone
+                            <label htmlFor={`chksin${props.num.toString()}`} className='ps-2'>
+                                I will provide later via phone
                             </label>
                         </div>
                     </div>
