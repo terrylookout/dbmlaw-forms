@@ -1,6 +1,3 @@
-.App {
-  /* text-align: center; */
-}
 
 .App-logo {
   height: 40vmin;
@@ -57,3 +54,6 @@
   z-index: 1 !important;
 }
 
+.col-button {
+  text-align: center;
+}
