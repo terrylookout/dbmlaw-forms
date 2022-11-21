@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import { FormType } from './App';
+import { FormType } from '../App';
 
 interface FormButtonsProps {
     onFormSelected: (formType: FormType) => void;
@@ -10,11 +10,11 @@ const classesString = 'col-button col col-xl-2 col-lg-4 col-md-4 col-sm-6'
 const FormButtons = (props: FormButtonsProps): ReactElement => {
 
     const [spacer, setSpacer] = useState(() =>
-        window.innerWidth < 1200 && window.innerWidth > 536 ? true : false);
+        window.innerWidth < 1200 && window.innerWidth > 490 ? true : false);
 
     useEffect(() => {
         window.addEventListener('resize', () => {
-            setSpacer(window.innerWidth < 1200 && window.innerWidth > 536 ? true : false);
+            setSpacer(window.innerWidth < 1200 && window.innerWidth > 490 ? true : false);
         });
     }, []);
 
@@ -55,54 +55,7 @@ const FormButtons = (props: FormButtonsProps): ReactElement => {
                 </div>
 
             </div>
-            <div style={{
-                width: '100%',
-                padding: '50px 20% 0',
-                boxSizing: 'border-box',
-            }}>
-                <div
-                    style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'auto auto auto',
-                        columnGap: '100px',
-                        rowGap: '50px',
-                        width: '50%',
-                        textAlign: 'left',
-                    }}>
 
-                    <div style={{
-                        flexGrow: '1',
-                    }}>
-
-                    </div>
-
-                    <div style={{
-                        flexGrow: '1',
-                    }}>
-
-                    </div>
-
-                    <div style={{
-                        flexGrow: '1',
-                    }}>
-
-                    </div>
-
-                    <div style={{
-                        flexGrow: '1',
-                    }}>
-
-                    </div>
-
-                    <div style={{
-                        flexGrow: '1',
-                    }}>
-
-                    </div>
-
-                </div>
-
-            </div>
         </>
     );
 }

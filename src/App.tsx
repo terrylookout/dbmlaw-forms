@@ -1,10 +1,10 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import './App.css';
 import DbmLogo from './images/dbm-logo.png';
-import FormButtons from './FormButtons';
-import PurchaseForm from './PurchaseForm';
-import SaleAndPurchaseForm from './SaleAndPurchaseForm';
-import SaleForm from './SaleForm';
+import FormButtons from './controls/FormButtons';
+import PurchaseForm from './forms/PurchaseForm';
+import SaleAndPurchaseForm from './forms/SaleAndPurchaseForm';
+import SaleForm from './forms/SaleForm';
 import 'react-day-picker/dist/style.css';
 
 export type FormType =
@@ -30,13 +30,8 @@ const App = (): ReactElement => {
 
   return (
     <div className="App">
-      <div style={{
-        padding: '25px 70px',
-      }}>
-        <div style={{
-          width: '100%',
-          textAlign: 'left',
-        }}>
+      <div className='ms-5 me-5 mt-3 mb-3'>
+        <div>
           <img
             style={{
               height: '80px',
@@ -45,11 +40,7 @@ const App = (): ReactElement => {
             src={DbmLogo} alt='DBM Law' />
         </div>
 
-        <div style={{
-          width: '100%',
-          textAlign: 'center',
-          boxSizing: 'border-box',
-        }}>
+        <div>
           <hr style={{
             width: '100%',
           }} />

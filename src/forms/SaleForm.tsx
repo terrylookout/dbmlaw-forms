@@ -1,11 +1,11 @@
 import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
-import { ClientInfo, SaleInfo } from './ClassesInterfaces';
+import { ClientInfo, SaleInfo } from '../ClassesInterfaces';
 
-import CircleBullet from './CircleBullet';
-import { FormProps, getEntry, getHeader, sendEmail } from './Helpers';
-import { SubmitConfirm, SubmitDone, Submitting } from './SubmitConfirm';
-import Seller from './Seller';
-import DateInput from './DateInput';
+import CircleBullet from '../controls/CircleBullet';
+import { FormProps, getEntry, getHeader, sendEmail } from '../Helpers';
+import { SubmitConfirm, SubmitDone, Submitting } from '../controls/SubmitConfirm';
+import Seller from '../controls/Seller';
+import DateInput from '../controls/DateInput';
 
 declare var bootstrap: any;
 

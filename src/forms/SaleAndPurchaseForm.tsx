@@ -1,31 +1,49 @@
 import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
-import Client from './Client';
-import { ClientInfo, GuarantorInfo, PurchaseInfo } from './ClassesInterfaces';
-import Guarantor from './Guarantor';
+import Client from '../controls/Client';
+import { ClientInfo, GuarantorInfo, PurchaseInfo, SaleInfo } from '../ClassesInterfaces';
+import Guarantor from '../Guarantor';
 
-import CircleBullet from './CircleBullet';
-import { FormProps, getEntry, getHeader, sendEmail } from './Helpers';
-import { SubmitConfirm, SubmitDone, Submitting } from './SubmitConfirm';
-import DateInput from './DateInput';
+import CircleBullet from '../controls/CircleBullet';
+import { FormProps, getEntry, getHeader, sendEmail } from '../Helpers';
+import { SubmitConfirm, SubmitDone, Submitting } from '../controls/SubmitConfirm';
+import Seller from '../controls/Seller';
+import DateInput from '../controls/DateInput';
 
 declare var bootstrap: any;
 
-
-const PurchaseForm = (props: FormProps): ReactElement => {
+const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
 
     const [purchaseInfo, setPurchaseInfo] = useState(() => new PurchaseInfo());
+    const [saleInfo, setSaleInfo] = useState(() => new SaleInfo());
+
     const [missingInfo, setMissingInfo] = useState(false);
+
+    const [numberOfSellers, setNumberOfSellers] = useState(0);
     const [numberOfClients, setNumberOfClients] = useState(0);
     const [numberOfGuarantors, setNumberOfGuarantors] = useState(0);
 
+    const [sellersArePurchasers, setSellersArePurchasers] = useState(false);
+
     const [currentPage, setCurrentPage] = useState<
+        'GET_SELLERS' | 'GET_SALE_DETAILS' |
         'GET_PURCHASERS' | 'PROPERTY_INFO' | 'CONFIRM_SUBMIT' | 'SUBMITTING' | 'SUBMIT_RESULT'
-    >('GET_PURCHASERS');
+    >('GET_SELLERS');
 
     const checkPage = () => {
         //
-        // clients
-        if (currentPage === 'GET_PURCHASERS') {
+
+        if (currentPage === 'GET_SELLERS') {
+            setMissingInfo(false);
+            setCurrentPage('GET_SALE_DETAILS')
+            return;
+
+        }
+        else if (currentPage === 'GET_SALE_DETAILS') {
+            setMissingInfo(false);
+            setCurrentPage('GET_PURCHASERS')
+            return;
+        }
+        else if (currentPage === 'GET_PURCHASERS') {
             if (purchaseInfo.forCompany) {
                 if (!purchaseInfo.companyName.trim()) {
                     const el = document.querySelector(`#companyname`);
@@ -56,6 +74,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
 
             for (let t = 0; t < purchaseInfo.clientsInfo.length; t++) {
                 const client = purchaseInfo.clientsInfo[t];
+
                 // check legal name
                 if (!client.fullLegalName.trim()) {
                     const el = document.querySelector(`#clientname${t}`);
@@ -154,7 +173,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
             setCurrentPage('PROPERTY_INFO')
             return;
         }
-        else {
+        else if (currentPage === 'PROPERTY_INFO') {
             // page 2
             if (!purchaseInfo.purchasePrice) {
                 const el = document.querySelector(`#purchaseprice`);
@@ -217,14 +236,13 @@ const PurchaseForm = (props: FormProps): ReactElement => {
         }
     };
 
-    const submitPurchaseForm = async (purchaseInfo: PurchaseInfo) => {
-        const c = getOutput(purchaseInfo);
+    const submitSaleAndPurchaseForm = async (purchaseInfo: PurchaseInfo) => {
+        const c = getOutput(purchaseInfo, saleInfo);
 
-        await sendEmail('Purchase submission', c);
+        await sendEmail('Sale and Purchase submission', c);
 
         setCurrentPage('SUBMIT_RESULT');
     };
-
 
     useEffect(() => {
         // eslint-disable-next-line
@@ -241,6 +259,25 @@ const PurchaseForm = (props: FormProps): ReactElement => {
         // eslint-disable-next-line
     }, []);
 
+
+    useEffect(() => {
+        if (sellersArePurchasers) {
+            setNumberOfClients(saleInfo.clientsInfo.length);
+        }
+        // eslint-disable-next-line
+    }, [sellersArePurchasers]);
+
+
+    useEffect(() => {
+        if (sellersArePurchasers && saleInfo.clientsInfo.length <= purchaseInfo.clientsInfo.length) {
+            for (let i = 0; i < saleInfo.clientsInfo.length; i++) {
+                purchaseInfo.clientsInfo[i] = { ...saleInfo.clientsInfo[i] };
+            }
+            setSellersArePurchasers(false);
+        }
+        // eslint-disable-next-line
+    }, [purchaseInfo.clientsInfo]);
+
     useEffect(() => {
         const tempClients = [...purchaseInfo.clientsInfo];
         if (numberOfClients > tempClients.length) {
@@ -256,10 +293,37 @@ const PurchaseForm = (props: FormProps): ReactElement => {
             } while (numberOfClients < tempClients.length);
         }
 
+        if (sellersArePurchasers && saleInfo.clientsInfo.length <= tempClients.length) {
+            for (let i = 0; i < saleInfo.clientsInfo.length; i++) {
+                tempClients[i] = { ...saleInfo.clientsInfo[i] };
+            }
+        }
+
         setPurchaseInfo({ ...purchaseInfo, clientsInfo: tempClients });
 
         // eslint-disable-next-line
     }, [numberOfClients]);
+
+    useEffect(() => {
+        const tempSellers = [...saleInfo.clientsInfo];
+        if (numberOfSellers > tempSellers.length) {
+            do {
+                tempSellers.push(
+                    new ClientInfo()
+                );
+            } while (numberOfSellers > tempSellers.length);
+        }
+        else if (numberOfSellers < tempSellers.length) {
+            do {
+                tempSellers.pop();
+            } while (numberOfSellers < tempSellers.length);
+        }
+
+        setSaleInfo({ ...saleInfo, clientsInfo: tempSellers });
+
+        // eslint-disable-next-line
+    }, [numberOfSellers]);
+
 
     useEffect(() => {
         const tempGuarantors = [...purchaseInfo.guarantorsInfo];
@@ -292,24 +356,45 @@ const PurchaseForm = (props: FormProps): ReactElement => {
     }, [purchaseInfo.forCompany]);
 
     useEffect(() => {
-        if (currentPage === 'PROPERTY_INFO') {
-            const top = document.querySelector('.top-second-page');
-            if (top) {
-                top.scrollIntoView({
-                    behavior: 'smooth',
-                });
-            }
+        if (saleInfo.forCompany) {
+            setNumberOfSellers(1);
         }
+        else {
+            setNumberOfSellers(0);
+        }
+
+    }, [saleInfo.forCompany]);
+
+    useEffect(() => {
+        //if (currentPage !== 'PROPERTY_INFO') {
+        const top = document.querySelector('.top-second-page');
+        if (top) {
+            top.scrollIntoView({
+                behavior: 'smooth',
+            });
+        }
+        //}
     }, [currentPage]);
 
     return (
 
-        <div className='modal fade' id='formModal' tabIndex={-1} aria-labelledby='formModalLabel' aria-hidden='true'
-            data-bs-backdrop='static' data-bs-keyboard='false'>
-            <div className={`modal-dialog modal-lg modal-fullscreen-sm-down ${currentPage === 'PROPERTY_INFO' || (currentPage === 'GET_PURCHASERS' && purchaseInfo.clientsInfo.length !== 0) ? 'modal-dialog-centered' : 'modal-near-top'} modal-dialog-scrollable`}>
-                <div className='modal-content'>
-                    <div className='modal-header'>
-                        <h1 className='modal-title fs-5' id='exampleModalLabel'>
+        <div className="modal fade" id="formModal" tabIndex={-1} aria-labelledby="formModalLabel" aria-hidden="true"
+            data-bs-backdrop="static" data-bs-keyboard="false">
+            <div className={`modal-dialog modal-lg ${currentPage === 'PROPERTY_INFO' ||
+                currentPage === 'GET_SALE_DETAILS' ||
+                (currentPage === 'GET_SELLERS' && saleInfo.clientsInfo.length !== 0) ||
+                (currentPage === 'GET_PURCHASERS' && purchaseInfo.clientsInfo.length !== 0) ? 'modal-dialog-centered' : 'modal-near-top'} modal-dialog-scrollable`}>
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h1 className="modal-title fs-5" id="exampleModalLabel">
+                            {
+                                currentPage === 'GET_SELLERS' &&
+                                <span>Seller Information</span>
+                            }
+                            {
+                                currentPage === 'GET_SALE_DETAILS' &&
+                                <span>Sale Details</span>
+                            }
 
                             {
                                 currentPage === 'GET_PURCHASERS' &&
@@ -336,54 +421,54 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                 <span>Success!</span>
                             }
 
-
                         </h1>
-                        <button type='button' className='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div className='modal-body'>
+                    <div className="modal-body">
                         {
                             <div className='container'>
-                                <div className='container'>
+                                <div className="container">
+
                                     {
-                                        currentPage === 'GET_PURCHASERS' &&
+                                        currentPage === 'GET_SELLERS' &&
                                         <>
-                                            <div className='row'>
-                                                <div className='col mb-3'>
+                                            <div className="row">
+                                                <div className="col mb-3">
                                                     <h6>
-                                                        Purchaser Information
+                                                        Seller Information
                                                     </h6>
                                                 </div>
                                             </div>
 
-                                            <div className='row align-items-center'>
-                                                <div className='col mb-3'>
+                                            <div className="row align-items-center">
+                                                <div className="col mb-3">
                                                     <h6>
-                                                        How many purchasers are there?
+                                                        How many people on title for the property being sold?
                                                     </h6>
                                                 </div>
 
-                                                <div className='col mb-3'>
-                                                    <select className='form-select p-3' aria-label='Purchasers'
-                                                        value={numberOfClients}
+                                                <div className="col mb-3">
+                                                    <select className="form-select p-3" aria-label="Sellers"
+                                                        value={numberOfSellers}
                                                         onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                                                             if (e && e.target && e.target.value) {
-                                                                setNumberOfClients(parseInt(e.target.value));
+                                                                setNumberOfSellers(parseInt(e.target.value));
                                                             }
                                                         }}>
-                                                        <option value='0'>Please choose</option>
-                                                        <option value='1'>1</option>
-                                                        <option value='2'>2</option>
-                                                        <option value='3'>3</option>
-                                                        <option value='4'>4</option>
-                                                        <option value='5'>5</option>
-                                                        <option value='6'>6</option>
+                                                        <option value='0'>Please choose...</option>
+                                                        <option value="1">1</option>
+                                                        <option value="2">2</option>
+                                                        <option value="3">3</option>
+                                                        <option value="4">4</option>
+                                                        <option value="5">5</option>
+                                                        <option value="6">6</option>
                                                     </select>
                                                     <div className='d-flex flex-nowrap pt-2'>
-                                                        <input type='checkbox' id='iscompany' checked={purchaseInfo.forCompany}
+                                                        <input type='checkbox' id='iscompanyseller' checked={saleInfo.forCompany}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                setPurchaseInfo({ ...purchaseInfo, forCompany: e.target.checked });
+                                                                setSaleInfo({ ...saleInfo, forCompany: e.target.checked });
                                                             }} />
-                                                        <label htmlFor='iscompany' className='ps-2'>
+                                                        <label htmlFor='iscompanyseller' className='ps-2'>
                                                             This is for a company
                                                         </label>
                                                     </div>
@@ -391,10 +476,10 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                             </div>
 
                                             {
-                                                purchaseInfo.forCompany &&
+                                                saleInfo.forCompany &&
                                                 <>
-                                                    <div className='row'>
-                                                        <div className='col mb-1 mt-4'>
+                                                    <div className="row">
+                                                        <div className="col mb-1 mt-4">
                                                             <h6>
                                                                 Please fill in company name, incorporation number, and signatory. Note that you will be contacted
                                                                 for additional information such as minutes books and company share registry.
@@ -403,9 +488,579 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                     </div>
 
 
-                                                    <div className='row'>
+                                                    <div className="row">
 
-                                                        <div className='col mb-3'>
+                                                        <div className="col mb-3">
+                                                            <div className='form-floating mb-0'>
+                                                                <input type='text' className='form-control' id='companynameseller' placeholder='Company name'
+                                                                    value={saleInfo.companyName}
+                                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                        setSaleInfo({ ...saleInfo, companyName: e.target.value });
+                                                                    }}
+                                                                />
+                                                                <label htmlFor='companynameseller'>
+                                                                    Company name (required)
+                                                                </label>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="col mb-3">
+                                                            <div className='form-floating mb-0'>
+                                                                <input type='text' className='form-control' id='incorporationnumberseller' placeholder='Incorporation #'
+                                                                    value={saleInfo.incorporationNumber}
+                                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                        setSaleInfo({ ...saleInfo, incorporationNumber: e.target.value });
+                                                                    }}
+                                                                />
+                                                                <label htmlFor='incorporationnumberseller'>
+                                                                    Incorporation # (required)
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </>
+                                            }
+
+                                            {
+                                                numberOfSellers > 0 &&
+                                                <>
+                                                    {
+                                                        saleInfo.clientsInfo.map((c, i) => {
+                                                            return (
+                                                                <Seller text={saleInfo.forCompany ? 'Signatory' : 'Seller'}
+                                                                    num={i}
+                                                                    key={i}
+                                                                    clientInfo={saleInfo.clientsInfo[i]}
+                                                                    client1Info={saleInfo.clientsInfo.length > 1 ? saleInfo.clientsInfo[0] : null}
+                                                                    company={saleInfo.forCompany}
+                                                                    updated={(c: ClientInfo, idx: number) => {
+                                                                        const tempClients: ClientInfo[] = [];
+                                                                        for (let t = 0; t < saleInfo.clientsInfo.length; t++) {
+                                                                            if (t === idx) {
+                                                                                tempClients.push(c);
+                                                                            }
+                                                                            else {
+                                                                                tempClients.push(saleInfo.clientsInfo[t]);
+                                                                            }
+                                                                        }
+                                                                        setSaleInfo({ ...saleInfo, clientsInfo: tempClients });
+                                                                    }}
+                                                                />
+                                                            );
+                                                        })
+                                                    }
+
+                                                </>
+                                            }
+                                        </>
+                                    }
+
+                                    {
+                                        currentPage === 'GET_SALE_DETAILS' &&
+                                        <>
+                                            <div className="row">
+                                                <div className="col mb-1 mt-2 top-second-page">
+                                                    &nbsp;
+                                                </div>
+                                            </div>
+                                            <div className="row">
+
+                                                <div className="col mb-1">
+                                                    <h6>
+                                                        <CircleBullet />
+                                                        Sale and Property Information
+                                                    </h6>
+                                                </div>
+                                            </div>
+
+                                            <div className="row">
+                                                <div className="col mb-3">
+                                                    <div className='form-floating mb-0'>
+                                                        <DateInput
+                                                            className='form-control'
+                                                            id={`closingdate`}
+                                                            value={saleInfo.closingDateTBD ? new Date() : saleInfo.closingDate}
+                                                            min={new Date((new Date()).setFullYear(new Date().getFullYear() - 5))}
+                                                            label='Closing date'
+                                                            onChange={(e) => {
+                                                                if (e) {
+                                                                    setSaleInfo({ ...saleInfo, closingDate: e });
+                                                                }
+                                                            }} />
+                                                    </div>
+                                                    <div className='mt-1'>
+                                                        <input type='checkbox' id='chkclosingdatetbd' checked={saleInfo.closingDateTBD}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                setSaleInfo({ ...saleInfo, closingDateTBD: e.target.checked });
+                                                            }} />
+                                                        <label htmlFor='chkclosingdatetbd'>
+                                                            &nbsp;&nbsp;Date still to be determined
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div className="col mb-3">
+                                                    <div className='form-floating mb-0'>
+                                                        <input type='number' className='form-control' id='saleprice' placeholder='Sale price'
+                                                            value={saleInfo.sellingPrice}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                if (e && e.target && e.target.value) {
+                                                                    setSaleInfo({ ...saleInfo, sellingPrice: parseFloat(e.target.value) });
+                                                                }
+                                                            }}
+                                                        />
+                                                        <label htmlFor='saleprice'>
+                                                            Sale price (CAD) if known
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <div className="row">
+                                                <div className="col mb-1 mt-4">
+                                                    <h6>
+                                                        <CircleBullet />
+                                                        Address of sale property
+                                                    </h6>
+                                                </div>
+                                            </div>
+
+                                            <div className="row">
+                                                <div className="col mb-3">
+                                                    <div className='form-floating mb-0'>
+                                                        <input type='text' className='form-control' id='sellingstreet1' placeholder='Street address line 1'
+                                                            value={saleInfo.street1}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                setSaleInfo({ ...saleInfo, street1: e.target.value });
+                                                            }}
+                                                        />
+                                                        <label htmlFor='floatingInput'>
+                                                            Street address line 1
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="row">
+                                                <div className="col mb-3">
+                                                    <div className='form-floating mb-0'>
+                                                        <input type='text' className='form-control' id='sellingstreet2' placeholder='Street address line 2'
+                                                            value={saleInfo.street2}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                setSaleInfo({ ...saleInfo, street2: e.target.value });
+                                                            }}
+                                                        />
+                                                        <label htmlFor='floatingInput'>
+                                                            Street address line 2
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <div className="row">
+                                                <div className="col mb-3">
+                                                    <div className='form-floating mb-0'>
+                                                        <input type='text' className='form-control' id='sellingcity' placeholder='City'
+                                                            value={saleInfo.city}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                setSaleInfo({ ...saleInfo, city: e.target.value });
+                                                            }}
+                                                        />
+                                                        <label htmlFor='floatingInput'>
+                                                            City
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div className="col mb-3">
+                                                    <select className="form-select p-3" aria-label="Province or territory"
+                                                        value={saleInfo.provinceTerritory}
+                                                        onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                                                            setSaleInfo({ ...saleInfo, provinceTerritory: e.target.value });
+                                                        }}
+                                                    >
+                                                        <option value='0'>Province or territory</option>
+                                                        <option value="Alberta">Alberta</option>
+                                                        <option value="British Columbia">British Columbia</option>
+                                                        <option value="Manitoba">Manitoba</option>
+                                                        <option value="New Brunswick">New Brunswick</option>
+                                                        <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+                                                        <option value="Northwest Territories">Northwest Territories</option>
+                                                        <option value="Nova Scotia">Nova Scotia</option>
+                                                        <option value="Nunavut">Nunavut</option>
+                                                        <option value="Ontario">Ontario</option>
+                                                        <option value="Prince Edward Island">Prince Edward Island</option>
+                                                        <option value="Quebec">Québec</option>
+                                                        <option value="Saskatchewan">Saskatchewan</option>
+                                                        <option value="Yukon">Yukon</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div className='row'>
+                                                <div className="col mb-3">
+                                                    <div className='form-floating mb-0'>
+                                                        <input type='text' className='form-control' id='sellingpostalcode' placeholder='Postal code'
+                                                            value={saleInfo.postalCode}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                setSaleInfo({ ...saleInfo, postalCode: e.target.value });
+                                                            }}
+                                                        />
+                                                        <label htmlFor='floatingInput'>
+                                                            Postal code
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="row">
+                                                <div className="col mb-1 mt-4">
+                                                    <h6>
+                                                        <CircleBullet />
+                                                        Your realtor information (if applicable)
+                                                    </h6>
+                                                </div>
+                                            </div>
+
+                                            <div className="row">
+                                                <div className="col mb-3">
+                                                    <div className='form-floating mb-0'>
+                                                        <input type='text' className='form-control' id='realtornameseller' placeholder='Realtor name'
+                                                            value={saleInfo.realtorName}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                setSaleInfo({ ...saleInfo, realtorName: e.target.value });
+                                                            }}
+                                                        />
+                                                        <label htmlFor='floatingInput'>
+                                                            Realtor name
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div className="col mb-3">
+                                                    <div className='form-floating mb-0'>
+                                                        <input type='tel' className='form-control' id='realtorphoneselling' placeholder='Phone number'
+                                                            value={saleInfo.realtorPhone}
+                                                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                setSaleInfo({ ...saleInfo, realtorPhone: e.target.value });
+                                                            }}
+                                                        />
+                                                        <label htmlFor='floatingInput'>
+                                                            Phone number - format: 123-456-7890
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <div className="row">
+                                                <div className="col mb-1 mt-4">
+                                                    <h6>
+                                                        <CircleBullet />
+                                                        Is there a mortgage or line of credit on title?
+                                                    </h6>
+                                                </div>
+                                            </div>
+
+                                            <div className="row">
+                                                <div className="col mb-3">
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name="mortgageselling" id="mortgageselling-yes"
+                                                            checked={saleInfo.mortgageOrLoCOnTitle === 'YES'}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                if (e && e.target && e.target.value && e.target.value === 'on') {
+                                                                    setSaleInfo({ ...saleInfo, mortgageOrLoCOnTitle: 'YES' });
+                                                                }
+                                                            }} />
+                                                        <label className="form-check-label" htmlFor="mortgageselling-yes">
+                                                            Yes
+                                                        </label>
+                                                    </div>
+
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name="mortgageselling" id="mortgageselling-no"
+                                                            checked={saleInfo.mortgageOrLoCOnTitle === 'NO'}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                if (e && e.target && e.target.value && e.target.value === 'on') {
+                                                                    setSaleInfo({ ...saleInfo, mortgageOrLoCOnTitle: 'NO' });
+                                                                }
+                                                            }} />
+                                                        <label className="form-check-label" htmlFor="mortgageselling-no">
+                                                            No
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {
+                                                saleInfo.mortgageOrLoCOnTitle === 'YES' &&
+                                                <>
+                                                    <div className="row">
+                                                        <div className="col mb-3">
+                                                            <div className='form-floating mb-0'>
+                                                                <input type='text' className='form-control' id='referencenumber' placeholder='Reference number'
+                                                                    value={saleInfo.mortgageOrLoCOnTitleReferenceNumber}
+                                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                        setSaleInfo({ ...saleInfo, mortgageOrLoCOnTitleReferenceNumber: e.target.value });
+                                                                    }}
+                                                                />
+                                                                <label htmlFor='referencenumber'>
+                                                                    Reference number
+                                                                </label>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="col mb-3">
+                                                            <div className='form-floating mb-0'>
+                                                                <input type='text' className='form-control' id='bankbranch' placeholder='Bank and Brank'
+                                                                    value={saleInfo.mortgageOrLoCOnTitleBankBranch}
+                                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                        setSaleInfo({ ...saleInfo, mortgageOrLoCOnTitleBankBranch: e.target.value });
+                                                                    }}
+                                                                />
+                                                                <label htmlFor='floatingInput'>
+                                                                    Bank and Branch
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            }
+
+
+                                            <div className="row">
+                                                <div className="col mb-1 mt-4">
+                                                    <h6>
+                                                        <CircleBullet />
+                                                        Does this involve a separation or divorce?
+                                                    </h6>
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col mb-1">
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name={`separation`} id={`separation-yes`}
+                                                            checked={saleInfo.involvesSeparationDivorce === 'YES'}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                if (e.target.checked) {
+                                                                    setSaleInfo({ ...saleInfo, involvesSeparationDivorce: 'YES' });
+                                                                }
+                                                            }} />
+
+                                                        <label className="form-check-label" htmlFor={`separation-yes`}>
+                                                            Yes
+                                                        </label>
+                                                    </div>
+
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name={`separation`} id={`separation-no`}
+                                                            checked={saleInfo.involvesSeparationDivorce === 'NO'}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                if (e.target.checked) {
+                                                                    setSaleInfo({ ...saleInfo, involvesSeparationDivorce: 'NO' });
+                                                                }
+                                                            }} />
+
+                                                        <label className="form-check-label" htmlFor={`separation-no`}>
+                                                            No
+                                                        </label>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+
+                                            <div className="row">
+                                                <div className="col mb-1 mt-4">
+                                                    <h6>
+                                                        <CircleBullet />
+                                                        Have you paid the property taxes and/or claimed the Home Owner&apos;s Grant for {new Date().getFullYear()}?
+                                                    </h6>
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col mb-1">
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name={`propertytaxes`} id={`propertytaxes-yes`}
+                                                            checked={saleInfo.paidPropertyTaxesOrClaimedHownOwnersGrant === 'YES'}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                if (e.target.checked) {
+                                                                    setSaleInfo({ ...saleInfo, paidPropertyTaxesOrClaimedHownOwnersGrant: 'YES' });
+                                                                }
+                                                            }} />
+
+                                                        <label className="form-check-label" htmlFor={`propertytaxes-yes`}>
+                                                            Yes
+                                                        </label>
+                                                    </div>
+
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name={`propertytaxes`} id={`propertytaxes-no`}
+                                                            checked={saleInfo.paidPropertyTaxesOrClaimedHownOwnersGrant === 'NO'}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                if (e.target.checked) {
+                                                                    setSaleInfo({ ...saleInfo, paidPropertyTaxesOrClaimedHownOwnersGrant: 'NO' });
+                                                                }
+                                                            }} />
+
+                                                        <label className="form-check-label" htmlFor={`propertytaxes-no`}>
+                                                            No
+                                                        </label>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            <div className="row">
+                                                <div className="col mb-1 mt-4">
+                                                    <h6>
+                                                        <CircleBullet />
+                                                        If applicable, have you filed your Empty Homes Declaration (Vancouver property)?
+                                                    </h6>
+                                                </div>
+                                            </div>
+
+                                            <div className="row">
+                                                <div className="col mb-1">
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name={`emptyhome`} id={`emptyhome-occupied`}
+                                                            checked={saleInfo.emptyHomesDeclaration === 'OCCUPIED'}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                if (e.target.checked) {
+                                                                    setSaleInfo({ ...saleInfo, emptyHomesDeclaration: 'OCCUPIED' });
+                                                                }
+                                                            }} />
+
+                                                        <label className="form-check-label" htmlFor={`emptyhome-occupied`}>
+                                                            Occupied
+                                                        </label>
+                                                    </div>
+
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name={`emptyhome`} id={`emptyhome-vacant`}
+                                                            checked={saleInfo.emptyHomesDeclaration === 'VACANT'}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                if (e.target.checked) {
+                                                                    setSaleInfo({ ...saleInfo, emptyHomesDeclaration: 'VACANT' });
+                                                                }
+                                                            }} />
+
+                                                        <label className="form-check-label" htmlFor={`emptyhome-vacant`}>
+                                                            Vacant
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                                <div className="col mb-1">
+
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name={`emptyhome`} id={`emptyhome-notfiled`}
+                                                            checked={saleInfo.emptyHomesDeclaration === 'NOT_COMPLETED'}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                if (e.target.checked) {
+                                                                    setSaleInfo({ ...saleInfo, emptyHomesDeclaration: 'NOT_COMPLETED' });
+                                                                }
+                                                            }} />
+
+                                                        <label className="form-check-label" htmlFor={`emptyhome-notfiled`}>
+                                                            Not completed/filed
+                                                        </label>
+                                                    </div>
+
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name={`emptyhome`} id={`emptyhome-notapplicable`}
+                                                            checked={saleInfo.emptyHomesDeclaration === 'NOT_APPLICABLE'}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                if (e.target.checked) {
+                                                                    setSaleInfo({ ...saleInfo, emptyHomesDeclaration: 'NOT_APPLICABLE' });
+                                                                }
+                                                            }} />
+
+                                                        <label className="form-check-label" htmlFor={`emptyhome-notapplicable`}>
+                                                            Not applicable
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </>
+                                    }
+
+                                    {
+                                        currentPage === 'GET_PURCHASERS' &&
+                                        <>
+                                            <div className="row">
+                                                <div className="col mb-3">
+                                                    <h6>
+                                                        Purchaser Information
+                                                    </h6>
+                                                </div>
+                                            </div>
+
+                                            <div className="row mt-2">
+                                                <div className="col mb-3">
+                                                    <h6>
+                                                        How many purchasers are there?
+                                                    </h6>
+                                                </div>
+
+                                                <div className="col mb-3">
+                                                    <select className="form-select p-3" aria-label="Province or territory"
+                                                        value={numberOfClients}
+                                                        onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                                                            if (e && e.target && e.target.value) {
+                                                                setNumberOfClients(parseInt(e.target.value));
+                                                            }
+                                                        }}>
+                                                        <option value='0'>Please choose...</option>
+                                                        <option value="1">1</option>
+                                                        <option value="2">2</option>
+                                                        <option value="3">3</option>
+                                                        <option value="4">4</option>
+                                                        <option value="5">5</option>
+                                                        <option value="6">6</option>
+                                                    </select>
+                                                    <div>
+                                                        <input type='checkbox' id='iscompany' checked={purchaseInfo.forCompany}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                setPurchaseInfo({ ...purchaseInfo, forCompany: e.target.checked });
+                                                            }} />
+                                                        <label htmlFor='iscompany' className='pt-2'>
+                                                            &nbsp;&nbsp;This is for a company
+                                                        </label>
+                                                    </div>
+                                                    <div className='mt-5'>
+                                                        OR
+                                                    </div>
+                                                    <div className='mt-5'>
+                                                        <input type='button' value='Sellers are also the Purchasers'
+                                                            className='btn btn-primary'
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+
+                                                                setSellersArePurchasers(!sellersArePurchasers);
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {
+                                                purchaseInfo.forCompany &&
+                                                <>
+                                                    <div className="row">
+                                                        <div className="col mb-1 mt-4">
+                                                            <h6>
+                                                                Please fill in company name, incorporation number, and signatory. Note that you will be contacted
+                                                                for additional information such as minutes books and company share registry.
+                                                            </h6>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div className="row">
+
+                                                        <div className="col mb-3">
                                                             <div className='form-floating mb-0'>
                                                                 <input type='text' className='form-control' id='companyname' placeholder='Company name'
                                                                     value={purchaseInfo.companyName}
@@ -419,7 +1074,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                             </div>
                                                         </div>
 
-                                                        <div className='col mb-3'>
+                                                        <div className="col mb-3">
                                                             <div className='form-floating mb-0'>
                                                                 <input type='text' className='form-control' id='incorporationnumber' placeholder='Incorporation #'
                                                                     value={purchaseInfo.incorporationNumber}
@@ -459,6 +1114,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                                                 tempClients.push(purchaseInfo.clientsInfo[t]);
                                                                             }
                                                                         }
+
                                                                         setPurchaseInfo({ ...purchaseInfo, clientsInfo: tempClients });
                                                                     }}
                                                                 />
@@ -474,14 +1130,14 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                     {
                                         currentPage === 'PROPERTY_INFO' &&
                                         <>
-                                            <div className='row'>
-                                                <div className='col mb-1 mt-2 top-second-page'>
+                                            <div className="row">
+                                                <div className="col mb-1 mt-2 top-second-page">
                                                     &nbsp;
                                                 </div>
                                             </div>
-                                            <div className='row'>
+                                            <div className="row">
 
-                                                <div className='col mb-1'>
+                                                <div className="col mb-1">
                                                     <h6>
                                                         <CircleBullet />
                                                         Purchase and Property Information
@@ -489,10 +1145,9 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                 </div>
                                             </div>
 
-                                            <div className='row'>
-                                                <div className='col mb-3'>
+                                            <div className="row">
+                                                <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
-
                                                         <DateInput
                                                             className='form-control'
                                                             id={`completiondate`}
@@ -505,7 +1160,6 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                                 }
 
                                                             }} />
-
                                                     </div>
                                                     <div className='mt-1'>
                                                         <input type='checkbox' id='chkdatetbd' checked={purchaseInfo.completionDateTBD}
@@ -517,10 +1171,9 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div className='col mb-3'>
+                                                <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
                                                         <input type='number' className='form-control' id='purchaseprice' placeholder='Purchase price'
-                                                            value={purchaseInfo.purchasePrice}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e && e.target && e.target.value) {
                                                                     setPurchaseInfo({ ...purchaseInfo, purchasePrice: parseFloat(e.target.value) });
@@ -535,8 +1188,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                             </div>
 
 
-                                            <div className='row'>
-                                                <div className='col mb-1 mt-4'>
+                                            <div className="row">
+                                                <div className="col mb-1 mt-4">
                                                     <h6>
                                                         <CircleBullet />
                                                         Address of purchased property
@@ -544,8 +1197,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                 </div>
                                             </div>
 
-                                            <div className='row'>
-                                                <div className='col mb-3'>
+                                            <div className="row">
+                                                <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
                                                         <input type='text' className='form-control' id='purchasestreet1' placeholder='Street address line 1'
                                                             value={purchaseInfo.street1}
@@ -560,8 +1213,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                 </div>
                                             </div>
 
-                                            <div className='row'>
-                                                <div className='col mb-3'>
+                                            <div className="row">
+                                                <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
                                                         <input type='text' className='form-control' id='purchasestreet2' placeholder='Street address line 2'
                                                             value={purchaseInfo.street2}
@@ -577,8 +1230,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                             </div>
 
 
-                                            <div className='row'>
-                                                <div className='col mb-3'>
+                                            <div className="row">
+                                                <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
                                                         <input type='text' className='form-control' id='purchasecity' placeholder='City'
                                                             value={purchaseInfo.city}
@@ -591,32 +1244,32 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div className='col mb-3'>
-                                                    <select className='form-select p-3' aria-label='Province or territory'
+                                                <div className="col mb-3">
+                                                    <select className="form-select p-3" aria-label="Province or territory"
                                                         value={purchaseInfo.provinceTerritory}
                                                         onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                                                             setPurchaseInfo({ ...purchaseInfo, provinceTerritory: e.target.value });
                                                         }}
                                                     >
                                                         <option value='0'>Province or territory</option>
-                                                        <option value='Alberta'>Alberta</option>
-                                                        <option value='British Columbia'>British Columbia</option>
-                                                        <option value='Manitoba'>Manitoba</option>
-                                                        <option value='New Brunswick'>New Brunswick</option>
-                                                        <option value='Newfoundland and Labrador'>Newfoundland and Labrador</option>
-                                                        <option value='Northwest Territories'>Northwest Territories</option>
-                                                        <option value='Nova Scotia'>Nova Scotia</option>
-                                                        <option value='Nunavut'>Nunavut</option>
-                                                        <option value='Ontario'>Ontario</option>
-                                                        <option value='Prince Edward Island'>Prince Edward Island</option>
-                                                        <option value='Quebec'>Québec</option>
-                                                        <option value='Saskatchewan'>Saskatchewan</option>
-                                                        <option value='Yukon'>Yukon</option>
+                                                        <option value="Alberta">Alberta</option>
+                                                        <option value="British Columbia">British Columbia</option>
+                                                        <option value="Manitoba">Manitoba</option>
+                                                        <option value="New Brunswick">New Brunswick</option>
+                                                        <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+                                                        <option value="Northwest Territories">Northwest Territories</option>
+                                                        <option value="Nova Scotia">Nova Scotia</option>
+                                                        <option value="Nunavut">Nunavut</option>
+                                                        <option value="Ontario">Ontario</option>
+                                                        <option value="Prince Edward Island">Prince Edward Island</option>
+                                                        <option value="Quebec">Québec</option>
+                                                        <option value="Saskatchewan">Saskatchewan</option>
+                                                        <option value="Yukon">Yukon</option>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div className='row'>
-                                                <div className='col mb-3'>
+                                                <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
                                                         <input type='text' className='form-control' id='purchasepostalcode' placeholder='Postal code'
                                                             value={purchaseInfo.postalCode}
@@ -634,8 +1287,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                             {
                                                 purchaseInfo.clientsInfo.length > 1 &&
                                                 <>
-                                                    <div className='row'>
-                                                        <div className='col mb-1 mt-4'>
+                                                    <div className="row">
+                                                        <div className="col mb-1 mt-4">
                                                             <h6>
                                                                 <CircleBullet />
                                                                 Do you want to own the property as Joint Tenants or as Tenants-In-Common?
@@ -644,11 +1297,11 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                     </div>
 
 
-                                                    <div className='row'>
-                                                        <div className='col mb-3'>
+                                                    <div className="row">
+                                                        <div className="col mb-3">
 
-                                                            <div className='form-check'>
-                                                                <input className='form-check-input' type='radio' name='ownertype' id='jointtenants'
+                                                            <div className="form-check">
+                                                                <input className="form-check-input" type="radio" name="ownertype" id="jointtenants"
                                                                     checked={purchaseInfo.joinType === 'JOINT_TENANTS'}
                                                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                         if (e.target.checked) {
@@ -656,13 +1309,13 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                                         }
                                                                     }}
                                                                 />
-                                                                <label className='form-check-label' htmlFor='jointtenants'>
+                                                                <label className="form-check-label" htmlFor="jointtenants">
                                                                     Joint Tenants
                                                                 </label>
                                                             </div>
 
-                                                            <div className='form-check'>
-                                                                <input className='form-check-input' type='radio' name='ownertype' id='tenantsincommon'
+                                                            <div className="form-check">
+                                                                <input className="form-check-input" type="radio" name="ownertype" id="tenantsincommon"
                                                                     checked={purchaseInfo.joinType === 'TENANTS_IN_COMMON'}
                                                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                         if (e.target.checked) {
@@ -671,14 +1324,14 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                                     }}
 
                                                                 />
-                                                                <label className='form-check-label' htmlFor='tenantsincommon'>
+                                                                <label className="form-check-label" htmlFor="tenantsincommon">
                                                                     Tenants-In-Common
                                                                 </label>
                                                             </div>
 
                                                         </div>
 
-                                                        <div className='col-7 mb-3'>
+                                                        <div className="col-7 mb-3">
 
                                                             <span>
                                                                 For more information between Joint Tenancy and Tenancy In Common, click on the following link to our blog post:&nbsp;&nbsp;
@@ -694,8 +1347,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                             }
 
 
-                                            <div className='row'>
-                                                <div className='col mb-1 mt-4 newused'>
+                                            <div className="row">
+                                                <div className="col mb-1 mt-4 newused">
                                                     <h6>
                                                         <CircleBullet />
                                                         Is this a NEW or USED building? (required)
@@ -703,38 +1356,38 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                 </div>
                                             </div>
 
-                                            <div className='row'>
-                                                <div className='col mb-3'>
-                                                    <div className='form-check'>
-                                                        <input className='form-check-input' type='radio' name='neworused' id='neworused-yes'
+                                            <div className="row">
+                                                <div className="col mb-3">
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name="neworused" id="neworused-yes"
                                                             checked={purchaseInfo.buildingNewUsed === 'NEW'}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e && e.target && e.target.value && e.target.value === 'on') {
                                                                     setPurchaseInfo({ ...purchaseInfo, buildingNewUsed: 'NEW' });
                                                                 }
                                                             }} />
-                                                        <label className='form-check-label' htmlFor='neworused-yes'>
+                                                        <label className="form-check-label" htmlFor="neworused-yes">
                                                             New
                                                         </label>
                                                     </div>
 
-                                                    <div className='form-check'>
-                                                        <input className='form-check-input' type='radio' name='neworused' id='neworused-no'
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name="neworused" id="neworused-no"
                                                             checked={purchaseInfo.buildingNewUsed === 'USED'}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e && e.target && e.target.value && e.target.value === 'on') {
                                                                     setPurchaseInfo({ ...purchaseInfo, buildingNewUsed: 'USED' });
                                                                 }
                                                             }} />
-                                                        <label className='form-check-label' htmlFor='neworused-no'>
+                                                        <label className="form-check-label" htmlFor="neworused-no">
                                                             Used
                                                         </label>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div className='row'>
-                                                <div className='col mb-1 mt-4'>
+                                            <div className="row">
+                                                <div className="col mb-1 mt-4">
                                                     <h6>
                                                         <CircleBullet />
                                                         Your realtor information (if applicable)
@@ -742,8 +1395,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                 </div>
                                             </div>
 
-                                            <div className='row'>
-                                                <div className='col mb-3'>
+                                            <div className="row">
+                                                <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
                                                         <input type='text' className='form-control' id='realtorname' placeholder='Realtor name'
                                                             value={purchaseInfo.realtorName}
@@ -756,11 +1409,11 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div className='col mb-3'>
+                                                <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
                                                         <input type='tel' className='form-control' id='realtorphone' placeholder='Phone number'
                                                             value={purchaseInfo.realtorPhone}
-                                                            pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}'
+                                                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 setPurchaseInfo({ ...purchaseInfo, realtorPhone: e.target.value });
                                                             }}
@@ -773,8 +1426,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                             </div>
 
 
-                                            <div className='row'>
-                                                <div className='col mb-1 mt-4'>
+                                            <div className="row">
+                                                <div className="col mb-1 mt-4">
                                                     <h6>
                                                         <CircleBullet />
                                                         If you are getting a mortgage, Bank or Mortgage Lender information (if applicable)
@@ -782,8 +1435,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                 </div>
                                             </div>
 
-                                            <div className='row'>
-                                                <div className='col mb-3'>
+                                            <div className="row">
+                                                <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
                                                         <input type='text' className='form-control' id='lendername' placeholder='Lender name'
                                                             value={purchaseInfo.lenderName}
@@ -798,9 +1451,9 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                 </div>
                                             </div>
 
-                                            <div className='row'>
+                                            <div className="row">
 
-                                                <div className='col mb-3'>
+                                                <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
                                                         <input type='text' className='form-control' id='brokerbankername' placeholder='Broker/Banker name'
                                                             value={purchaseInfo.brokerBankerName}
@@ -814,10 +1467,10 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                     </div>
                                                 </div>
 
-                                                <div className='col mb-3'>
+                                                <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
                                                         <input type='tel' className='form-control' id='lenderphone' placeholder='Phone number'
-                                                            pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}' value={purchaseInfo.brokerBankerPhone}
+                                                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" value={purchaseInfo.brokerBankerPhone}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 setPurchaseInfo({ ...purchaseInfo, brokerBankerPhone: e.target.value });
                                                             }}
@@ -830,8 +1483,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                             </div>
 
 
-                                            <div className='row'>
-                                                <div className='col mb-1 mt-4'>
+                                            <div className="row">
+                                                <div className="col mb-1 mt-4">
                                                     <h6>
                                                         <CircleBullet />
                                                         If this is a strata, please enter the following information (if applicable)
@@ -839,8 +1492,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                 </div>
                                             </div>
 
-                                            <div className='row'>
-                                                <div className='col mb-3'>
+                                            <div className="row">
+                                                <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
                                                         <input type='text' className='form-control' id='strataname' placeholder='Strata name'
                                                             value={purchaseInfo.strataName}
@@ -855,8 +1508,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                 </div>
                                             </div>
 
-                                            <div className='row'>
-                                                <div className='col mb-1 mt-4'>
+                                            <div className="row">
+                                                <div className="col mb-1 mt-4">
                                                     <h6>
                                                         <CircleBullet />
                                                         If applicable, the parking stall number(s) and storage locker number(s):
@@ -865,9 +1518,9 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                             </div>
 
 
-                                            <div className='row'>
+                                            <div className="row">
 
-                                                <div className='col mb-3'>
+                                                <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
                                                         <input type='text' className='form-control' id='parkingstalls' placeholder='Parking stalls'
                                                             value={purchaseInfo.parkingStallNumbers}
@@ -881,7 +1534,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                     </div>
                                                 </div>
 
-                                                <div className='col mb-3'>
+                                                <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
                                                         <input type='text' className='form-control' id='storagelockers' placeholder='Storage lockers'
                                                             value={purchaseInfo.storageLockerNumbers}
@@ -897,8 +1550,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                             </div>
 
 
-                                            <div className='row'>
-                                                <div className='col mb-1 mt-4'>
+                                            <div className="row">
+                                                <div className="col mb-1 mt-4">
                                                     <h6>
                                                         <CircleBullet />
                                                         Your house insurance information (if applicable)
@@ -906,8 +1559,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                 </div>
                                             </div>
 
-                                            <div className='row'>
-                                                <div className='col mb-3'>
+                                            <div className="row">
+                                                <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
                                                         <input type='text' className='form-control' id='insurancename' placeholder='Agent name'
                                                             value={purchaseInfo.insuranceAgentName}
@@ -920,11 +1573,11 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div className='col mb-3'>
+                                                <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
                                                         <input type='tel' className='form-control' id='insurancenumber' placeholder='Agent number'
                                                             value={purchaseInfo.insuranceAgentPhone}
-                                                            pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}'
+                                                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 setPurchaseInfo({ ...purchaseInfo, insuranceAgentPhone: e.target.value });
                                                             }}
@@ -937,8 +1590,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                             </div>
 
 
-                                            <div className='row'>
-                                                <div className='col mb-1 mt-4'>
+                                            <div className="row">
+                                                <div className="col mb-1 mt-4">
                                                     <h6>
                                                         <CircleBullet />
                                                         Will any portion of the property be rented out?
@@ -946,30 +1599,30 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                 </div>
                                             </div>
 
-                                            <div className='row'>
-                                                <div className='col mb-3'>
-                                                    <div className='form-check'>
-                                                        <input className='form-check-input' type='radio' name='rented' id='rented-yes'
+                                            <div className="row">
+                                                <div className="col mb-3">
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name="rented" id="rented-yes"
                                                             checked={purchaseInfo.portionPropertyRentedOut === 'YES'}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e && e.target && e.target.value && e.target.value === 'on') {
                                                                     setPurchaseInfo({ ...purchaseInfo, portionPropertyRentedOut: 'YES' });
                                                                 }
                                                             }} />
-                                                        <label className='form-check-label' htmlFor='rented-yes'>
+                                                        <label className="form-check-label" htmlFor="rented-yes">
                                                             Yes
                                                         </label>
                                                     </div>
 
-                                                    <div className='form-check'>
-                                                        <input className='form-check-input' type='radio' name='rented' id='rented-no'
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name="rented" id="rented-no"
                                                             checked={purchaseInfo.portionPropertyRentedOut === 'NO'}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e && e.target && e.target.value && e.target.value === 'on') {
                                                                     setPurchaseInfo({ ...purchaseInfo, portionPropertyRentedOut: 'NO' });
                                                                 }
                                                             }} />
-                                                        <label className='form-check-label' htmlFor='rented-no'>
+                                                        <label className="form-check-label" htmlFor="rented-no">
                                                             No
                                                         </label>
                                                     </div>
@@ -977,8 +1630,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                             </div>
 
 
-                                            <div className='row'>
-                                                <div className='col mb-1 mt-4'>
+                                            <div className="row">
+                                                <div className="col mb-1 mt-4">
                                                     <h6>
                                                         <CircleBullet />
                                                         If you will need to bring in funds to complete this transaction, please advise where
@@ -988,90 +1641,90 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                             </div>
 
 
-                                            <div className='row'>
-                                                <div className='col mb-1'>
-                                                    <div className='form-check'>
-                                                        <input className='form-check-input' type='radio' name={`fundsource`} id={`fundsource-notapplicable`}
+                                            <div className="row">
+                                                <div className="col mb-1">
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-notapplicable`}
                                                             checked={purchaseInfo.fundsSource === ''}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e.target.checked) {
                                                                     setPurchaseInfo({ ...purchaseInfo, fundsSource: '' });
                                                                 }
                                                             }} />
-                                                        <label className='form-check-label' htmlFor={`fundsource-notapplicable`}>
+                                                        <label className="form-check-label" htmlFor={`fundsource-notapplicable`}>
                                                             Not applicable
                                                         </label>
                                                     </div>
 
-                                                    <div className='form-check'>
-                                                        <input className='form-check-input' type='radio' name={`fundsource`} id={`fundsource-chequing`}
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-chequing`}
                                                             checked={purchaseInfo.fundsSource === 'CHEQUING_ACCOUNT'}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e.target.checked) {
                                                                     setPurchaseInfo({ ...purchaseInfo, fundsSource: 'CHEQUING_ACCOUNT' });
                                                                 }
                                                             }} />
-                                                        <label className='form-check-label' htmlFor={`fundsource-chequing`}>
+                                                        <label className="form-check-label" htmlFor={`fundsource-chequing`}>
                                                             Chequing Account
                                                         </label>
                                                     </div>
 
-                                                    <div className='form-check'>
-                                                        <input className='form-check-input' type='radio' name={`fundsource`} id={`fundsource-saving`}
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-saving`}
                                                             checked={purchaseInfo.fundsSource === 'SAVINGS_ACCOUNT'}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e.target.checked) {
                                                                     setPurchaseInfo({ ...purchaseInfo, fundsSource: 'SAVINGS_ACCOUNT' });
                                                                 }
                                                             }} />
-                                                        <label className='form-check-label' htmlFor={`fundsource-saving`}>
+                                                        <label className="form-check-label" htmlFor={`fundsource-saving`}>
                                                             Savings Account
                                                         </label>
                                                     </div>
                                                 </div>
 
-                                                <div className='col mb-1'>
-                                                    <div className='form-check'>
-                                                        <input className='form-check-input' type='radio' name={`fundsource`} id={`fundsource-heloc`}
+                                                <div className="col mb-1">
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-heloc`}
                                                             checked={purchaseInfo.fundsSource === 'HELOC'}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e.target.checked) {
                                                                     setPurchaseInfo({ ...purchaseInfo, fundsSource: 'HELOC' });
                                                                 }
                                                             }} />
-                                                        <label className='form-check-label' htmlFor={`fundsource-heloc`}>
+                                                        <label className="form-check-label" htmlFor={`fundsource-heloc`}>
                                                             Home Equity Line of Credit
                                                         </label>
                                                     </div>
 
 
-                                                    <div className='form-check'>
-                                                        <input className='form-check-input' type='radio' name={`fundsource`} id={`fundsource-another`}
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-another`}
                                                             checked={purchaseInfo.fundsSource === 'ANOTHER_INDIVIDUAL'}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e.target.checked) {
                                                                     setPurchaseInfo({ ...purchaseInfo, fundsSource: 'ANOTHER_INDIVIDUAL' });
                                                                 }
                                                             }} />
-                                                        <label className='form-check-label' htmlFor={`fundsource-another`}>
+                                                        <label className="form-check-label" htmlFor={`fundsource-another`}>
                                                             Another individual
                                                         </label>
                                                     </div>
-                                                    <div className='form-check'>
-                                                        <input className='form-check-input' type='radio' name={`fundsource`} id={`fundsource-other`}
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-other`}
                                                             checked={purchaseInfo.fundsSource === 'OTHER'}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e.target.checked) {
                                                                     setPurchaseInfo({ ...purchaseInfo, fundsSource: 'OTHER' });
                                                                 }
                                                             }} />
-                                                        <label className='form-check-label' htmlFor={`fundsource-other`}>
+                                                        <label className="form-check-label" htmlFor={`fundsource-other`}>
                                                             Other
                                                         </label>
                                                     </div>
                                                 </div>
 
-                                                <div className='col mb-1 mt-4'>
+                                                <div className="col mb-1 mt-4">
 
                                                 </div>
                                             </div>
@@ -1079,8 +1732,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                             {
                                                 (purchaseInfo.fundsSource && (purchaseInfo.fundsSource === 'CHEQUING_ACCOUNT' || purchaseInfo.fundsSource === 'SAVINGS_ACCOUNT')) &&
                                                 <>
-                                                    <div className='row'>
-                                                        <div className='col mb-1 mt-4'>
+                                                    <div className="row">
+                                                        <div className="col mb-1 mt-4">
                                                             <h6>
                                                                 <CircleBullet />
                                                                 If coming from your savings or chequing account, where was the funds come from
@@ -1089,8 +1742,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                         </div>
                                                     </div>
 
-                                                    <div className='row'>
-                                                        <div className='col mb-3'>
+                                                    <div className="row">
+                                                        <div className="col mb-3">
                                                             <div className='form-floating mb-0'>
                                                                 <input type='text' className='form-control' id='fundschequingsource' placeholder='Funds source'
                                                                     value={purchaseInfo.fundsChequingSavingsSource}
@@ -1111,8 +1764,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                             {
                                                 purchaseInfo.fundsSource === 'ANOTHER_INDIVIDUAL' &&
                                                 <>
-                                                    <div className='row'>
-                                                        <div className='col mb-1 mt-4'>
+                                                    <div className="row">
+                                                        <div className="col mb-1 mt-4">
                                                             <h6>
                                                                 <CircleBullet />
                                                                 If the funds came from someone else who is not a purchaser, please provide the
@@ -1121,8 +1774,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                         </div>
                                                     </div>
 
-                                                    <div className='row'>
-                                                        <div className='col mb-3'>
+                                                    <div className="row">
+                                                        <div className="col mb-3">
                                                             <div className='form-floating mb-0'>
                                                                 <input type='text' className='form-control' id='othername' placeholder='Name'
                                                                     value={purchaseInfo.nonPurchaserName}
@@ -1136,11 +1789,11 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                             </div>
                                                         </div>
 
-                                                        <div className='col mb-3'>
+                                                        <div className="col mb-3">
                                                             <div className='form-floating mb-0'>
                                                                 <input type='tel' className='form-control' id='otherphone' placeholder='Phone number'
                                                                     value={purchaseInfo.nonPurchaserPhone}
-                                                                    pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}'
+                                                                    pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                                                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                         setPurchaseInfo({ ...purchaseInfo, nonPurchaserPhone: e.target.value });
                                                                     }}
@@ -1153,8 +1806,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
 
                                                     </div>
 
-                                                    <div className='row'>
-                                                        <div className='col mb-3'>
+                                                    <div className="row">
+                                                        <div className="col mb-3">
                                                             <div className='form-floating mb-0'>
                                                                 <input type='text' className='form-control' id='otheroccupation' placeholder='Occupation'
                                                                     value={purchaseInfo.nonPurchaserOccupation}
@@ -1168,7 +1821,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                             </div>
                                                         </div>
 
-                                                        <div className='col mb-3'>
+                                                        <div className="col mb-3">
                                                             <div className='form-floating mb-0'>
                                                                 <input type='text' className='form-control' id='otheroccupation' placeholder='Relationship'
                                                                     value={purchaseInfo.nonPurchaserRelationship}
@@ -1184,8 +1837,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
 
                                                     </div>
 
-                                                    <div className='row'>
-                                                        <div className='col mb-3'>
+                                                    <div className="row">
+                                                        <div className="col mb-3">
                                                             <div className='form-floating mb-0'>
                                                                 <input type='text' className='form-control' id='otherstreet1' placeholder='Street address line 1'
                                                                     value={purchaseInfo.nonPurchaserStreet1}
@@ -1200,8 +1853,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                         </div>
                                                     </div>
 
-                                                    <div className='row'>
-                                                        <div className='col mb-3'>
+                                                    <div className="row">
+                                                        <div className="col mb-3">
                                                             <div className='form-floating mb-0'>
                                                                 <input type='text' className='form-control' id='otherstreet2' placeholder='Street address line 2'
                                                                     value={purchaseInfo.nonPurchaserStreet2}
@@ -1216,8 +1869,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                         </div>
                                                     </div>
 
-                                                    <div className='row'>
-                                                        <div className='col mb-3'>
+                                                    <div className="row">
+                                                        <div className="col mb-3">
                                                             <div className='form-floating mb-0'>
                                                                 <input type='text' className='form-control' id='othercity' placeholder='City'
                                                                     value={purchaseInfo.nonPurchaserCity}
@@ -1231,32 +1884,32 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                             </div>
                                                         </div>
 
-                                                        <div className='col mb-3'>
-                                                            <select className='form-select p-3' aria-label='Province or territory'
+                                                        <div className="col mb-3">
+                                                            <select className="form-select p-3" aria-label="Province or territory"
                                                                 value={purchaseInfo.nonPurchaserProvinceTerritory}
                                                                 onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                                                                     setPurchaseInfo({ ...purchaseInfo, nonPurchaserProvinceTerritory: e.target.value });
                                                                 }}
                                                             >
                                                                 <option value='0'>Province or territory</option>
-                                                                <option value='Alberta'>Alberta</option>
-                                                                <option value='British Columbia'>British Columbia</option>
-                                                                <option value='Manitoba'>Manitoba</option>
-                                                                <option value='New Brunswick'>New Brunswick</option>
-                                                                <option value='Newfoundland and Labrador'>Newfoundland and Labrador</option>
-                                                                <option value='Northwest Territories'>Northwest Territories</option>
-                                                                <option value='Nova Scotia'>Nova Scotia</option>
-                                                                <option value='Nunavut'>Nunavut</option>
-                                                                <option value='Ontario'>Ontario</option>
-                                                                <option value='Prince Edward Island'>Prince Edward Island</option>
-                                                                <option value='Quebec'>Québec</option>
-                                                                <option value='Saskatchewan'>Saskatchewan</option>
-                                                                <option value='Yukon'>Yukon</option>
+                                                                <option value="Alberta">Alberta</option>
+                                                                <option value="British Columbia">British Columbia</option>
+                                                                <option value="Manitoba">Manitoba</option>
+                                                                <option value="New Brunswick">New Brunswick</option>
+                                                                <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+                                                                <option value="Northwest Territories">Northwest Territories</option>
+                                                                <option value="Nova Scotia">Nova Scotia</option>
+                                                                <option value="Nunavut">Nunavut</option>
+                                                                <option value="Ontario">Ontario</option>
+                                                                <option value="Prince Edward Island">Prince Edward Island</option>
+                                                                <option value="Quebec">Québec</option>
+                                                                <option value="Saskatchewan">Saskatchewan</option>
+                                                                <option value="Yukon">Yukon</option>
                                                             </select>
                                                         </div>
                                                     </div>
-                                                    <div className='row'>
-                                                        <div className='col mb-3'>
+                                                    <div className="row">
+                                                        <div className="col mb-3">
                                                             <div className='form-floating mb-0'>
                                                                 <input type='text' className='form-control' id='otherpostalcode' placeholder='Postal code'
                                                                     value={purchaseInfo.postalCode}
@@ -1270,7 +1923,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                             </div>
                                                         </div>
 
-                                                        <div className='col mb-3'>
+                                                        <div className="col mb-3">
 
                                                         </div>
 
@@ -1278,8 +1931,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                 </>
                                             }
 
-                                            <div className='row align-items-center mt-4'>
-                                                <div className='col mb-3'>
+                                            <div className="row align-items-center mt-4">
+                                                <div className="col mb-3">
                                                     <div style={{
                                                         display: 'grid',
                                                         gridTemplateColumns: 'min-content 1fr'
@@ -1301,8 +1954,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
 
                                                 </div>
 
-                                                <div className='col mb-3'>
-                                                    <select className='form-select p-3' aria-label='Province or territory'
+                                                <div className="col mb-3">
+                                                    <select className="form-select p-3" aria-label="Province or territory"
                                                         value={purchaseInfo.guarantorsInfo.length}
                                                         onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                                                             if (e && e.target && e.target.value) {
@@ -1310,10 +1963,10 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                             }
                                                         }}>
                                                         <option value='0'>No guarantors</option>
-                                                        <option value='1'>1</option>
-                                                        <option value='2'>2</option>
-                                                        <option value='3'>3</option>
-                                                        <option value='4'>4</option>
+                                                        <option value="1">1</option>
+                                                        <option value="2">2</option>
+                                                        <option value="3">3</option>
+                                                        <option value="4">4</option>
                                                     </select>
 
                                                 </div>
@@ -1322,8 +1975,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                             {
                                                 numberOfGuarantors > 0 &&
                                                 <>
-                                                    <div className='row'>
-                                                        <div className='col mb-1 mt-4'>
+                                                    <div className="row">
+                                                        <div className="col mb-1 mt-4">
                                                             <h6>
                                                                 IMPORTANT: All guarantors will be required to sign particular mortgage documents
                                                                 and attend appointment(s)
@@ -1358,8 +2011,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                 </>
                                             }
 
-                                            <div className='row'>
-                                                <div className='col mb-1 mt-4'>
+                                            <div className="row">
+                                                <div className="col mb-1 mt-4">
                                                     <h6>
                                                         <CircleBullet />
                                                         Do you have an appointment location preference?
@@ -1367,52 +2020,52 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                 </div>
                                             </div>
 
-                                            <div className='row'>
-                                                <div className='col mb-3'>
+                                            <div className="row">
+                                                <div className="col mb-3">
 
-                                                    <div className='form-check'>
-                                                        <input className='form-check-input' type='radio' name='apptlocation' id='apptlocation-coquitlam'
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name="apptlocation" id="apptlocation-coquitlam"
                                                             checked={purchaseInfo.apptLocationPreference === 'COQUITLAM'}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e && e.target && e.target.value && e.target.value === 'on') {
                                                                     setPurchaseInfo({ ...purchaseInfo, apptLocationPreference: 'COQUITLAM' });
                                                                 }
                                                             }} />
-                                                        <label className='form-check-label' htmlFor='apptlocation-coquitlam'>
+                                                        <label className="form-check-label" htmlFor="apptlocation-coquitlam">
                                                             Coquitlam
                                                         </label>
                                                     </div>
 
-                                                    <div className='form-check'>
-                                                        <input className='form-check-input' type='radio' name='apptlocation' id='apptlocation-vancouver'
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name="apptlocation" id="apptlocation-vancouver"
                                                             checked={purchaseInfo.apptLocationPreference === 'VANCOUVER'}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e && e.target && e.target.value && e.target.value === 'on') {
                                                                     setPurchaseInfo({ ...purchaseInfo, apptLocationPreference: 'VANCOUVER' });
                                                                 }
                                                             }} />
-                                                        <label className='form-check-label' htmlFor='apptlocation-vancouver'>
+                                                        <label className="form-check-label" htmlFor="apptlocation-vancouver">
                                                             Vancouver
                                                         </label>
                                                     </div>
 
-                                                    <div className='form-check'>
-                                                        <input className='form-check-input' type='radio' name='apptlocation' id='apptlocation-langley'
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name="apptlocation" id="apptlocation-langley"
                                                             checked={purchaseInfo.apptLocationPreference === 'LANGLEY'}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e && e.target && e.target.value && e.target.value === 'on') {
                                                                     setPurchaseInfo({ ...purchaseInfo, apptLocationPreference: 'LANGLEY' });
                                                                 }
                                                             }} />
-                                                        <label className='form-check-label' htmlFor='apptlocation-langley'>
+                                                        <label className="form-check-label" htmlFor="apptlocation-langley">
                                                             Langley
                                                         </label>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div className='row'>
-                                                <div className='col mb-1 mt-4'>
+                                            <div className="row">
+                                                <div className="col mb-1 mt-4">
                                                     <h6>
                                                         <CircleBullet />
                                                         Do you have any additional details, questions, or concerns?
@@ -1420,8 +2073,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                 </div>
                                             </div>
 
-                                            <div className='row'>
-                                                <div className='col mb-3'>
+                                            <div className="row">
+                                                <div className="col mb-3">
 
                                                     <textarea
                                                         className='dbm-textarea'
@@ -1453,19 +2106,20 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                     {
                                         currentPage === 'CONFIRM_SUBMIT' &&
                                         <SubmitConfirm
-                                            text='Submit your purchase information to Drysdale Bacon McStravick?'
+                                            text='Submit your sale and purchase information to Drysdale Bacon McStravick?'
                                         />
                                     }
                                 </div>
                             </div>
                         }
                     </div>
-                    <div className='modal-footer'>
+                    <div className="modal-footer">
+
                         {
-                            (currentPage === 'GET_PURCHASERS' && (purchaseInfo.forCompany || numberOfClients !== 0)) &&
+                            (currentPage === 'GET_SELLERS' && (saleInfo.forCompany || numberOfSellers !== 0)) &&
                             <>
-                                <div className='row'>
-                                    <div className='col mb-3 mt-4 text-danger fw-semibold error-label'>
+                                <div className="row">
+                                    <div className="col mb-3 mt-4 text-danger fw-semibold error-label">
                                         {
                                             missingInfo &&
                                             <h6>
@@ -1473,7 +2127,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                             </h6>
                                         }
                                     </div>
-                                    <div className='col mb-3 mt-4' style={{
+                                    <div className="col mb-3 mt-4" style={{
                                         textAlign: 'right',
                                     }}>
                                         <input type='submit' value='Next' className='btn btn-primary form-button'
@@ -1487,17 +2141,76 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                         }
 
                         {
-                            currentPage === 'PROPERTY_INFO' &&
+                            currentPage === 'GET_SALE_DETAILS' &&
                             <>
-                                <div className='row'>
-                                    <div className='col mb-3 mt-4 text-danger fw-semibold error-label'>
+                                <div className="row">
+                                    <div className="col mb-3 mt-4 text-danger fw-semibold error-label">
                                         <h6 style={{
                                             visibility: missingInfo ? 'visible' : 'hidden',
                                         }}>
                                             Please fill in all required information
                                         </h6>
                                     </div>
-                                    <div className='col mb-3 mt-4' style={{
+                                    <div className="col mb-3 mt-4" style={{
+                                        textAlign: 'right',
+                                        whiteSpace: 'nowrap',
+                                    }}>
+                                        <input type='button' value='Back to Sellers' className='btn btn-secondary form-button me-2'
+                                            onClick={() => setCurrentPage('GET_SELLERS')} />
+
+                                        <input type='button' value='Next' className='btn btn-primary form-button'
+                                            onClick={() => {
+                                                checkPage();
+                                            }} />
+                                    </div>
+                                </div>
+                            </>
+                        }
+
+                        {
+                            (currentPage === 'GET_PURCHASERS') &&
+                            <>
+                                <div className="row">
+                                    <div className="col mb-3 mt-4 text-danger fw-semibold error-label">
+                                        {
+                                            missingInfo &&
+                                            <h6>
+                                                Please fill in all required information
+                                            </h6>
+                                        }
+                                    </div>
+                                    <div className="col mb-3 mt-4" style={{
+                                        textAlign: 'right',
+                                        whiteSpace: 'nowrap',
+                                    }}>
+                                        <input type='button' value='Back to Sale Details' className='btn btn-secondary form-button me-2'
+                                            onClick={() => setCurrentPage('GET_SALE_DETAILS')} />
+
+                                        <input type='button' value='Next' className='btn btn-primary form-button'
+                                            style={{
+                                                visibility: purchaseInfo.forCompany || numberOfClients !== 0 ? 'visible' : 'hidden',
+                                            }}
+                                            onClick={() => {
+                                                checkPage();
+                                            }} />
+                                    </div>
+                                </div>
+
+                            </>
+                        }
+
+                        {
+                            currentPage === 'PROPERTY_INFO' &&
+                            <>
+                                <div className="row">
+                                    <div className="col mb-3 mt-4 text-danger fw-semibold error-label">
+                                        <h6 style={{
+                                            visibility: missingInfo ? 'visible' : 'hidden',
+                                        }}>
+                                            Please fill in all required information
+                                        </h6>
+                                    </div>
+                                    <div className="col mb-3 mt-4" style={{
                                         textAlign: 'right',
                                         whiteSpace: 'nowrap',
                                     }}>
@@ -1516,8 +2229,8 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                         {
                             currentPage === 'CONFIRM_SUBMIT' &&
                             <>
-                                <div className='row'>
-                                    <div className='col mb-3 mt-4' style={{
+                                <div className="row">
+                                    <div className="col mb-3 mt-4" style={{
                                         textAlign: 'right',
                                         whiteSpace: 'nowrap',
                                     }}>
@@ -1528,7 +2241,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                             onClick={() => {
                                                 setCurrentPage('SUBMITTING');
                                                 setTimeout(() => {
-                                                    submitPurchaseForm(purchaseInfo);
+                                                    submitSaleAndPurchaseForm(purchaseInfo);
                                                 }, 250);
                                             }} />
                                     </div>
@@ -1539,14 +2252,14 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                         {
                             currentPage === 'SUBMIT_RESULT' &&
                             <>
-                                <div className='row'>
-                                    <div className='col mb-3 mt-4' style={{
+                                <div className="row">
+                                    <div className="col mb-3 mt-4" style={{
                                         textAlign: 'right',
                                         whiteSpace: 'nowrap',
                                     }}>
                                         <input
                                             type='button' value='Finish' className='btn btn-primary form-button'
-                                            data-bs-dismiss='modal' aria-label='Close'
+                                            data-bs-dismiss="modal" aria-label="Close"
                                         />
                                     </div>
                                 </div>
@@ -1560,19 +2273,94 @@ const PurchaseForm = (props: FormProps): ReactElement => {
 
 };
 
-const getOutput = (purchaseInfo: PurchaseInfo): string => {
+const getOutput = (purchaseInfo: PurchaseInfo, saleInfo: SaleInfo): string => {
 
     const output: string[] = [];
 
-    output.push('<html><b>PURCHASE</b><br />');
-    output.push('<table>');
+    output.push('<html><b>SALE AND PURCHASE</b><br /><br />');
 
+    output.push('<b>SELLERS</b><br />');
+
+    output.push('<table>');
+    if (saleInfo.forCompany) {
+        output.push(getEntry('Company', saleInfo.companyName));
+        output.push(getEntry('Incorporation Number', saleInfo.incorporationNumber));
+
+        output.push(getEntry('Signatory Full Legal Name', saleInfo.clientsInfo[0].fullLegalName));
+
+        output.push(getEntry('Phone Number', saleInfo.clientsInfo[0].phoneNumber));
+        output.push(getEntry('Email', saleInfo.clientsInfo[0].emailAddress));
+        output.push(getEntry('Street 1', saleInfo.clientsInfo[0].mailingStreet1));
+        output.push(getEntry('Street 2', saleInfo.clientsInfo[0].mailingStreet2));
+        output.push(getEntry('Province or Territory', saleInfo.clientsInfo[0].mailingProvinceTerritory));
+        output.push(getEntry('Postal Code', saleInfo.clientsInfo[0].mailingPostalCode, true));
+
+        output.push(getEntry('Resident of Canada at completion', saleInfo.clientsInfo[0].residentOfCanada, true));
+    }
+    else {
+        for (let i = 0; i < saleInfo.clientsInfo.length; i++) {
+
+            const client = saleInfo.clientsInfo[i];
+
+            output.push(getHeader(`SELLER ${(i + 1).toString()}`));
+            output.push(getEntry('Full Legal Name', client.fullLegalName));
+            output.push(getEntry('Phone Number', client.phoneNumber));
+            output.push(getEntry('Email', client.emailAddress));
+            output.push(getEntry('Date of Birth', client.dateOfBirth.toDateString() === (new Date()).toDateString()
+                ? ''
+                : client.dateOfBirth.toISOString().split('T')[0]));
+
+            output.push(getHeader('Mailing or Forwarding Address'))
+
+            output.push(getEntry('Street 1', client.mailingStreet1));
+            output.push(getEntry('Street 2', client.mailingStreet2));
+            output.push(getEntry('City', client.mailingCity));
+            output.push(getEntry('Province or Territory', client.mailingProvinceTerritory));
+            output.push(getEntry('Postal Code', client.mailingPostalCode, true));
+
+            output.push(getEntry('Resident of Canada at completion', client.residentOfCanada, true));
+        }
+    }
+
+    output.push(getHeader('SALE PROPERTY INFORMATION'));
+
+    output.push(getEntry('Closing Date', saleInfo.closingDateTBD ? 'TBD' : saleInfo.closingDate ? saleInfo.closingDate.toISOString().split('T')[0] : ''));
+
+    output.push(getEntry('Sale Price (CAD)', saleInfo.sellingPrice.toString()));
+
+    output.push(getEntry('Street 1', saleInfo.street1));
+    output.push(getEntry('Street 2', saleInfo.street2));
+    output.push(getEntry('City', saleInfo.city));
+    output.push(getEntry('Province or Territory', saleInfo.provinceTerritory));
+    output.push(getEntry('Postal Code', saleInfo.postalCode, true));
+
+    output.push(getEntry('Realtor Name', saleInfo.realtorName));
+    output.push(getEntry('Realtor Phone', saleInfo.realtorPhone, true));
+
+    output.push(getEntry('Mortgage or LOC on title', saleInfo.mortgageOrLoCOnTitle));
+    output.push(getEntry('Reference Number', saleInfo.mortgageOrLoCOnTitleReferenceNumber));
+    output.push(getEntry('Bank and Branch', saleInfo.mortgageOrLoCOnTitleBankBranch, true));
+
+    output.push(getEntry('Separation or Divorce Involved', saleInfo.involvesSeparationDivorce, true));
+
+    output.push('</table><table>');
+
+    output.push(getEntry(`Property Taxes Paid and or Home Owners Grant Claimed for ${(new Date().getFullYear())}`, saleInfo.paidPropertyTaxesOrClaimedHownOwnersGrant, true));
+
+    output.push('</table><table>');
+
+    output.push(getEntry('Empty Homes Declaration filed (Vancouver property)', saleInfo.emptyHomesDeclaration, true));
+
+    output.push('</table>');
+
+    output.push('<br /><b>PURCHASERS</b><br />');
+
+    output.push('<table>');
     if (purchaseInfo.forCompany) {
         output.push(getEntry('Company', purchaseInfo.companyName));
         output.push(getEntry('Incorporation Number', purchaseInfo.incorporationNumber));
 
         output.push(getEntry('Signatory Full Legal Name', purchaseInfo.clientsInfo[0].fullLegalName));
-
 
         output.push(getEntry('Phone Number', purchaseInfo.clientsInfo[0].phoneNumber));
         output.push(getEntry('Email', purchaseInfo.clientsInfo[0].emailAddress));
@@ -1641,10 +2429,10 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
 
     // property details
 
-    output.push(getHeader('PROPERTY DETAILS'));
+    output.push(getHeader('PURCHASE PROPERTY DETAILS'));
 
-    //output.push(getEntry('Completion Date', purchaseInfo.completionDate.toISOString().split('T')[0]));
     output.push(getEntry('Completion Date', purchaseInfo.completionDateTBD ? 'TBD' : purchaseInfo.completionDate ? purchaseInfo.completionDate.toISOString().split('T')[0] : ''));
+
     output.push(getEntry('Purchase Price (CAD)', purchaseInfo.purchasePrice.toString()));
     output.push(getEntry('Street 1', purchaseInfo.street1));
     output.push(getEntry('Street 2', purchaseInfo.street2));
@@ -1754,4 +2542,4 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
 }
 
 
-export default PurchaseForm;
+export default SaleAndPurchaseForm;

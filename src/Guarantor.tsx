@@ -1,5 +1,5 @@
 import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
-import CircleBullet from './CircleBullet';
+import CircleBullet from './controls/CircleBullet';
 import { GuarantorInfo } from './ClassesInterfaces';
 
 interface GuarantorProps {

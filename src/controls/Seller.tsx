@@ -1,6 +1,6 @@
 import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
 import CircleBullet from './CircleBullet';
-import { ClientInfo } from './ClassesInterfaces';
+import { ClientInfo } from '../ClassesInterfaces';
 import DateInput from './DateInput';
 
 interface SellerProps {
