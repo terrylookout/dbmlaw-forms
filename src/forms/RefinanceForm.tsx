@@ -18,14 +18,14 @@ const RefinanceForm = (props: FormProps): ReactElement => {
     const [numberOfSellers, setNumberOfSellers] = useState(0);
 
     const [currentPage, setCurrentPage] = useState<
-        'GET_SELLERS' | 'GET_SALE_DETAILS' |
+        'GET_BORROWERS' | 'GET_SALE_DETAILS' |
         'CONFIRM_SUBMIT' | 'SUBMITTING' | 'SUBMIT_RESULT'
-    >('GET_SELLERS');
+    >('GET_BORROWERS');
 
     const checkPage = () => {
         //
 
-        if (currentPage === 'GET_SELLERS') {
+        if (currentPage === 'GET_BORROWERS') {
             setMissingInfo(false);
             setCurrentPage('GET_SALE_DETAILS')
             return;
@@ -297,14 +297,14 @@ const RefinanceForm = (props: FormProps): ReactElement => {
 
         <div className="modal fade" id="formModal" tabIndex={-1} aria-labelledby="formModalLabel" aria-hidden="true"
             data-bs-backdrop="static" data-bs-keyboard="false">
-            <div className={`modal-dialog modal-lg ${(currentPage === 'GET_SELLERS' && saleInfo.clientsInfo.length !== 0)
+            <div className={`modal-dialog modal-lg ${(currentPage === 'GET_BORROWERS' && saleInfo.clientsInfo.length !== 0)
                 ? 'modal-dialog-centered' : 'modal-near-top'} modal-dialog-scrollable`}>
                 <div className="modal-content">
                     <div className="modal-header">
                         <h1 className="modal-title fs-5" id="exampleModalLabel">
                             {
-                                currentPage === 'GET_SELLERS' &&
-                                <span>Seller Information</span>
+                                currentPage === 'GET_BORROWERS' &&
+                                <span>Borrower Information</span>
                             }
                             {
                                 currentPage === 'GET_SALE_DETAILS' &&
@@ -335,12 +335,12 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                 <div className="container">
 
                                     {
-                                        currentPage === 'GET_SELLERS' &&
+                                        currentPage === 'GET_BORROWERS' &&
                                         <>
                                             <div className="row">
                                                 <div className="col mb-3">
                                                     <h6>
-                                                        Seller Information
+                                                        Borrowers
                                                     </h6>
                                                 </div>
                                             </div>
@@ -348,11 +348,11 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                             <div className="row align-items-center">
                                                 <div className="col mb-3">
                                                     <h6>
-                                                        How many people on title for the property being sold?
+                                                        How many people on title?
                                                     </h6>
                                                 </div>
 
-                                                <div className="col mb-3">
+                                                <div className="col col-7 mb-3">
                                                     <select className="form-select p-3" aria-label="Sellers"
                                                         value={numberOfSellers}
                                                         onChange={(e: ChangeEvent<HTMLSelectElement>) => {
@@ -368,15 +368,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                         <option value="5">5</option>
                                                         <option value="6">6</option>
                                                     </select>
-                                                    <div className='d-flex flex-nowrap pt-2'>
-                                                        <input type='checkbox' id='iscompanyseller' checked={saleInfo.forCompany}
-                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                setSaleInfo({ ...saleInfo, forCompany: e.target.checked });
-                                                            }} />
-                                                        <label htmlFor='iscompanyseller' className='ps-2'>
-                                                            This is for a company
-                                                        </label>
-                                                    </div>
+
                                                 </div>
                                             </div>
 
@@ -940,7 +932,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                     <div className="modal-footer">
 
                         {
-                            (currentPage === 'GET_SELLERS' && (saleInfo.forCompany || numberOfSellers !== 0)) &&
+                            (currentPage === 'GET_BORROWERS' && (saleInfo.forCompany || numberOfSellers !== 0)) &&
                             <>
                                 <div className="row">
                                     <div className="col mb-3 mt-4 text-danger fw-semibold error-label">
@@ -980,7 +972,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                         whiteSpace: 'nowrap',
                                     }}>
                                         <input type='button' value='Back to Sellers' className='btn btn-secondary form-button me-2'
-                                            onClick={() => setCurrentPage('GET_SELLERS')} />
+                                            onClick={() => setCurrentPage('GET_BORROWERS')} />
 
                                         <input type='button' value='Next' className='btn btn-primary form-button'
                                             onClick={() => {

@@ -352,7 +352,7 @@ const SaleForm = (props: FormProps): ReactElement => {
                                                     </h6>
                                                 </div>
 
-                                                <div className="col mb-3">
+                                                <div className="col col-7 mb-3">
                                                     <select className="form-select p-3" aria-label="Sellers"
                                                         value={numberOfSellers}
                                                         onChange={(e: ChangeEvent<HTMLSelectElement>) => {

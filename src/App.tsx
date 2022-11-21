@@ -6,6 +6,7 @@ import PurchaseForm from './forms/PurchaseForm';
 import SaleAndPurchaseForm from './forms/SaleAndPurchaseForm';
 import SaleForm from './forms/SaleForm';
 import 'react-day-picker/dist/style.css';
+import RefinanceForm from './forms/RefinanceForm';
 
 export type FormType =
   'NONE' | 'PURCHASE' | 'SALE' | 'REFINANCE' | 'SALE_AND_PURCHASE' | 'PROJECT_PURCHASE';
@@ -36,7 +37,7 @@ const App = (): ReactElement => {
             style={{
               height: '80px',
             }}
-            title='11-15-2022 2'
+            title='11-20-2022 1'
             src={DbmLogo} alt='DBM Law' />
         </div>
 
@@ -64,6 +65,13 @@ const App = (): ReactElement => {
         {
           selectedForm === 'SALE' &&
           <SaleForm key={Math.random()}
+            dismissed={() => setSelectedForm('NONE')}
+          />
+        }
+
+        {
+          selectedForm === 'REFINANCE' &&
+          <RefinanceForm key={Math.random()}
             dismissed={() => setSelectedForm('NONE')}
           />
         }
