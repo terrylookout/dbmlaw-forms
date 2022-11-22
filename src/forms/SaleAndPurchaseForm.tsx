@@ -389,36 +389,36 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                         <h1 className="modal-title fs-5" id="exampleModalLabel">
                             {
                                 currentPage === 'GET_SELLERS' &&
-                                <span>Seller Information</span>
+                                <span>SALE &amp; PURCHASE - Seller Information</span>
                             }
                             {
                                 currentPage === 'GET_SALE_DETAILS' &&
-                                <span>Sale Details</span>
+                                <span>SALE &amp; PURCHASE - Sale Details</span>
                             }
 
                             {
                                 currentPage === 'GET_PURCHASERS' &&
-                                <span>Purchaser Information</span>
+                                <span>SALE &amp; PURCHASE - Purchaser Information</span>
                             }
 
                             {
                                 currentPage === 'PROPERTY_INFO' &&
-                                <span>Property Details</span>
+                                <span>SALE &amp; PURCHASE - Property Details</span>
                             }
 
                             {
                                 currentPage === 'CONFIRM_SUBMIT' &&
-                                <span>Ready to Submit</span>
+                                <span>SALE &amp; PURCHASE - Ready to Submit</span>
                             }
 
                             {
                                 currentPage === 'SUBMITTING' &&
-                                <span>Please Wait</span>
+                                <span>SALE &amp; PURCHASE - Please Wait</span>
                             }
 
                             {
                                 currentPage === 'SUBMIT_RESULT' &&
-                                <span>Success!</span>
+                                <span>SALE &amp; PURCHASE - Success!</span>
                             }
 
                         </h1>

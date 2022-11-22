@@ -1,3 +1,4 @@
+import { StringLiteral } from "typescript";
 
 export class ClientInfo {
 
@@ -31,6 +32,9 @@ export class ClientInfo {
     public hasOwnedPrincipalResidenceSomewhere: 'YES' | 'NO' | '';
     public residentOfCanada: 'YES' | 'NO' | '';
 
+    public relationship: string;
+    public timeLivingAtProperty: string;
+
     public citizenShip: '' | 'CANADIAN_CITIZEN' | 'PERMANENT_RESIDENT' | 'BC_PROV_NOMINEE' | 'RESIDENT_OTHER_COUNTRY';
 
     constructor() {
@@ -41,6 +45,8 @@ export class ClientInfo {
         this.dateOfBirth = new Date();
         this.socialInsNumber = '';
         this.sinViaPhone = false;
+
+        this.relationship = '';
 
         this.mailingStreet1 = '';
         this.mailingStreet2 = '';
@@ -65,6 +71,8 @@ export class ClientInfo {
         this.willBeLivingInPropertyWithinThreeMonths = '';
         this.hasOwnedPrincipalResidenceSomewhere = '';
         this.residentOfCanada = '';
+
+        this.timeLivingAtProperty = '';
 
         this.citizenShip = '';
     }
@@ -154,6 +162,75 @@ export class SaleInfo {
     }
 }
 
+export class RefinanceInfo {
+    public clientsInfo: ClientInfo[];
+
+    public clientsAddedInfo: ClientInfo[];
+
+    public removedFromTitle: string[];
+
+    public forCompany: boolean;
+    public companyName: string;
+    public incorporationNumber: string;
+
+    public street1: string;
+    public street2: string;
+    public city: string;
+    public provinceTerritory: string;
+    public postalCode: string;
+
+    public mortgageLenderName: string;
+
+    public mortgageOrLoCOnTitle: 'YES' | 'NO' | '';
+    public mortgageOrLoCOnTitleReferenceNumber: string;
+    public mortgageOrLoCOnTitleBankBranch: string;
+
+    public strataName: string;
+
+    public involvesSeparationDivorce: 'YES' | 'NO' | '';
+
+    public paidPropertyTaxesOrClaimedHownOwnersGrant: 'YES' | 'NO' | '';
+
+    public emptyHomesDeclaration: 'OCCUPIED' | 'VACANT' | 'NOT_APPLICABLE' | 'NOT_COMPLETED' | '';
+
+    public additionalComments: string;
+
+    constructor() {
+
+        this.clientsInfo = [];
+
+        this.clientsAddedInfo = [];
+
+        this.removedFromTitle = [];
+
+
+        this.forCompany = false;
+        this.companyName = '';
+        this.incorporationNumber = '';
+
+        this.mortgageLenderName = '';
+
+        this.street1 = '';
+        this.street2 = '';
+        this.city = '';
+        this.provinceTerritory = '';
+        this.postalCode = '';
+
+        this.mortgageOrLoCOnTitle = '';
+        this.mortgageOrLoCOnTitleReferenceNumber = '';
+        this.mortgageOrLoCOnTitleBankBranch = '';
+
+        this.strataName = '';
+
+        this.involvesSeparationDivorce = '';
+
+        this.paidPropertyTaxesOrClaimedHownOwnersGrant = '';
+
+        this.emptyHomesDeclaration = '';
+
+        this.additionalComments = '';
+    }
+}
 
 export class PurchaseInfo {
 

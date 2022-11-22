@@ -313,27 +313,27 @@ const PurchaseForm = (props: FormProps): ReactElement => {
 
                             {
                                 currentPage === 'GET_PURCHASERS' &&
-                                <span>Purchaser Information</span>
+                                <span>PURCHASE - Purchaser Information</span>
                             }
 
                             {
                                 currentPage === 'PROPERTY_INFO' &&
-                                <span>Property Details</span>
+                                <span>PURCHASE - Property Details</span>
                             }
 
                             {
                                 currentPage === 'CONFIRM_SUBMIT' &&
-                                <span>Ready to Submit</span>
+                                <span>PURCHASE - Ready to Submit</span>
                             }
 
                             {
                                 currentPage === 'SUBMITTING' &&
-                                <span>Please Wait</span>
+                                <span>PURCHASE - Please Wait</span>
                             }
 
                             {
                                 currentPage === 'SUBMIT_RESULT' &&
-                                <span>Success!</span>
+                                <span>PURCHASE - Success!</span>
                             }
 
 

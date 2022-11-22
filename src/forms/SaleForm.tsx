@@ -304,26 +304,26 @@ const SaleForm = (props: FormProps): ReactElement => {
                         <h1 className="modal-title fs-5" id="exampleModalLabel">
                             {
                                 currentPage === 'GET_SELLERS' &&
-                                <span>Seller Information</span>
+                                <span>SALE - Seller Information</span>
                             }
                             {
                                 currentPage === 'GET_SALE_DETAILS' &&
-                                <span>Sale Details</span>
+                                <span>SALE - Sale Details</span>
                             }
 
                             {
                                 currentPage === 'CONFIRM_SUBMIT' &&
-                                <span>Ready to Submit</span>
+                                <span>SALE - Ready to Submit</span>
                             }
 
                             {
                                 currentPage === 'SUBMITTING' &&
-                                <span>Please Wait</span>
+                                <span>SALE - Please Wait</span>
                             }
 
                             {
                                 currentPage === 'SUBMIT_RESULT' &&
-                                <span>Success!</span>
+                                <span>SALE - Success!</span>
                             }
 
                         </h1>

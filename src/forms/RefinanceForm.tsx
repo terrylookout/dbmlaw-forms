@@ -1,41 +1,64 @@
 import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
-import { ClientInfo, SaleInfo } from '../ClassesInterfaces';
+import { ClientInfo, RefinanceInfo } from '../ClassesInterfaces';
 
 import CircleBullet from '../controls/CircleBullet';
 import { FormProps, getEntry, getHeader, sendEmail } from '../Helpers';
 import { SubmitConfirm, SubmitDone, Submitting } from '../controls/SubmitConfirm';
-import Seller from '../controls/Seller';
-import DateInput from '../controls/DateInput';
+import Owner from '../controls/Owner';
+import TransferAdded from '../controls/TransferAdded';
+//import DateInput from '../controls/DateInput';
 
 declare var bootstrap: any;
 
 const RefinanceForm = (props: FormProps): ReactElement => {
 
-    const [saleInfo, setSaleInfo] = useState(() => new SaleInfo());
+    const [refinanceInfo, setRefinanceInfo] = useState(() => new RefinanceInfo());
 
     const [missingInfo, setMissingInfo] = useState(false);
 
-    const [numberOfSellers, setNumberOfSellers] = useState(0);
+    const [numberOfOwners, setNumberOfOwners] = useState(0);
+
+    const [numberOfAdded, setNumberOfAdded] = useState(0);
 
     const [currentPage, setCurrentPage] = useState<
-        'GET_BORROWERS' | 'GET_SALE_DETAILS' |
+        'GET_PROPERTY_DETAILS' | 'GET_OWNERS' | 'GET_TRANSFER_INFORMATION' | 'GET_MORTGAGE_DETAILS' |
         'CONFIRM_SUBMIT' | 'SUBMITTING' | 'SUBMIT_RESULT'
-    >('GET_BORROWERS');
+    >('GET_PROPERTY_DETAILS');
 
     const checkPage = () => {
         //
 
-        if (currentPage === 'GET_BORROWERS') {
-            setMissingInfo(false);
-            setCurrentPage('GET_SALE_DETAILS')
-            return;
+        switch (currentPage) {
+            case 'GET_PROPERTY_DETAILS':
+                setMissingInfo(false);
+                setCurrentPage('GET_OWNERS');
+                break;
+
+            case 'GET_OWNERS':
+                setMissingInfo(false);
+                setCurrentPage('GET_TRANSFER_INFORMATION');
+                break;
+
+            case 'GET_TRANSFER_INFORMATION':
+                setMissingInfo(false);
+                setCurrentPage('GET_PROPERTY_DETAILS');
+                break;
 
         }
-        else {
-            // here we are good to submit
-            setCurrentPage('CONFIRM_SUBMIT');
 
-        }
+
+
+        // if (currentPage === 'GET_BORROWERS') {
+        //     setMissingInfo(false);
+        //     setCurrentPage('GET_PROPERTY_DETAILS')
+        //     return;
+
+        // }
+        // else {
+        //     // here we are good to submit
+        //     setCurrentPage('CONFIRM_SUBMIT');
+
+        // }
         // else if (currentPage === 'GET_PURCHASERS') {
         //     if (purchaseInfo.forCompany) {
         //         if (!purchaseInfo.companyName.trim()) {
@@ -230,7 +253,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
     };
 
     const submitSaleForm = async () => {
-        const c = getOutput(saleInfo);
+        const c = getOutput(refinanceInfo);
 
         await sendEmail('Sale submission', c);
 
@@ -253,34 +276,50 @@ const RefinanceForm = (props: FormProps): ReactElement => {
     }, []);
 
     useEffect(() => {
-        const tempSellers = [...saleInfo.clientsInfo];
-        if (numberOfSellers > tempSellers.length) {
+        const tempOwners = [...refinanceInfo.clientsInfo];
+        if (numberOfOwners > tempOwners.length) {
             do {
-                tempSellers.push(
+                tempOwners.push(
                     new ClientInfo()
                 );
-            } while (numberOfSellers > tempSellers.length);
+            } while (numberOfOwners > tempOwners.length);
         }
-        else if (numberOfSellers < tempSellers.length) {
+        else if (numberOfOwners < tempOwners.length) {
             do {
-                tempSellers.pop();
-            } while (numberOfSellers < tempSellers.length);
+                tempOwners.pop();
+            } while (numberOfOwners < tempOwners.length);
         }
 
-        setSaleInfo({ ...saleInfo, clientsInfo: tempSellers });
+        setRefinanceInfo({ ...refinanceInfo, clientsInfo: tempOwners });
 
         // eslint-disable-next-line
-    }, [numberOfSellers]);
+    }, [numberOfOwners]);
 
     useEffect(() => {
-        if (saleInfo.forCompany) {
-            setNumberOfSellers(1);
+        const tempOwners = [...refinanceInfo.clientsAddedInfo];
+        if (numberOfAdded > tempOwners.length) {
+            do {
+                tempOwners.push(
+                    new ClientInfo()
+                );
+            } while (numberOfAdded > tempOwners.length);
         }
-        else {
-            setNumberOfSellers(0);
+        else if (numberOfAdded < tempOwners.length) {
+            do {
+                tempOwners.pop();
+            } while (numberOfAdded < tempOwners.length);
         }
 
-    }, [saleInfo.forCompany]);
+        setRefinanceInfo({ ...refinanceInfo, clientsAddedInfo: tempOwners });
+
+        // eslint-disable-next-line
+    }, [numberOfAdded]);
+
+    useEffect(() => {
+
+        setNumberOfOwners(refinanceInfo.forCompany ? 1 : 0);
+
+    }, [refinanceInfo.forCompany]);
 
     useEffect(() => {
         //if (currentPage !== 'PROPERTY_INFO') {
@@ -297,33 +336,44 @@ const RefinanceForm = (props: FormProps): ReactElement => {
 
         <div className="modal fade" id="formModal" tabIndex={-1} aria-labelledby="formModalLabel" aria-hidden="true"
             data-bs-backdrop="static" data-bs-keyboard="false">
-            <div className={`modal-dialog modal-lg ${(currentPage === 'GET_BORROWERS' && saleInfo.clientsInfo.length !== 0)
+            <div className={`modal-dialog modal-lg ${(currentPage === 'GET_OWNERS' && refinanceInfo.clientsInfo.length !== 0)
                 ? 'modal-dialog-centered' : 'modal-near-top'} modal-dialog-scrollable`}>
                 <div className="modal-content">
                     <div className="modal-header">
                         <h1 className="modal-title fs-5" id="exampleModalLabel">
                             {
-                                currentPage === 'GET_BORROWERS' &&
-                                <span>Borrower Information</span>
+                                currentPage === 'GET_OWNERS' &&
+                                <span>RE-FINANCE - Owner Information</span>
                             }
+
                             {
-                                currentPage === 'GET_SALE_DETAILS' &&
-                                <span>Sale Details</span>
+                                currentPage === 'GET_TRANSFER_INFORMATION' &&
+                                <span>RE-FINANCE - Transfer Information</span>
+                            }
+
+                            {
+                                currentPage === 'GET_PROPERTY_DETAILS' &&
+                                <span>RE-FINANCE - Property Details</span>
+                            }
+
+                            {
+                                currentPage === 'GET_MORTGAGE_DETAILS' &&
+                                <span>RE-FINANCE - Mortgage Details</span>
                             }
 
                             {
                                 currentPage === 'CONFIRM_SUBMIT' &&
-                                <span>Ready to Submit</span>
+                                <span>RE-FINANCE - Ready to Submit</span>
                             }
 
                             {
                                 currentPage === 'SUBMITTING' &&
-                                <span>Please Wait</span>
+                                <span>RE-FINANCE - Please Wait</span>
                             }
 
                             {
                                 currentPage === 'SUBMIT_RESULT' &&
-                                <span>Success!</span>
+                                <span>RE-FINANCE - Success!</span>
                             }
 
                         </h1>
@@ -335,181 +385,11 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                 <div className="container">
 
                                     {
-                                        currentPage === 'GET_BORROWERS' &&
-                                        <>
-                                            <div className="row">
-                                                <div className="col mb-3">
-                                                    <h6>
-                                                        Borrowers
-                                                    </h6>
-                                                </div>
-                                            </div>
-
-                                            <div className="row align-items-center">
-                                                <div className="col mb-3">
-                                                    <h6>
-                                                        How many people on title?
-                                                    </h6>
-                                                </div>
-
-                                                <div className="col col-7 mb-3">
-                                                    <select className="form-select p-3" aria-label="Sellers"
-                                                        value={numberOfSellers}
-                                                        onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                                                            if (e && e.target && e.target.value) {
-                                                                setNumberOfSellers(parseInt(e.target.value));
-                                                            }
-                                                        }}>
-                                                        <option value='0'>Please choose...</option>
-                                                        <option value="1">1</option>
-                                                        <option value="2">2</option>
-                                                        <option value="3">3</option>
-                                                        <option value="4">4</option>
-                                                        <option value="5">5</option>
-                                                        <option value="6">6</option>
-                                                    </select>
-
-                                                </div>
-                                            </div>
-
-                                            {
-                                                saleInfo.forCompany &&
-                                                <>
-                                                    <div className="row">
-                                                        <div className="col mb-1 mt-4">
-                                                            <h6>
-                                                                Please fill in company name, incorporation number, and signatory. Note that you will be contacted
-                                                                for additional information such as minutes books and company share registry.
-                                                            </h6>
-                                                        </div>
-                                                    </div>
-
-
-                                                    <div className="row">
-
-                                                        <div className="col mb-3">
-                                                            <div className='form-floating mb-0'>
-                                                                <input type='text' className='form-control' id='companynameseller' placeholder='Company name'
-                                                                    value={saleInfo.companyName}
-                                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                        setSaleInfo({ ...saleInfo, companyName: e.target.value });
-                                                                    }}
-                                                                />
-                                                                <label htmlFor='companynameseller'>
-                                                                    Company name (required)
-                                                                </label>
-                                                            </div>
-                                                        </div>
-
-                                                        <div className="col mb-3">
-                                                            <div className='form-floating mb-0'>
-                                                                <input type='text' className='form-control' id='incorporationnumberseller' placeholder='Incorporation #'
-                                                                    value={saleInfo.incorporationNumber}
-                                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                        setSaleInfo({ ...saleInfo, incorporationNumber: e.target.value });
-                                                                    }}
-                                                                />
-                                                                <label htmlFor='incorporationnumberseller'>
-                                                                    Incorporation # (required)
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                </>
-                                            }
-
-                                            {
-                                                numberOfSellers > 0 &&
-                                                <>
-                                                    {
-                                                        saleInfo.clientsInfo.map((c, i) => {
-                                                            return (
-                                                                <Seller text={saleInfo.forCompany ? 'Signatory' : 'Seller'}
-                                                                    num={i}
-                                                                    key={i}
-                                                                    clientInfo={saleInfo.clientsInfo[i]}
-                                                                    client1Info={saleInfo.clientsInfo.length > 1 ? saleInfo.clientsInfo[0] : null}
-                                                                    company={saleInfo.forCompany}
-                                                                    updated={(c: ClientInfo, idx: number) => {
-                                                                        const tempClients: ClientInfo[] = [];
-                                                                        for (let t = 0; t < saleInfo.clientsInfo.length; t++) {
-                                                                            if (t === idx) {
-                                                                                tempClients.push(c);
-                                                                            }
-                                                                            else {
-                                                                                tempClients.push(saleInfo.clientsInfo[t]);
-                                                                            }
-                                                                        }
-                                                                        setSaleInfo({ ...saleInfo, clientsInfo: tempClients });
-                                                                    }}
-                                                                />
-                                                            );
-                                                        })
-                                                    }
-
-                                                </>
-                                            }
-                                        </>
-                                    }
-
-                                    {
-                                        currentPage === 'GET_SALE_DETAILS' &&
+                                        currentPage === 'GET_PROPERTY_DETAILS' &&
                                         <>
                                             <div className="row">
                                                 <div className="col mb-1 mt-2 top-second-page">
                                                     &nbsp;
-                                                </div>
-                                            </div>
-                                            <div className="row">
-
-                                                <div className="col mb-1">
-                                                    <h6>
-                                                        <CircleBullet />
-                                                        Sale and Property Information
-                                                    </h6>
-                                                </div>
-                                            </div>
-
-                                            <div className="row">
-                                                <div className="col mb-3">
-                                                    <div className='form-floating mb-0'>
-                                                        <DateInput
-                                                            className='form-control'
-                                                            id={`closingdate`}
-                                                            value={saleInfo.closingDateTBD ? new Date() : saleInfo.closingDate}
-                                                            min={new Date((new Date()).setFullYear(new Date().getFullYear() - 5))}
-                                                            label='Closing date'
-                                                            onChange={(e) => {
-                                                                if (e) {
-                                                                    setSaleInfo({ ...saleInfo, closingDate: e });
-                                                                }
-                                                            }} />
-                                                    </div>
-                                                    <div className='mt-1'>
-                                                        <input type='checkbox' id='chkclosingdatetbd' checked={saleInfo.closingDateTBD}
-                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                setSaleInfo({ ...saleInfo, closingDateTBD: e.target.checked });
-                                                            }} />
-                                                        <label htmlFor='chkclosingdatetbd'>
-                                                            &nbsp;&nbsp;Date still to be determined
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div className="col mb-3">
-                                                    <div className='form-floating mb-0'>
-                                                        <input type='number' className='form-control' id='saleprice' placeholder='Sale price'
-                                                            value={saleInfo.sellingPrice}
-                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                if (e && e.target && e.target.value) {
-                                                                    setSaleInfo({ ...saleInfo, sellingPrice: parseFloat(e.target.value) });
-                                                                }
-                                                            }}
-                                                        />
-                                                        <label htmlFor='saleprice'>
-                                                            Sale price (CAD) if known
-                                                        </label>
-                                                    </div>
                                                 </div>
                                             </div>
 
@@ -518,7 +398,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                 <div className="col mb-1 mt-4">
                                                     <h6>
                                                         <CircleBullet />
-                                                        Address of sale property
+                                                        Address of property
                                                     </h6>
                                                 </div>
                                             </div>
@@ -527,9 +407,9 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                 <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
                                                         <input type='text' className='form-control' id='sellingstreet1' placeholder='Street address line 1'
-                                                            value={saleInfo.street1}
+                                                            value={refinanceInfo.street1}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                setSaleInfo({ ...saleInfo, street1: e.target.value });
+                                                                setRefinanceInfo({ ...refinanceInfo, street1: e.target.value });
                                                             }}
                                                         />
                                                         <label htmlFor='floatingInput'>
@@ -543,9 +423,9 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                 <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
                                                         <input type='text' className='form-control' id='sellingstreet2' placeholder='Street address line 2'
-                                                            value={saleInfo.street2}
+                                                            value={refinanceInfo.street2}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                setSaleInfo({ ...saleInfo, street2: e.target.value });
+                                                                setRefinanceInfo({ ...refinanceInfo, street2: e.target.value });
                                                             }}
                                                         />
                                                         <label htmlFor='floatingInput'>
@@ -560,9 +440,9 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                 <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
                                                         <input type='text' className='form-control' id='sellingcity' placeholder='City'
-                                                            value={saleInfo.city}
+                                                            value={refinanceInfo.city}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                setSaleInfo({ ...saleInfo, city: e.target.value });
+                                                                setRefinanceInfo({ ...refinanceInfo, city: e.target.value });
                                                             }}
                                                         />
                                                         <label htmlFor='floatingInput'>
@@ -572,9 +452,9 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                 </div>
                                                 <div className="col mb-3">
                                                     <select className="form-select p-3" aria-label="Province or territory"
-                                                        value={saleInfo.provinceTerritory}
+                                                        value={refinanceInfo.provinceTerritory}
                                                         onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                                                            setSaleInfo({ ...saleInfo, provinceTerritory: e.target.value });
+                                                            setRefinanceInfo({ ...refinanceInfo, provinceTerritory: e.target.value });
                                                         }}
                                                     >
                                                         <option value='0'>Province or territory</option>
@@ -598,9 +478,9 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                 <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
                                                         <input type='text' className='form-control' id='sellingpostalcode' placeholder='Postal code'
-                                                            value={saleInfo.postalCode}
+                                                            value={refinanceInfo.postalCode}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                setSaleInfo({ ...saleInfo, postalCode: e.target.value });
+                                                                setRefinanceInfo({ ...refinanceInfo, postalCode: e.target.value });
                                                             }}
                                                         />
                                                         <label htmlFor='floatingInput'>
@@ -614,7 +494,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                 <div className="col mb-1 mt-4">
                                                     <h6>
                                                         <CircleBullet />
-                                                        Your realtor information (if applicable)
+                                                        If this is a strata, please enter the following information (if applicable)
                                                     </h6>
                                                 </div>
                                             </div>
@@ -622,39 +502,326 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                             <div className="row">
                                                 <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
-                                                        <input type='text' className='form-control' id='realtornameseller' placeholder='Realtor name'
-                                                            value={saleInfo.realtorName}
+                                                        <input type='text' className='form-control' id='strataname' placeholder='Strata name'
+                                                            value={refinanceInfo.strataName}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                setSaleInfo({ ...saleInfo, realtorName: e.target.value });
+                                                                setRefinanceInfo({ ...refinanceInfo, strataName: e.target.value });
                                                             }}
                                                         />
                                                         <label htmlFor='floatingInput'>
-                                                            Realtor name
+                                                            Strata Management Company name
                                                         </label>
                                                     </div>
                                                 </div>
+
+                                            </div>
+                                        </>
+                                    }
+
+
+                                    {
+                                        currentPage === 'GET_OWNERS' &&
+                                        <>
+                                            <div className="row">
                                                 <div className="col mb-3">
-                                                    <div className='form-floating mb-0'>
-                                                        <input type='tel' className='form-control' id='realtorphoneselling' placeholder='Phone number'
-                                                            value={saleInfo.realtorPhone}
-                                                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                setSaleInfo({ ...saleInfo, realtorPhone: e.target.value });
-                                                            }}
-                                                        />
-                                                        <label htmlFor='floatingInput'>
-                                                            Phone number - format: 123-456-7890
-                                                        </label>
-                                                    </div>
+                                                    <h6>
+                                                        Owners
+                                                    </h6>
                                                 </div>
                                             </div>
 
+                                            <div className="row align-items-center">
+                                                <div className="col mb-3">
+                                                    <h6>
+                                                        How many people on title?
+                                                    </h6>
+                                                </div>
+
+                                                <div className="col col-7 mb-3">
+                                                    <select className="form-select p-3" aria-label="Sellers"
+                                                        value={numberOfOwners}
+                                                        onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                                                            if (e && e.target && e.target.value) {
+                                                                setNumberOfOwners(parseInt(e.target.value));
+                                                            }
+                                                        }}>
+                                                        <option value='0'>Please choose...</option>
+                                                        <option value="1">1</option>
+                                                        <option value="2">2</option>
+                                                        <option value="3">3</option>
+                                                        <option value="4">4</option>
+                                                        <option value="5">5</option>
+                                                        <option value="6">6</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+
+                                            {
+                                                refinanceInfo.forCompany &&
+                                                <>
+                                                    <div className="row">
+                                                        <div className="col mb-1 mt-4">
+                                                            <h6>
+                                                                Please fill in company name, incorporation number, and signatory. Note that you will be contacted
+                                                                for additional information such as minutes books and company share registry.
+                                                            </h6>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div className="row">
+
+                                                        <div className="col mb-3">
+                                                            <div className='form-floating mb-0'>
+                                                                <input type='text' className='form-control' id='companynameseller' placeholder='Company name'
+                                                                    value={refinanceInfo.companyName}
+                                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                        setRefinanceInfo({ ...refinanceInfo, companyName: e.target.value });
+                                                                    }}
+                                                                />
+                                                                <label htmlFor='companynameseller'>
+                                                                    Company name (required)
+                                                                </label>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="col mb-3">
+                                                            <div className='form-floating mb-0'>
+                                                                <input type='text' className='form-control' id='incorporationnumberseller' placeholder='Incorporation #'
+                                                                    value={refinanceInfo.incorporationNumber}
+                                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                        setRefinanceInfo({ ...refinanceInfo, incorporationNumber: e.target.value });
+                                                                    }}
+                                                                />
+                                                                <label htmlFor='incorporationnumberseller'>
+                                                                    Incorporation # (required)
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </>
+                                            }
+
+                                            {
+                                                numberOfOwners > 0 &&
+                                                <>
+                                                    {
+                                                        refinanceInfo.clientsInfo.map((c, i) => {
+                                                            return (
+                                                                <Owner text={refinanceInfo.forCompany ? 'Signatory' : 'Owner'}
+                                                                    num={i}
+                                                                    key={i}
+                                                                    clientInfo={refinanceInfo.clientsInfo[i]}
+                                                                    client1Info={refinanceInfo.clientsInfo.length > 1 ? refinanceInfo.clientsInfo[0] : null}
+                                                                    company={refinanceInfo.forCompany}
+                                                                    updated={(c: ClientInfo, idx: number) => {
+                                                                        const tempClients: ClientInfo[] = [];
+                                                                        for (let t = 0; t < refinanceInfo.clientsInfo.length; t++) {
+                                                                            if (t === idx) {
+                                                                                tempClients.push(c);
+                                                                            }
+                                                                            else {
+                                                                                tempClients.push(refinanceInfo.clientsInfo[t]);
+                                                                            }
+                                                                        }
+                                                                        setRefinanceInfo({ ...refinanceInfo, clientsInfo: tempClients });
+                                                                    }}
+                                                                />
+                                                            );
+                                                        })
+                                                    }
+
+                                                </>
+                                            }
+                                        </>
+                                    }
+
+                                    {
+                                        currentPage === 'GET_TRANSFER_INFORMATION' &&
+                                        <>
+                                            <div className="row">
+                                                <div className="col mb-1 mt-2 top-second-page">
+                                                    &nbsp;
+                                                </div>
+                                            </div>
+
+                                            <div className="row">
+                                                <div className="col mb-3">
+                                                    <h6>
+                                                        Title changes
+                                                    </h6>
+                                                </div>
+                                            </div>
 
                                             <div className="row">
                                                 <div className="col mb-1 mt-4">
                                                     <h6>
                                                         <CircleBullet />
-                                                        Is there a mortgage or line of credit on title?
+                                                        {
+                                                            numberOfOwners === 1 ?
+                                                                `Is the owner (${refinanceInfo.clientsInfo[0].fullLegalName}) going to be removed from title?`
+                                                                :
+                                                                `Are any of the owners going to be removed from title?`
+                                                        }
+                                                    </h6>
+                                                </div>
+                                            </div>
+
+                                            <div className='row'>
+                                                {
+                                                    refinanceInfo.clientsInfo.map((owner, idx) => {
+                                                        return (
+                                                            <div className='row mb-1' key={idx}>
+                                                                <div className='col'>
+                                                                    <span style={{
+                                                                        textDecoration: refinanceInfo.removedFromTitle.indexOf(owner.fullLegalName) > -1 ? 'line-through' : '',
+                                                                    }}>
+                                                                        {owner.fullLegalName}
+                                                                    </span>
+                                                                </div>
+                                                                <div className='col col'>
+                                                                    <span>
+                                                                        <input type='checkbox' className='btn btn-secondary'
+                                                                            id={`removecheck${idx}`}
+                                                                            value='Remove from title'
+                                                                            checked={refinanceInfo.removedFromTitle.indexOf(owner.fullLegalName) > -1}
+                                                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+
+                                                                                let temp = refinanceInfo.removedFromTitle;
+                                                                                if (e.target.checked) {
+                                                                                    temp.push(owner.fullLegalName);
+                                                                                } else {
+                                                                                    temp = temp.filter((s) => s !== owner.fullLegalName);
+                                                                                }
+                                                                                setRefinanceInfo({ ...refinanceInfo, removedFromTitle: temp });
+                                                                            }
+
+                                                                            }
+                                                                        />
+                                                                        <label htmlFor={`removecheck${idx}`}
+                                                                            className='ps-2'>
+                                                                            {
+                                                                                refinanceInfo.removedFromTitle.indexOf(owner.fullLegalName) > -1 ?
+                                                                                    `Keep on title`
+                                                                                    : `Remove from title`
+                                                                            }
+
+                                                                        </label>
+                                                                    </span>
+                                                                </div>
+
+                                                                <div className='col'>
+                                                                    <span>
+                                                                        {
+
+                                                                        }
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    })
+                                                }
+                                            </div>
+
+                                            <div className='row align-items-center mt-5'>
+                                                <div className="col mb-3">
+                                                    <h6>
+                                                        <CircleBullet />
+                                                        How many people are being ADDED to title?
+                                                    </h6>
+                                                </div>
+
+                                                <div className="col col-6 mb-3">
+                                                    <select className="form-select p-3" aria-label="Added"
+                                                        value={numberOfAdded}
+                                                        onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                                                            if (e && e.target && e.target.value) {
+                                                                setNumberOfAdded(parseInt(e.target.value));
+                                                            }
+                                                        }}>
+                                                        <option value='0'>Please choose...</option>
+                                                        <option value="1">1</option>
+                                                        <option value="2">2</option>
+                                                        <option value="3">3</option>
+                                                        <option value="4">4</option>
+                                                        <option value="5">5</option>
+                                                        <option value="6">6</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+
+                                            {
+                                                numberOfAdded > 0 &&
+                                                <>
+                                                    {
+                                                        refinanceInfo.clientsAddedInfo.map((c, i) => {
+                                                            return (
+                                                                <TransferAdded text={refinanceInfo.forCompany ? 'Signatory' : 'Added Owner'}
+                                                                    num={i}
+                                                                    key={i}
+                                                                    refinanceInfo={refinanceInfo}
+                                                                    updated={(c: ClientInfo, idx: number) => {
+                                                                        const tempClients: ClientInfo[] = [];
+                                                                        for (let t = 0; t < refinanceInfo.clientsAddedInfo.length; t++) {
+                                                                            if (t === idx) {
+                                                                                tempClients.push(c);
+                                                                            }
+                                                                            else {
+                                                                                tempClients.push(refinanceInfo.clientsAddedInfo[t]);
+                                                                            }
+                                                                        }
+                                                                        setRefinanceInfo({ ...refinanceInfo, clientsAddedInfo: tempClients });
+                                                                    }}
+                                                                />
+                                                            );
+                                                        })
+                                                    }
+
+                                                </>
+                                            }
+
+                                        </>
+                                    }
+
+
+                                    {
+                                        currentPage === 'GET_MORTGAGE_DETAILS' &&
+                                        <>
+
+                                            <div className="row">
+                                                <div className="col mb-1 mt-4">
+                                                    <h6>
+                                                        <CircleBullet />
+                                                        Name of Mortgage Lender?
+                                                    </h6>
+                                                </div>
+                                            </div>
+
+
+                                            <div className="row">
+                                                <div className="col mb-3">
+                                                    <div className='form-floating mb-0'>
+                                                        <input type='text' className='form-control' id='mortgagelendername' placeholder='Mortgage Lender name'
+                                                            value={refinanceInfo.mortgageLenderName}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                setRefinanceInfo({ ...refinanceInfo, mortgageLenderName: e.target.value });
+                                                            }}
+                                                        />
+                                                        <label htmlFor='mortgagelendername'>
+                                                            Mortgage Lender name
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="row">
+                                                <div className="col mb-1 mt-4">
+                                                    <h6>
+                                                        <CircleBullet />
+                                                        Is there currently a mortgage or line of credit on title that will need to be paid out and discharged?
                                                     </h6>
                                                 </div>
                                             </div>
@@ -663,10 +830,10 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                 <div className="col mb-3">
                                                     <div className="form-check">
                                                         <input className="form-check-input" type="radio" name="mortgageselling" id="mortgageselling-yes"
-                                                            checked={saleInfo.mortgageOrLoCOnTitle === 'YES'}
+                                                            checked={refinanceInfo.mortgageOrLoCOnTitle === 'YES'}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e && e.target && e.target.value && e.target.value === 'on') {
-                                                                    setSaleInfo({ ...saleInfo, mortgageOrLoCOnTitle: 'YES' });
+                                                                    setRefinanceInfo({ ...refinanceInfo, mortgageOrLoCOnTitle: 'YES' });
                                                                 }
                                                             }} />
                                                         <label className="form-check-label" htmlFor="mortgageselling-yes">
@@ -676,10 +843,10 @@ const RefinanceForm = (props: FormProps): ReactElement => {
 
                                                     <div className="form-check">
                                                         <input className="form-check-input" type="radio" name="mortgageselling" id="mortgageselling-no"
-                                                            checked={saleInfo.mortgageOrLoCOnTitle === 'NO'}
+                                                            checked={refinanceInfo.mortgageOrLoCOnTitle === 'NO'}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e && e.target && e.target.value && e.target.value === 'on') {
-                                                                    setSaleInfo({ ...saleInfo, mortgageOrLoCOnTitle: 'NO' });
+                                                                    setRefinanceInfo({ ...refinanceInfo, mortgageOrLoCOnTitle: 'NO' });
                                                                 }
                                                             }} />
                                                         <label className="form-check-label" htmlFor="mortgageselling-no">
@@ -690,15 +857,15 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                             </div>
 
                                             {
-                                                saleInfo.mortgageOrLoCOnTitle === 'YES' &&
+                                                refinanceInfo.mortgageOrLoCOnTitle === 'YES' &&
                                                 <>
                                                     <div className="row">
                                                         <div className="col mb-3">
                                                             <div className='form-floating mb-0'>
                                                                 <input type='text' className='form-control' id='referencenumber' placeholder='Reference number'
-                                                                    value={saleInfo.mortgageOrLoCOnTitleReferenceNumber}
+                                                                    value={refinanceInfo.mortgageOrLoCOnTitleReferenceNumber}
                                                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                        setSaleInfo({ ...saleInfo, mortgageOrLoCOnTitleReferenceNumber: e.target.value });
+                                                                        setRefinanceInfo({ ...refinanceInfo, mortgageOrLoCOnTitleReferenceNumber: e.target.value });
                                                                     }}
                                                                 />
                                                                 <label htmlFor='referencenumber'>
@@ -710,9 +877,9 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                         <div className="col mb-3">
                                                             <div className='form-floating mb-0'>
                                                                 <input type='text' className='form-control' id='bankbranch' placeholder='Bank and Brank'
-                                                                    value={saleInfo.mortgageOrLoCOnTitleBankBranch}
+                                                                    value={refinanceInfo.mortgageOrLoCOnTitleBankBranch}
                                                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                        setSaleInfo({ ...saleInfo, mortgageOrLoCOnTitleBankBranch: e.target.value });
+                                                                        setRefinanceInfo({ ...refinanceInfo, mortgageOrLoCOnTitleBankBranch: e.target.value });
                                                                     }}
                                                                 />
                                                                 <label htmlFor='floatingInput'>
@@ -737,10 +904,10 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                 <div className="col mb-1">
                                                     <div className="form-check">
                                                         <input className="form-check-input" type="radio" name={`separation`} id={`separation-yes`}
-                                                            checked={saleInfo.involvesSeparationDivorce === 'YES'}
+                                                            checked={refinanceInfo.involvesSeparationDivorce === 'YES'}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e.target.checked) {
-                                                                    setSaleInfo({ ...saleInfo, involvesSeparationDivorce: 'YES' });
+                                                                    setRefinanceInfo({ ...refinanceInfo, involvesSeparationDivorce: 'YES' });
                                                                 }
                                                             }} />
 
@@ -751,10 +918,10 @@ const RefinanceForm = (props: FormProps): ReactElement => {
 
                                                     <div className="form-check">
                                                         <input className="form-check-input" type="radio" name={`separation`} id={`separation-no`}
-                                                            checked={saleInfo.involvesSeparationDivorce === 'NO'}
+                                                            checked={refinanceInfo.involvesSeparationDivorce === 'NO'}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e.target.checked) {
-                                                                    setSaleInfo({ ...saleInfo, involvesSeparationDivorce: 'NO' });
+                                                                    setRefinanceInfo({ ...refinanceInfo, involvesSeparationDivorce: 'NO' });
                                                                 }
                                                             }} />
 
@@ -766,148 +933,9 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                 </div>
                                             </div>
 
-
-                                            <div className="row">
-                                                <div className="col mb-1 mt-4">
-                                                    <h6>
-                                                        <CircleBullet />
-                                                        Have you paid the property taxes and/or claimed the Home Owner&apos;s Grant for {new Date().getFullYear()}?
-                                                    </h6>
-                                                </div>
-                                            </div>
-                                            <div className="row">
-                                                <div className="col mb-1">
-                                                    <div className="form-check">
-                                                        <input className="form-check-input" type="radio" name={`propertytaxes`} id={`propertytaxes-yes`}
-                                                            checked={saleInfo.paidPropertyTaxesOrClaimedHownOwnersGrant === 'YES'}
-                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                if (e.target.checked) {
-                                                                    setSaleInfo({ ...saleInfo, paidPropertyTaxesOrClaimedHownOwnersGrant: 'YES' });
-                                                                }
-                                                            }} />
-
-                                                        <label className="form-check-label" htmlFor={`propertytaxes-yes`}>
-                                                            Yes
-                                                        </label>
-                                                    </div>
-
-                                                    <div className="form-check">
-                                                        <input className="form-check-input" type="radio" name={`propertytaxes`} id={`propertytaxes-no`}
-                                                            checked={saleInfo.paidPropertyTaxesOrClaimedHownOwnersGrant === 'NO'}
-                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                if (e.target.checked) {
-                                                                    setSaleInfo({ ...saleInfo, paidPropertyTaxesOrClaimedHownOwnersGrant: 'NO' });
-                                                                }
-                                                            }} />
-
-                                                        <label className="form-check-label" htmlFor={`propertytaxes-no`}>
-                                                            No
-                                                        </label>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-
-                                            <div className="row">
-                                                <div className="col mb-1 mt-4">
-                                                    <h6>
-                                                        <CircleBullet />
-                                                        If applicable, have you filed your Empty Homes Declaration (Vancouver property)?
-                                                    </h6>
-                                                </div>
-                                            </div>
-
-                                            <div className="row">
-                                                <div className="col mb-1">
-                                                    <div className="form-check">
-                                                        <input className="form-check-input" type="radio" name={`emptyhome`} id={`emptyhome-occupied`}
-                                                            checked={saleInfo.emptyHomesDeclaration === 'OCCUPIED'}
-                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                if (e.target.checked) {
-                                                                    setSaleInfo({ ...saleInfo, emptyHomesDeclaration: 'OCCUPIED' });
-                                                                }
-                                                            }} />
-
-                                                        <label className="form-check-label" htmlFor={`emptyhome-occupied`}>
-                                                            Occupied
-                                                        </label>
-                                                    </div>
-
-                                                    <div className="form-check">
-                                                        <input className="form-check-input" type="radio" name={`emptyhome`} id={`emptyhome-vacant`}
-                                                            checked={saleInfo.emptyHomesDeclaration === 'VACANT'}
-                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                if (e.target.checked) {
-                                                                    setSaleInfo({ ...saleInfo, emptyHomesDeclaration: 'VACANT' });
-                                                                }
-                                                            }} />
-
-                                                        <label className="form-check-label" htmlFor={`emptyhome-vacant`}>
-                                                            Vacant
-                                                        </label>
-                                                    </div>
-                                                </div>
-
-                                                <div className="col mb-1">
-
-                                                    <div className="form-check">
-                                                        <input className="form-check-input" type="radio" name={`emptyhome`} id={`emptyhome-notfiled`}
-                                                            checked={saleInfo.emptyHomesDeclaration === 'NOT_COMPLETED'}
-                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                if (e.target.checked) {
-                                                                    setSaleInfo({ ...saleInfo, emptyHomesDeclaration: 'NOT_COMPLETED' });
-                                                                }
-                                                            }} />
-
-                                                        <label className="form-check-label" htmlFor={`emptyhome-notfiled`}>
-                                                            Not completed/filed
-                                                        </label>
-                                                    </div>
-
-                                                    <div className="form-check">
-                                                        <input className="form-check-input" type="radio" name={`emptyhome`} id={`emptyhome-notapplicable`}
-                                                            checked={saleInfo.emptyHomesDeclaration === 'NOT_APPLICABLE'}
-                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                if (e.target.checked) {
-                                                                    setSaleInfo({ ...saleInfo, emptyHomesDeclaration: 'NOT_APPLICABLE' });
-                                                                }
-                                                            }} />
-
-                                                        <label className="form-check-label" htmlFor={`emptyhome-notapplicable`}>
-                                                            Not applicable
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="row">
-                                                <div className="col mb-1 mt-4">
-                                                    <h6>
-                                                        <CircleBullet />
-                                                        Do you have any additional details, questions, or concerns?
-                                                    </h6>
-                                                </div>
-                                            </div>
-
-                                            <div className="row">
-                                                <div className="col mb-3">
-
-                                                    <textarea
-                                                        className='dbm-textarea'
-                                                        style={{
-                                                            width: '100%',
-                                                        }}
-                                                        value={saleInfo.additionalComments}
-                                                        rows={6}
-                                                        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
-                                                            setSaleInfo({ ...saleInfo, additionalComments: e.target.value });
-                                                        }}>
-                                                    </textarea>
-
-                                                </div>
-                                            </div>
                                         </>
                                     }
+
 
                                     {
                                         currentPage === 'SUBMITTING' &&
@@ -932,32 +960,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                     <div className="modal-footer">
 
                         {
-                            (currentPage === 'GET_BORROWERS' && (saleInfo.forCompany || numberOfSellers !== 0)) &&
-                            <>
-                                <div className="row">
-                                    <div className="col mb-3 mt-4 text-danger fw-semibold error-label">
-                                        {
-                                            missingInfo &&
-                                            <h6>
-                                                Please fill in all required information
-                                            </h6>
-                                        }
-                                    </div>
-                                    <div className="col mb-3 mt-4" style={{
-                                        textAlign: 'right',
-                                    }}>
-                                        <input type='submit' value='Next' className='btn btn-primary form-button'
-                                            onClick={() => {
-                                                checkPage();
-                                            }} />
-                                    </div>
-                                </div>
-
-                            </>
-                        }
-
-                        {
-                            currentPage === 'GET_SALE_DETAILS' &&
+                            currentPage === 'GET_PROPERTY_DETAILS' &&
                             <>
                                 <div className="row">
                                     <div className="col mb-3 mt-4 text-danger fw-semibold error-label">
@@ -971,8 +974,89 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                         textAlign: 'right',
                                         whiteSpace: 'nowrap',
                                     }}>
-                                        <input type='button' value='Back to Sellers' className='btn btn-secondary form-button me-2'
-                                            onClick={() => setCurrentPage('GET_BORROWERS')} />
+
+                                        <input type='button' value='Next' className='btn btn-primary form-button'
+                                            onClick={() => {
+                                                checkPage();
+                                            }} />
+                                    </div>
+                                </div>
+                            </>
+                        }
+
+                        {
+                            (currentPage === 'GET_OWNERS' && (refinanceInfo.forCompany || numberOfOwners !== 0)) &&
+                            <>
+                                <div className="row">
+                                    <div className="col mb-3 mt-4 text-danger fw-semibold error-label">
+                                        {
+                                            missingInfo &&
+                                            <h6>
+                                                Please fill in all required information
+                                            </h6>
+                                        }
+                                    </div>
+                                    <div className="col mb-3 mt-4" style={{
+                                        textAlign: 'right',
+                                        whiteSpace: 'nowrap',
+                                    }}>
+                                        <input type='button' value='Back to Property Details' className='btn btn-secondary form-button me-2'
+                                            onClick={() => setCurrentPage('GET_PROPERTY_DETAILS')} />
+
+                                        <input type='submit' value='Next' className='btn btn-primary form-button'
+                                            onClick={() => {
+                                                checkPage();
+                                            }} />
+                                    </div>
+                                </div>
+
+                            </>
+                        }
+
+                        {
+                            currentPage === 'GET_TRANSFER_INFORMATION' &&
+                            <>
+                                <div className="row">
+                                    <div className="col mb-3 mt-4 text-danger fw-semibold error-label">
+                                        <h6 style={{
+                                            visibility: missingInfo ? 'visible' : 'hidden',
+                                        }}>
+                                            Please fill in all required information
+                                        </h6>
+                                    </div>
+                                    <div className="col mb-3 mt-4" style={{
+                                        textAlign: 'right',
+                                        whiteSpace: 'nowrap',
+                                    }}>
+                                        <input type='button' value='Back to Owners' className='btn btn-secondary form-button me-2'
+                                            onClick={() => setCurrentPage('GET_OWNERS')} />
+
+                                        <input type='button' value='Next' className='btn btn-primary form-button'
+                                            onClick={() => {
+                                                checkPage();
+                                            }} />
+                                    </div>
+                                </div>
+                            </>
+                        }
+
+                        {
+                            currentPage === 'GET_MORTGAGE_DETAILS' &&
+                            <>
+                                <div className="row">
+                                    <div className="col mb-3 mt-4 text-danger fw-semibold error-label">
+                                        <h6 style={{
+                                            visibility: missingInfo ? 'visible' : 'hidden',
+                                        }}>
+                                            Please fill in all required information
+                                        </h6>
+                                    </div>
+                                    <div className="col mb-3 mt-4" style={{
+                                        textAlign: 'right',
+                                        whiteSpace: 'nowrap',
+                                    }}>
+                                        <input type='button' value='Back to Property Details' className='btn btn-secondary form-button me-2'
+                                            onClick={() => setCurrentPage('GET_PROPERTY_DETAILS')} />
 
                                         <input type='button' value='Next' className='btn btn-primary form-button'
                                             onClick={() => {
@@ -992,7 +1076,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                         whiteSpace: 'nowrap',
                                     }}>
                                         <input type='button' value='Go back' className='btn btn-secondary form-button me-2'
-                                            onClick={() => setCurrentPage('GET_SALE_DETAILS')} />
+                                            onClick={() => setCurrentPage('GET_PROPERTY_DETAILS')} />
 
                                         <input type='button' value='Submit to DBM' className='btn btn-primary form-button'
                                             onClick={() => {
@@ -1030,7 +1114,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
 
 };
 
-const getOutput = (saleInfo: SaleInfo): string => {
+const getOutput = (refinanceInfo: RefinanceInfo): string => {
 
     const output: string[] = [];
 
@@ -1039,25 +1123,25 @@ const getOutput = (saleInfo: SaleInfo): string => {
     output.push('<b>SELLERS</b><br />');
 
     output.push('<table>');
-    if (saleInfo.forCompany) {
-        output.push(getEntry('Company', saleInfo.companyName));
-        output.push(getEntry('Incorporation Number', saleInfo.incorporationNumber));
+    if (refinanceInfo.forCompany) {
+        output.push(getEntry('Company', refinanceInfo.companyName));
+        output.push(getEntry('Incorporation Number', refinanceInfo.incorporationNumber));
 
-        output.push(getEntry('Signatory Full Legal Name', saleInfo.clientsInfo[0].fullLegalName));
+        output.push(getEntry('Signatory Full Legal Name', refinanceInfo.clientsInfo[0].fullLegalName));
 
-        output.push(getEntry('Phone Number', saleInfo.clientsInfo[0].phoneNumber));
-        output.push(getEntry('Email', saleInfo.clientsInfo[0].emailAddress));
-        output.push(getEntry('Street 1', saleInfo.clientsInfo[0].mailingStreet1));
-        output.push(getEntry('Street 2', saleInfo.clientsInfo[0].mailingStreet2));
-        output.push(getEntry('Province or Territory', saleInfo.clientsInfo[0].mailingProvinceTerritory));
-        output.push(getEntry('Postal Code', saleInfo.clientsInfo[0].mailingPostalCode, true));
+        output.push(getEntry('Phone Number', refinanceInfo.clientsInfo[0].phoneNumber));
+        output.push(getEntry('Email', refinanceInfo.clientsInfo[0].emailAddress));
+        output.push(getEntry('Street 1', refinanceInfo.clientsInfo[0].mailingStreet1));
+        output.push(getEntry('Street 2', refinanceInfo.clientsInfo[0].mailingStreet2));
+        output.push(getEntry('Province or Territory', refinanceInfo.clientsInfo[0].mailingProvinceTerritory));
+        output.push(getEntry('Postal Code', refinanceInfo.clientsInfo[0].mailingPostalCode, true));
 
-        output.push(getEntry('Resident of Canada at completion', saleInfo.clientsInfo[0].residentOfCanada, true));
+        output.push(getEntry('Resident of Canada at completion', refinanceInfo.clientsInfo[0].residentOfCanada, true));
     }
     else {
-        for (let i = 0; i < saleInfo.clientsInfo.length; i++) {
+        for (let i = 0; i < refinanceInfo.clientsInfo.length; i++) {
 
-            const client = saleInfo.clientsInfo[i];
+            const client = refinanceInfo.clientsInfo[i];
 
             output.push(getHeader(`SELLER ${(i + 1).toString()}`));
             output.push(getEntry('Full Legal Name', client.fullLegalName));
@@ -1081,37 +1165,32 @@ const getOutput = (saleInfo: SaleInfo): string => {
 
     output.push(getHeader('SALE PROPERTY INFORMATION'));
 
-    output.push(getEntry('Closing Date', saleInfo.closingDateTBD ? 'TBD' : saleInfo.closingDate ? saleInfo.closingDate.toISOString().split('T')[0] : ''));
+    output.push(getEntry('Street 1', refinanceInfo.street1));
+    output.push(getEntry('Street 2', refinanceInfo.street2));
+    output.push(getEntry('City', refinanceInfo.city));
+    output.push(getEntry('Province or Territory', refinanceInfo.provinceTerritory));
+    output.push(getEntry('Postal Code', refinanceInfo.postalCode, true));
 
-    output.push(getEntry('Sale Price (CAD)', saleInfo.sellingPrice.toString()));
+    output.push(getEntry('Strata Company Name', refinanceInfo.strataName, true));
 
-    output.push(getEntry('Street 1', saleInfo.street1));
-    output.push(getEntry('Street 2', saleInfo.street2));
-    output.push(getEntry('City', saleInfo.city));
-    output.push(getEntry('Province or Territory', saleInfo.provinceTerritory));
-    output.push(getEntry('Postal Code', saleInfo.postalCode, true));
+    output.push(getEntry('Mortgage or LOC on title', refinanceInfo.mortgageOrLoCOnTitle));
+    output.push(getEntry('Reference Number', refinanceInfo.mortgageOrLoCOnTitleReferenceNumber));
+    output.push(getEntry('Bank and Branch', refinanceInfo.mortgageOrLoCOnTitleBankBranch, true));
 
-    output.push(getEntry('Realtor Name', saleInfo.realtorName));
-    output.push(getEntry('Realtor Phone', saleInfo.realtorPhone, true));
-
-    output.push(getEntry('Mortgage or LOC on title', saleInfo.mortgageOrLoCOnTitle));
-    output.push(getEntry('Reference Number', saleInfo.mortgageOrLoCOnTitleReferenceNumber));
-    output.push(getEntry('Bank and Branch', saleInfo.mortgageOrLoCOnTitleBankBranch, true));
-
-    output.push(getEntry('Separation or Divorce Involved', saleInfo.involvesSeparationDivorce, true));
+    output.push(getEntry('Separation or Divorce Involved', refinanceInfo.involvesSeparationDivorce, true));
 
     output.push('</table><table>');
 
-    output.push(getEntry(`Property Taxes Paid and or Home Owners Grant Claimed for ${(new Date().getFullYear())}`, saleInfo.paidPropertyTaxesOrClaimedHownOwnersGrant, true));
+    output.push(getEntry(`Property Taxes Paid and or Home Owners Grant Claimed for ${(new Date().getFullYear())}`, refinanceInfo.paidPropertyTaxesOrClaimedHownOwnersGrant, true));
 
     output.push('</table><table>');
 
-    output.push(getEntry('Empty Homes Declaration filed (Vancouver property)', saleInfo.emptyHomesDeclaration, true));
+    output.push(getEntry('Empty Homes Declaration filed (Vancouver property)', refinanceInfo.emptyHomesDeclaration, true));
 
     output.push('</table><table>');
 
     output.push(getEntry('Additional Comments', ''));
-    output.push(getEntry(saleInfo.additionalComments, '', true));
+    output.push(getEntry(refinanceInfo.additionalComments, '', true));
 
     output.push('</table></html>');
 
