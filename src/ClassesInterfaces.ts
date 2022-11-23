@@ -1,4 +1,3 @@
-import { StringLiteral } from "typescript";
 
 export class ClientInfo {
 
@@ -9,6 +8,8 @@ export class ClientInfo {
     public dateOfBirth: Date;
     public socialInsNumber: string;
     public sinViaPhone: boolean;
+
+    public addressSameAsProperty: 'YES' | 'NO' | '';
 
     public mailingStreet1: string;
     public mailingStreet2: string;
@@ -45,6 +46,7 @@ export class ClientInfo {
         this.dateOfBirth = new Date();
         this.socialInsNumber = '';
         this.sinViaPhone = false;
+        this.addressSameAsProperty = '';
 
         this.relationship = '';
 
@@ -164,10 +166,12 @@ export class SaleInfo {
 
 export class RefinanceInfo {
     public clientsInfo: ClientInfo[];
-
     public clientsAddedInfo: ClientInfo[];
+    public guarantorsInfo: GuarantorInfo[];
 
     public removedFromTitle: string[];
+
+    public joinType: 'JOINT_TENANTS' | 'TENANTS_IN_COMMON' | '';
 
     public forCompany: boolean;
     public companyName: string;
@@ -185,6 +189,9 @@ export class RefinanceInfo {
     public mortgageOrLoCOnTitleReferenceNumber: string;
     public mortgageOrLoCOnTitleBankBranch: string;
 
+    public mortgageLenderRequiresOtherDebtsPaid: 'YES' | 'NO' | '';
+    public mortgageLenderRequiresOtherDebtsPaidDetails: string;
+
     public strataName: string;
 
     public involvesSeparationDivorce: 'YES' | 'NO' | '';
@@ -193,22 +200,28 @@ export class RefinanceInfo {
 
     public emptyHomesDeclaration: 'OCCUPIED' | 'VACANT' | 'NOT_APPLICABLE' | 'NOT_COMPLETED' | '';
 
+    public insuranceAgentName: string;
+    public insuranceAgentPhone: string;
+
     public additionalComments: string;
 
     constructor() {
 
         this.clientsInfo = [];
-
         this.clientsAddedInfo = [];
+        this.guarantorsInfo = [];
 
         this.removedFromTitle = [];
-
+        this.joinType = '';
 
         this.forCompany = false;
         this.companyName = '';
         this.incorporationNumber = '';
 
         this.mortgageLenderName = '';
+
+        this.insuranceAgentName = '';
+        this.insuranceAgentPhone = '';
 
         this.street1 = '';
         this.street2 = '';
@@ -219,6 +232,9 @@ export class RefinanceInfo {
         this.mortgageOrLoCOnTitle = '';
         this.mortgageOrLoCOnTitleReferenceNumber = '';
         this.mortgageOrLoCOnTitleBankBranch = '';
+
+        this.mortgageLenderRequiresOtherDebtsPaid = '';
+        this.mortgageLenderRequiresOtherDebtsPaidDetails = '';
 
         this.strataName = '';
 

@@ -57,3 +57,7 @@
 .col-button {
   text-align: center;
 }
+
+.modal-body {
+  overscroll-behavior: contain;
+}

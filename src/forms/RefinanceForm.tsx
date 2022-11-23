@@ -1,22 +1,25 @@
 import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
-import { ClientInfo, RefinanceInfo } from '../ClassesInterfaces';
+import { ClientInfo, GuarantorInfo, RefinanceInfo } from '../ClassesInterfaces';
 
 import CircleBullet from '../controls/CircleBullet';
 import { FormProps, getEntry, getHeader, sendEmail } from '../Helpers';
 import { SubmitConfirm, SubmitDone, Submitting } from '../controls/SubmitConfirm';
 import Owner from '../controls/Owner';
 import TransferAdded from '../controls/TransferAdded';
+import Guarantor from '../Guarantor';
 //import DateInput from '../controls/DateInput';
 
 declare var bootstrap: any;
 
 const RefinanceForm = (props: FormProps): ReactElement => {
 
-    const [refinanceInfo, setRefinanceInfo] = useState(() => new RefinanceInfo());
+    const [refinanceInfo, setRefinanceInfo] = useState<RefinanceInfo>(() => new RefinanceInfo());
 
     const [missingInfo, setMissingInfo] = useState(false);
 
     const [numberOfOwners, setNumberOfOwners] = useState(0);
+
+    const [numberOfGuarantors, setNumberOfGuarantors] = useState(0);
 
     const [numberOfAdded, setNumberOfAdded] = useState(0);
 
@@ -27,7 +30,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
 
     const checkPage = () => {
         //
-
+        //
         switch (currentPage) {
             case 'GET_PROPERTY_DETAILS':
                 setMissingInfo(false);
@@ -41,7 +44,12 @@ const RefinanceForm = (props: FormProps): ReactElement => {
 
             case 'GET_TRANSFER_INFORMATION':
                 setMissingInfo(false);
-                setCurrentPage('GET_PROPERTY_DETAILS');
+                setCurrentPage('GET_MORTGAGE_DETAILS');
+                break;
+
+            case 'GET_MORTGAGE_DETAILS':
+                setMissingInfo(false);
+                setCurrentPage('CONFIRM_SUBMIT');
                 break;
 
         }
@@ -255,12 +263,16 @@ const RefinanceForm = (props: FormProps): ReactElement => {
     const submitSaleForm = async () => {
         const c = getOutput(refinanceInfo);
 
-        await sendEmail('Sale submission', c);
+        await sendEmail('Refinance submission', c);
 
         setCurrentPage('SUBMIT_RESULT');
     };
 
     useEffect(() => {
+
+        console.log(refinanceInfo.clientsInfo, refinanceInfo.clientsAddedInfo, numberOfOwners, numberOfAdded);
+
+
         // eslint-disable-next-line
         if (!document.querySelector('.modal-backdrop')) {
             new bootstrap.Modal('#formModal').show();
@@ -293,7 +305,27 @@ const RefinanceForm = (props: FormProps): ReactElement => {
         setRefinanceInfo({ ...refinanceInfo, clientsInfo: tempOwners });
 
         // eslint-disable-next-line
-    }, [numberOfOwners]);
+    }, [numberOfOwners,]);
+
+    useEffect(() => {
+        const temp = [...refinanceInfo.guarantorsInfo];
+        if (numberOfGuarantors > temp.length) {
+            do {
+                temp.push(
+                    new GuarantorInfo(),
+                );
+            } while (numberOfGuarantors > temp.length);
+        }
+        else if (numberOfGuarantors < temp.length) {
+            do {
+                temp.pop();
+            } while (numberOfGuarantors < temp.length);
+        }
+
+        setRefinanceInfo({ ...refinanceInfo, guarantorsInfo: temp });
+
+        // eslint-disable-next-line
+    }, [numberOfGuarantors]);
 
     useEffect(() => {
         const tempOwners = [...refinanceInfo.clientsAddedInfo];
@@ -315,14 +347,15 @@ const RefinanceForm = (props: FormProps): ReactElement => {
         // eslint-disable-next-line
     }, [numberOfAdded]);
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        setNumberOfOwners(refinanceInfo.forCompany ? 1 : 0);
+    //     setNumberOfOwners(refinanceInfo.forCompany ? 1 : 0);
 
-    }, [refinanceInfo.forCompany]);
+    // }, [refinanceInfo.forCompany]);
 
     useEffect(() => {
         //if (currentPage !== 'PROPERTY_INFO') {
+        //
         const top = document.querySelector('.top-second-page');
         if (top) {
             top.scrollIntoView({
@@ -336,7 +369,8 @@ const RefinanceForm = (props: FormProps): ReactElement => {
 
         <div className="modal fade" id="formModal" tabIndex={-1} aria-labelledby="formModalLabel" aria-hidden="true"
             data-bs-backdrop="static" data-bs-keyboard="false">
-            <div className={`modal-dialog modal-lg ${(currentPage === 'GET_OWNERS' && refinanceInfo.clientsInfo.length !== 0)
+            <div className={`modal-dialog modal-lg ${((currentPage === 'GET_OWNERS' && refinanceInfo.clientsInfo.length !== 0)) ||
+                (currentPage === 'GET_PROPERTY_DETAILS')
                 ? 'modal-dialog-centered' : 'modal-near-top'} modal-dialog-scrollable`}>
                 <div className="modal-content">
                     <div className="modal-header">
@@ -488,6 +522,8 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                         </label>
                                                     </div>
                                                 </div>
+
+                                                <div className='col'></div>
                                             </div>
 
                                             <div className="row">
@@ -513,7 +549,45 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                         </label>
                                                     </div>
                                                 </div>
+                                            </div>
 
+                                            <div className='row'>
+                                                <div className='col mb-1 mt-4'>
+                                                    <h6>
+                                                        <CircleBullet />
+                                                        Your house insurance information
+                                                    </h6>
+                                                </div>
+                                            </div>
+
+                                            <div className='row'>
+                                                <div className='col mb-3'>
+                                                    <div className='form-floating mb-0'>
+                                                        <input type='text' className='form-control' id='insurancename' placeholder='Agent name'
+                                                            value={refinanceInfo.insuranceAgentName}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                setRefinanceInfo({ ...refinanceInfo, insuranceAgentName: e.target.value });
+                                                            }}
+                                                        />
+                                                        <label htmlFor='floatingInput'>
+                                                            Agent name
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div className='col mb-3'>
+                                                    <div className='form-floating mb-0'>
+                                                        <input type='tel' className='form-control' id='insurancenumber' placeholder='Agent number'
+                                                            value={refinanceInfo.insuranceAgentPhone}
+                                                            pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}'
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                setRefinanceInfo({ ...refinanceInfo, insuranceAgentPhone: e.target.value });
+                                                            }}
+                                                        />
+                                                        <label htmlFor='floatingInput'>
+                                                            Phone number - format: 123-456-7890
+                                                        </label>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </>
                                     }
@@ -523,7 +597,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                         currentPage === 'GET_OWNERS' &&
                                         <>
                                             <div className="row">
-                                                <div className="col mb-3">
+                                                <div className="col mb-3 top-second-page">
                                                     <h6>
                                                         Owners
                                                     </h6>
@@ -669,61 +743,57 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                 </div>
                                             </div>
 
-                                            <div className='row'>
-                                                {
-                                                    refinanceInfo.clientsInfo.map((owner, idx) => {
-                                                        return (
-                                                            <div className='row mb-1' key={idx}>
-                                                                <div className='col'>
-                                                                    <span style={{
-                                                                        textDecoration: refinanceInfo.removedFromTitle.indexOf(owner.fullLegalName) > -1 ? 'line-through' : '',
-                                                                    }}>
-                                                                        {owner.fullLegalName}
-                                                                    </span>
-                                                                </div>
-                                                                <div className='col col'>
-                                                                    <span>
-                                                                        <input type='checkbox' className='btn btn-secondary'
-                                                                            id={`removecheck${idx}`}
-                                                                            value='Remove from title'
-                                                                            checked={refinanceInfo.removedFromTitle.indexOf(owner.fullLegalName) > -1}
-                                                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                            {
+                                                refinanceInfo.clientsInfo.map((owner, idx) => {
+                                                    return (
+                                                        <div className='row mb-1' key={idx}>
+                                                            <div className='col'>
+                                                                <span style={{
+                                                                    textDecoration: refinanceInfo.removedFromTitle.indexOf(owner.fullLegalName) > -1 ? 'line-through' : '',
+                                                                }}>
+                                                                    {owner.fullLegalName}
+                                                                </span>
+                                                            </div>
+                                                            <div className='col' style={{
+                                                                whiteSpace: 'nowrap',
+                                                            }}>
+                                                                <span>
+                                                                    <input type='checkbox' className='btn btn-secondary'
+                                                                        id={`removecheck${idx}`}
+                                                                        value='Remove from title'
+                                                                        checked={refinanceInfo.removedFromTitle.indexOf(owner.fullLegalName) > -1}
+                                                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 
-                                                                                let temp = refinanceInfo.removedFromTitle;
-                                                                                if (e.target.checked) {
-                                                                                    temp.push(owner.fullLegalName);
-                                                                                } else {
-                                                                                    temp = temp.filter((s) => s !== owner.fullLegalName);
-                                                                                }
-                                                                                setRefinanceInfo({ ...refinanceInfo, removedFromTitle: temp });
+                                                                            let temp = refinanceInfo.removedFromTitle;
+                                                                            if (e.target.checked) {
+                                                                                temp.push(owner.fullLegalName);
+                                                                            } else {
+                                                                                temp = temp.filter((s) => s !== owner.fullLegalName);
                                                                             }
-
-                                                                            }
-                                                                        />
-                                                                        <label htmlFor={`removecheck${idx}`}
-                                                                            className='ps-2'>
-                                                                            {
-                                                                                refinanceInfo.removedFromTitle.indexOf(owner.fullLegalName) > -1 ?
-                                                                                    `Keep on title`
-                                                                                    : `Remove from title`
-                                                                            }
-
-                                                                        </label>
-                                                                    </span>
-                                                                </div>
-
-                                                                <div className='col'>
-                                                                    <span>
-                                                                        {
+                                                                            setRefinanceInfo({ ...refinanceInfo, removedFromTitle: temp });
+                                                                        }
 
                                                                         }
-                                                                    </span>
-                                                                </div>
+                                                                    />
+                                                                </span>
+                                                                <label htmlFor={`removecheck${idx}`}
+                                                                    className='ps-2'>
+                                                                    Check to remove from title / uncheck to keep
+
+                                                                </label>
                                                             </div>
-                                                        )
-                                                    })
-                                                }
-                                            </div>
+
+                                                            <div className='col'>
+                                                                <span>
+                                                                    {
+
+                                                                    }
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                })
+                                            }
 
                                             <div className='row align-items-center mt-5'>
                                                 <div className="col mb-3">
@@ -792,7 +862,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                         <>
 
                                             <div className="row">
-                                                <div className="col mb-1 mt-4">
+                                                <div className="col mb-1 mt-4 top-second-page">
                                                     <h6>
                                                         <CircleBullet />
                                                         Name of Mortgage Lender?
@@ -891,6 +961,65 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                 </>
                                             }
 
+                                            <div className="row">
+                                                <div className="col mb-1 mt-4">
+                                                    <h6>
+                                                        <CircleBullet />
+                                                        Does Mortgage Lender require other debts to be paid?
+                                                    </h6>
+                                                </div>
+                                            </div>
+
+                                            <div className="row">
+                                                <div className="col mb-3">
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name="mortgagedebt" id="mortgagedebts-yes"
+                                                            checked={refinanceInfo.mortgageLenderRequiresOtherDebtsPaid === 'YES'}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                if (e && e.target && e.target.value && e.target.value === 'on') {
+                                                                    setRefinanceInfo({ ...refinanceInfo, mortgageLenderRequiresOtherDebtsPaid: 'YES' });
+                                                                }
+                                                            }} />
+                                                        <label className="form-check-label" htmlFor="mortgagedebts-yes">
+                                                            Yes
+                                                        </label>
+                                                    </div>
+
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name="mortgagedebts" id="mortgagedebts-no"
+                                                            checked={refinanceInfo.mortgageLenderRequiresOtherDebtsPaid === 'NO'}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                if (e && e.target && e.target.value && e.target.value === 'on') {
+                                                                    setRefinanceInfo({ ...refinanceInfo, mortgageLenderRequiresOtherDebtsPaid: 'NO' });
+                                                                }
+                                                            }} />
+                                                        <label className="form-check-label" htmlFor="mortgagedebts-no">
+                                                            No
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {
+                                                refinanceInfo.mortgageLenderRequiresOtherDebtsPaid === 'YES' &&
+                                                <div className="row">
+                                                    <div className="col mb-3">
+                                                        <div className='form-floating mb-0'>
+                                                            <input type='text' className='form-control' id='mortgagelenderotherdebts' placeholder='Mortgage Lender Other Debts'
+                                                                value={refinanceInfo.mortgageLenderRequiresOtherDebtsPaidDetails}
+                                                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                    setRefinanceInfo({ ...refinanceInfo, mortgageLenderRequiresOtherDebtsPaidDetails: e.target.value });
+                                                                }}
+                                                            />
+                                                            <label htmlFor='mortgagelendername'>
+                                                                Enter details ie. Credit card, student loans, etc.
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            }
 
                                             <div className="row">
                                                 <div className="col mb-1 mt-4">
@@ -933,6 +1062,176 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                 </div>
                                             </div>
 
+                                            {
+                                                ((refinanceInfo.clientsInfo.length + refinanceInfo.clientsAddedInfo.length) > 1) &&
+                                                <>
+                                                    <div className='row'>
+                                                        <div className='col mb-1 mt-4'>
+                                                            <h6>
+                                                                <CircleBullet />
+                                                                Do you want to own the property as Joint Tenants or as Tenants-In-Common?
+                                                            </h6>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div className='row'>
+                                                        <div className='col mb-3'>
+
+                                                            <div className='form-check'>
+                                                                <input className='form-check-input' type='radio' name='ownertype' id='jointtenants'
+                                                                    checked={refinanceInfo.joinType === 'JOINT_TENANTS'}
+                                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                        if (e.target.checked) {
+                                                                            setRefinanceInfo({ ...refinanceInfo, joinType: 'JOINT_TENANTS' });
+                                                                        }
+                                                                    }}
+                                                                />
+                                                                <label className='form-check-label' htmlFor='jointtenants'>
+                                                                    Joint Tenants
+                                                                </label>
+                                                            </div>
+
+                                                            <div className='form-check'>
+                                                                <input className='form-check-input' type='radio' name='ownertype' id='tenantsincommon'
+                                                                    checked={refinanceInfo.joinType === 'TENANTS_IN_COMMON'}
+                                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                        if (e.target.checked) {
+                                                                            setRefinanceInfo({ ...refinanceInfo, joinType: 'TENANTS_IN_COMMON' });
+                                                                        }
+                                                                    }}
+
+                                                                />
+                                                                <label className='form-check-label' htmlFor='tenantsincommon'>
+                                                                    Tenants-In-Common
+                                                                </label>
+                                                            </div>
+
+                                                        </div>
+
+                                                        <div className='col-7 mb-3'>
+
+                                                            <span>
+                                                                For more information between Joint Tenancy and Tenancy In Common, click on the following link to our blog post:&nbsp;&nbsp;
+                                                            </span>
+
+                                                            <a href='http://www.dbmrealestatelaw.com/joint-tenancy-vs-tenancy-common/' target='_blank' rel='noreferrer'>
+                                                                http://www.dbmrealestatelaw.com/joint-tenancy-vs-tenancy-common/
+                                                            </a>
+                                                        </div>
+
+                                                    </div>
+                                                </>
+                                            }
+
+
+                                            <div className='row align-items-center mt-4'>
+                                                <div className='col mb-3'>
+                                                    <div style={{
+                                                        display: 'grid',
+                                                        gridTemplateColumns: 'min-content 1fr'
+                                                    }}>
+                                                        <div>
+                                                            <CircleBullet />
+                                                        </div>
+                                                        <div>
+
+                                                            <h6 style={{
+                                                                display: 'inline-block',
+                                                            }}>
+                                                                <div>Are there any guarantors/co-signers?</div>
+                                                                <div>If so, how many?</div>
+                                                            </h6>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                                <div className='col mb-3'>
+                                                    <select className='form-select p-3' aria-label='number of guarantors'
+                                                        value={refinanceInfo.guarantorsInfo.length}
+                                                        onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                                                            if (e && e.target && e.target.value) {
+                                                                setNumberOfGuarantors(parseInt(e.target.value));
+                                                            }
+                                                        }}>
+                                                        <option value='0'>No guarantors</option>
+                                                        <option value='1'>1</option>
+                                                        <option value='2'>2</option>
+                                                        <option value='3'>3</option>
+                                                        <option value='4'>4</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+
+                                            {
+                                                numberOfGuarantors > 0 &&
+                                                <>
+                                                    <div className='row'>
+                                                        <div className='col mb-1 mt-4'>
+                                                            <h6>
+                                                                IMPORTANT: All guarantors will be required to sign particular mortgage documents
+                                                                and attend appointment(s)
+                                                            </h6>
+                                                        </div>
+                                                    </div>
+                                                    {
+                                                        refinanceInfo.guarantorsInfo.map((c, i) => {
+                                                            return (
+                                                                <Guarantor text={'Guarantor/Co-signer'}
+                                                                    num={i}
+                                                                    key={i}
+                                                                    numberOfPurchasers={refinanceInfo.clientsInfo.length}
+                                                                    guarantorInfo={refinanceInfo.guarantorsInfo[i]}
+                                                                    updated={(c: GuarantorInfo, idx: number) => {
+                                                                        const tempGuarantors: GuarantorInfo[] = [];
+                                                                        for (let t = 0; t < refinanceInfo.guarantorsInfo.length; t++) {
+                                                                            if (t === idx) {
+                                                                                tempGuarantors.push(c);
+                                                                            }
+                                                                            else {
+                                                                                tempGuarantors.push(refinanceInfo.guarantorsInfo[t]);
+                                                                            }
+                                                                        }
+                                                                        setRefinanceInfo({ ...refinanceInfo, guarantorsInfo: tempGuarantors });
+                                                                    }}
+                                                                />
+                                                            );
+                                                        })
+                                                    }
+
+                                                </>
+                                            }
+
+                                            <div className='row'>
+                                                <div className='col mb-1 mt-4'>
+                                                    <h6>
+                                                        <CircleBullet />
+                                                        Do you have any additional details, questions, or concerns?
+                                                    </h6>
+                                                </div>
+                                            </div>
+
+                                            <div className='row'>
+                                                <div className='col mb-3'>
+
+                                                    <textarea
+                                                        className='dbm-textarea'
+                                                        style={{
+                                                            width: '100%',
+                                                        }}
+                                                        value={refinanceInfo.additionalComments}
+                                                        rows={6}
+                                                        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+                                                            setRefinanceInfo({ ...refinanceInfo, additionalComments: e.target.value });
+                                                        }}>
+                                                    </textarea>
+
+                                                </div>
+                                            </div>
+
                                         </>
                                     }
 
@@ -950,7 +1249,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                     {
                                         currentPage === 'CONFIRM_SUBMIT' &&
                                         <SubmitConfirm
-                                            text='Submit your sale information to Drysdale Bacon McStravick?'
+                                            text='Submit your refinance information to Drysdale Bacon McStravick?'
                                         />
                                     }
                                 </div>
@@ -1055,8 +1354,8 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                         textAlign: 'right',
                                         whiteSpace: 'nowrap',
                                     }}>
-                                        <input type='button' value='Back to Property Details' className='btn btn-secondary form-button me-2'
-                                            onClick={() => setCurrentPage('GET_PROPERTY_DETAILS')} />
+                                        <input type='button' value='Back to Transfer Information' className='btn btn-secondary form-button me-2'
+                                            onClick={() => setCurrentPage('GET_TRANSFER_INFORMATION')} />
 
                                         <input type='button' value='Next' className='btn btn-primary form-button'
                                             onClick={() => {
@@ -1075,8 +1374,8 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                         textAlign: 'right',
                                         whiteSpace: 'nowrap',
                                     }}>
-                                        <input type='button' value='Go back' className='btn btn-secondary form-button me-2'
-                                            onClick={() => setCurrentPage('GET_PROPERTY_DETAILS')} />
+                                        <input type='button' value='Back to Mortgage Information' className='btn btn-secondary form-button me-2'
+                                            onClick={() => setCurrentPage('GET_MORTGAGE_DETAILS')} />
 
                                         <input type='button' value='Submit to DBM' className='btn btn-primary form-button'
                                             onClick={() => {
@@ -1118,40 +1417,87 @@ const getOutput = (refinanceInfo: RefinanceInfo): string => {
 
     const output: string[] = [];
 
-    output.push('<html><b>SALE</b><br /><br />');
-
-    output.push('<b>SELLERS</b><br />');
+    output.push('<html><b>REFINANCE</b><br /><br />');
 
     output.push('<table>');
-    if (refinanceInfo.forCompany) {
-        output.push(getEntry('Company', refinanceInfo.companyName));
-        output.push(getEntry('Incorporation Number', refinanceInfo.incorporationNumber));
+    output.push(getHeader('PROPERTY'));
+    output.push(getEntry('Street Address 1', refinanceInfo.street1));
+    output.push(getEntry('Street Address 2', refinanceInfo.street2));
+    output.push(getEntry('City', refinanceInfo.city));
+    output.push(getEntry('Province or Territory', refinanceInfo.provinceTerritory));
+    output.push(getEntry('Postal Code', refinanceInfo.postalCode, true));
 
-        output.push(getEntry('Signatory Full Legal Name', refinanceInfo.clientsInfo[0].fullLegalName));
+    output.push(getEntry('Strata Company', refinanceInfo.strataName, true));
 
-        output.push(getEntry('Phone Number', refinanceInfo.clientsInfo[0].phoneNumber));
-        output.push(getEntry('Email', refinanceInfo.clientsInfo[0].emailAddress));
-        output.push(getEntry('Street 1', refinanceInfo.clientsInfo[0].mailingStreet1));
-        output.push(getEntry('Street 2', refinanceInfo.clientsInfo[0].mailingStreet2));
-        output.push(getEntry('Province or Territory', refinanceInfo.clientsInfo[0].mailingProvinceTerritory));
-        output.push(getEntry('Postal Code', refinanceInfo.clientsInfo[0].mailingPostalCode, true));
+    output.push(getEntry('House Insurance Agent', refinanceInfo.insuranceAgentName));
+    output.push(getEntry('House Insurance Phone', refinanceInfo.insuranceAgentPhone, true));
 
-        output.push(getEntry('Resident of Canada at completion', refinanceInfo.clientsInfo[0].residentOfCanada, true));
+    output.push('</table><table>');
+
+    for (let i = 0; i < refinanceInfo.clientsInfo.length; i++) {
+
+        const client = refinanceInfo.clientsInfo[i];
+
+        output.push(getHeader(`OWNER ${(i + 1).toString()}`));
+        output.push(getEntry('Full Legal Name', client.fullLegalName));
+        output.push(getEntry('Phone Number', client.phoneNumber));
+        output.push(getEntry('Email', client.emailAddress));
+        output.push(getEntry('Date of Birth', client.dateOfBirth.toDateString() === (new Date()).toDateString()
+            ? ''
+            : client.dateOfBirth.toISOString().split('T')[0]));
+        output.push(getEntry('SIN', client.sinViaPhone ? 'TO BE PROVIDED BY PHONE' : client.socialInsNumber));
+
+        output.push(getHeader('Current Address'))
+
+        if (client.addressSameAsProperty === 'NO') {
+            output.push(getEntry('Street 1', client.mailingStreet1));
+            output.push(getEntry('Street 2', client.mailingStreet2));
+            output.push(getEntry('City', client.mailingCity));
+            output.push(getEntry('Province or Territory', client.mailingProvinceTerritory));
+            output.push(getEntry('Postal Code', client.mailingPostalCode, true));
+        }
+        else if (client.addressSameAsProperty === 'YES') {
+            output.push(getEntry('Address', 'SAME AS MORTGAGE PROPERTY', true));
+            output.push(getEntry('Time Living At Property', client.timeLivingAtProperty, true));
+        }
+        else {
+            output.push(getEntry('Address', 'NOT SPECIFIED', true));
+        }
+
+
+        //output.push(getEntry('Resident of Canada at completion', client.residentOfCanada, true));
+    }
+
+    output.push(getHeader('TO BE REMOVED FROM TITLE'));
+
+    if (refinanceInfo.removedFromTitle.length === 0) {
+        output.push('NONE');
     }
     else {
-        for (let i = 0; i < refinanceInfo.clientsInfo.length; i++) {
+        for (let i = 0; i < refinanceInfo.removedFromTitle.length; i++) {
+            output.push(getEntry('Remove', refinanceInfo.removedFromTitle[i], i === refinanceInfo.removedFromTitle.length - 1 ? true : false));
+        }
+    }
 
-            const client = refinanceInfo.clientsInfo[i];
+    output.push(getHeader('TO BE ADDED TO TITLE'));
 
-            output.push(getHeader(`SELLER ${(i + 1).toString()}`));
+    if (refinanceInfo.clientsAddedInfo.length === 0) {
+        output.push('NONE');
+    }
+    else {
+        for (let i = 0; i < refinanceInfo.clientsAddedInfo.length; i++) {
+            const client = refinanceInfo.clientsAddedInfo[i];
+
+            output.push(getHeader(`TRANSFER ${(i + 1).toString()}`));
             output.push(getEntry('Full Legal Name', client.fullLegalName));
             output.push(getEntry('Phone Number', client.phoneNumber));
             output.push(getEntry('Email', client.emailAddress));
             output.push(getEntry('Date of Birth', client.dateOfBirth.toDateString() === (new Date()).toDateString()
                 ? ''
                 : client.dateOfBirth.toISOString().split('T')[0]));
+            output.push(getEntry('Social Insurance Number', client.sinViaPhone ? 'TO BE PROVIDED VIA PHONE' : client.socialInsNumber, true));
 
-            output.push(getHeader('Mailing or Forwarding Address'))
+            output.push(getHeader('Current Address'))
 
             output.push(getEntry('Street 1', client.mailingStreet1));
             output.push(getEntry('Street 2', client.mailingStreet2));
@@ -1159,33 +1505,91 @@ const getOutput = (refinanceInfo: RefinanceInfo): string => {
             output.push(getEntry('Province or Territory', client.mailingProvinceTerritory));
             output.push(getEntry('Postal Code', client.mailingPostalCode, true));
 
-            output.push(getEntry('Resident of Canada at completion', client.residentOfCanada, true));
+            output.push(getEntry('Relationship', client.relationship));
+
+            output.push(getEntry('Occupation', client.occupation));
+            output.push(getEntry('Employer Name', client.employerName));
+            output.push(getEntry('Employer Phone Number', client.employerPhone));
+            output.push(getEntry('Employer Street 1', client.employerStreet1));
+            output.push(getEntry('Employer Street 2', client.employerStreet2));
+            output.push(getEntry('Employer City', client.employerCity));
+            output.push(getEntry('Employer Province or Territory', client.employerProvinceTerritory));
+            output.push(getEntry('Employer Postal Code', client.employerPostalCode, true));
+
+            let citizenShip = '';
+            switch (client.citizenShip) {
+                case 'CANADIAN_CITIZEN':
+                    citizenShip = 'Canadian citizen';
+                    break;
+
+                case 'PERMANENT_RESIDENT':
+                    citizenShip = 'Permanent resident';
+                    break;
+
+                case 'BC_PROV_NOMINEE':
+                    citizenShip = 'B.C. Provincial Nominee';
+                    break;
+
+                default:
+                    citizenShip = '';
+            }
+
+            output.push(getEntry('Citizenship', citizenShip));
+
+            output.push(getEntry('Time Living At Property', client.timeLivingAtProperty, true));
+
         }
     }
 
-    output.push(getHeader('SALE PROPERTY INFORMATION'));
+    output.push(getHeader('MORTGAGE INFORMATION'));
 
-    output.push(getEntry('Street 1', refinanceInfo.street1));
-    output.push(getEntry('Street 2', refinanceInfo.street2));
-    output.push(getEntry('City', refinanceInfo.city));
-    output.push(getEntry('Province or Territory', refinanceInfo.provinceTerritory));
-    output.push(getEntry('Postal Code', refinanceInfo.postalCode, true));
+    output.push(getEntry('Mortgage Lender Name', refinanceInfo.mortgageLenderName));
 
-    output.push(getEntry('Strata Company Name', refinanceInfo.strataName, true));
+    output.push(getEntry('Need To Pay Out Mortgage / LOC', refinanceInfo.mortgageOrLoCOnTitle));
 
-    output.push(getEntry('Mortgage or LOC on title', refinanceInfo.mortgageOrLoCOnTitle));
-    output.push(getEntry('Reference Number', refinanceInfo.mortgageOrLoCOnTitleReferenceNumber));
-    output.push(getEntry('Bank and Branch', refinanceInfo.mortgageOrLoCOnTitleBankBranch, true));
+    if (refinanceInfo.mortgageOrLoCOnTitle === 'YES') {
+        output.push(getEntry('Reference Number', refinanceInfo.mortgageOrLoCOnTitleReferenceNumber));
+        output.push(getEntry('Bank And Branch', refinanceInfo.mortgageOrLoCOnTitleBankBranch, true));
+    }
+
+    output.push(getEntry('Lender Requires Debts To Be Paid', refinanceInfo.mortgageLenderRequiresOtherDebtsPaid));
+    if (refinanceInfo.mortgageLenderRequiresOtherDebtsPaid === 'YES') {
+        output.push(getEntry('Debt Details', refinanceInfo.mortgageLenderRequiresOtherDebtsPaidDetails, true));
+    }
 
     output.push(getEntry('Separation or Divorce Involved', refinanceInfo.involvesSeparationDivorce, true));
 
-    output.push('</table><table>');
+    let joinType = '';
+    if ((refinanceInfo.clientsInfo.length + refinanceInfo.clientsAddedInfo.length) < 2) {
+        joinType = 'NOT APPLICABLE AS ONLY ONE OWNER';
+    }
+    else {
+        switch (refinanceInfo.joinType) {
+            case 'JOINT_TENANTS':
+                joinType = 'Joint Tenants';
+                break;
 
-    output.push(getEntry(`Property Taxes Paid and or Home Owners Grant Claimed for ${(new Date().getFullYear())}`, refinanceInfo.paidPropertyTaxesOrClaimedHownOwnersGrant, true));
+            case 'TENANTS_IN_COMMON':
+                joinType = 'Tenants-in-Common'
+                break;
 
-    output.push('</table><table>');
+            default:
+                joinType = '';
+        }
+    }
 
-    output.push(getEntry('Empty Homes Declaration filed (Vancouver property)', refinanceInfo.emptyHomesDeclaration, true));
+    output.push(getEntry('Tenancy', joinType, true));
+
+    for (let i = 0; i < refinanceInfo.guarantorsInfo.length; i++) {
+
+        const guarantor = refinanceInfo.guarantorsInfo[i];
+
+        output.push(getEntry(`GUARANTOR ${(i + 1).toString()}`, ''));
+        output.push(getEntry('Full Legal Name', guarantor.fullLegalName));
+        output.push(getEntry('Phone Number', guarantor.phoneNumber));
+        output.push(getEntry('Email', guarantor.emailAddress));
+        output.push(getEntry('Relationship', guarantor.relationship, true));
+    }
 
     output.push('</table><table>');
 

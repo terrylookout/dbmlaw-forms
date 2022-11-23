@@ -124,126 +124,145 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
 
 
             <div className="row align-items-center mt-4">
-                <div className="col mb-1">
-                    <h6>
-                        <CircleBullet />Current address
-                    </h6>
-                </div>
-
-
-                <div className='col mb-1' style={{
-                    textAlign: 'right',
-                }}>
-                    <input type='button' className='btn btn-secondary' value={`Same as Mortgage property`} onClick={() => {
-                        if (props.refinanceInfo) {
-                            setClientInfo({
-                                ...clientInfo,
-                                mailingStreet1: props.refinanceInfo.street1,
-                                mailingStreet2: props.refinanceInfo.street2,
-                                mailingCity: props.refinanceInfo.city,
-                                mailingProvinceTerritory: props.refinanceInfo.provinceTerritory,
-                                mailingPostalCode: props.refinanceInfo.postalCode,
-                            });
-                        }
-
-                    }} />
-                </div>
-
-            </div>
-
-
-            <div className="row">
-                <div className="col mb-3">
-                    <div className='form-floating mb-0'>
-                        <input type='text' className='form-control' id='mailingstreet1' placeholder='Street address line 1'
-                            value={clientInfo.mailingStreet1}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setClientInfo({ ...clientInfo, mailingStreet1: e.target.value });
-                            }}
-                        />
-                        <label htmlFor='floatingInput'>
-                            Street address line 1
-                        </label>
+                <div className="row">
+                    <div className="col mb-1 mt-4">
+                        <h6>
+                            <CircleBullet />
+                            Is your address the same as mortgage property?
+                        </h6>
                     </div>
                 </div>
-            </div>
 
-            <div className="row">
-                <div className="col mb-3">
-                    <div className='form-floating mb-0'>
-                        <input type='text' className='form-control' id='mailingstreet2' placeholder='Street address line 2'
-                            value={clientInfo.mailingStreet2}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setClientInfo({ ...clientInfo, mailingStreet2: e.target.value });
-                            }}
-                        />
-                        <label htmlFor='floatingInput'>
-                            Street address line 2
-                        </label>
+                <div className="row">
+                    <div className="col mb-3">
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`addresssame${props.num}`} id={`addresssame-yes${props.num}`}
+                                checked={clientInfo.addressSameAsProperty === 'YES'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e && e.target && e.target.value && e.target.value === 'on') {
+                                        setClientInfo({ ...clientInfo, addressSameAsProperty: 'YES' });
+                                    }
+                                }} />
+                            <label className="form-check-label" htmlFor={`addresssame-yes${props.num}`}>
+                                Yes
+                            </label>
+                        </div>
+
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`addresssame${props.num}`} id={`addresssame-no${props.num}`}
+                                checked={clientInfo.addressSameAsProperty === 'NO'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e && e.target && e.target.value && e.target.value === 'on') {
+                                        setClientInfo({ ...clientInfo, addressSameAsProperty: 'NO' });
+                                    }
+                                }} />
+                            <label className="form-check-label" htmlFor={`addresssame-no${props.num}`}>
+                                No
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>
 
 
-            <div className="row">
-                <div className="col mb-3">
-                    <div className='form-floating mb-0'>
-                        <input type='text' className='form-control' id='mailingcity' placeholder='City'
-                            value={clientInfo.mailingCity}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setClientInfo({ ...clientInfo, mailingCity: e.target.value });
-                            }}
-                        />
-                        <label htmlFor='floatingInput'>
-                            City
-                        </label>
+            {
+                clientInfo.addressSameAsProperty === 'NO' &&
+                <>
+                    <div className="row">
+                        <div className="col mb-3">
+                            <div className='form-floating mb-0'>
+                                <input type='text' className='form-control' id='mailingstreet1' placeholder='Street address line 1'
+                                    value={clientInfo.mailingStreet1}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                        setClientInfo({ ...clientInfo, mailingStreet1: e.target.value });
+                                    }}
+                                />
+                                <label htmlFor='floatingInput'>
+                                    Street address line 1
+                                </label>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div className="col mb-3">
-                    <select className="form-select p-3" aria-label="Province or territory"
-                        value={clientInfo.mailingProvinceTerritory}
-                        onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                            setClientInfo({ ...clientInfo, mailingProvinceTerritory: e.target.value });
-                        }}
-                    >
-                        <option value='0'>Province or territory</option>
-                        <option value="Alberta">Alberta</option>
-                        <option value="British Columbia">British Columbia</option>
-                        <option value="Manitoba">Manitoba</option>
-                        <option value="New Brunswick">New Brunswick</option>
-                        <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
-                        <option value="Northwest Territories">Northwest Territories</option>
-                        <option value="Nova Scotia">Nova Scotia</option>
-                        <option value="Nunavut">Nunavut</option>
-                        <option value="Ontario">Ontario</option>
-                        <option value="Prince Edward Island">Prince Edward Island</option>
-                        <option value="Quebec">Québec</option>
-                        <option value="Saskatchewan">Saskatchewan</option>
-                        <option value="Yukon">Yukon</option>
-                    </select>
-                </div>
-            </div>
 
-
-            <div className="row">
-                <div className="col mb-3">
-                    <div className='form-floating mb-0'>
-                        <input type='text' className='form-control' id='mailingpostalcode' placeholder='Postal code'
-                            value={clientInfo.mailingPostalCode}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setClientInfo({ ...clientInfo, mailingPostalCode: e.target.value });
-                            }}
-                        />
-                        <label htmlFor='floatingInput'>
-                            Postal code
-                        </label>
+                    <div className="row">
+                        <div className="col mb-3">
+                            <div className='form-floating mb-0'>
+                                <input type='text' className='form-control' id='mailingstreet2' placeholder='Street address line 2'
+                                    value={clientInfo.mailingStreet2}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                        setClientInfo({ ...clientInfo, mailingStreet2: e.target.value });
+                                    }}
+                                />
+                                <label htmlFor='floatingInput'>
+                                    Street address line 2
+                                </label>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div className="col mb-3">
 
-                </div>
-            </div>
 
+                    <div className="row">
+                        <div className="col mb-3">
+                            <div className='form-floating mb-0'>
+                                <input type='text' className='form-control' id='mailingcity' placeholder='City'
+                                    value={clientInfo.mailingCity}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                        setClientInfo({ ...clientInfo, mailingCity: e.target.value });
+                                    }}
+                                />
+                                <label htmlFor='floatingInput'>
+                                    City
+                                </label>
+                            </div>
+                        </div>
+                        <div className="col mb-3">
+                            <select className="form-select p-3" aria-label="Province or territory"
+                                value={clientInfo.mailingProvinceTerritory}
+                                onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                                    setClientInfo({ ...clientInfo, mailingProvinceTerritory: e.target.value });
+                                }}
+                            >
+                                <option value='0'>Province or territory</option>
+                                <option value="Alberta">Alberta</option>
+                                <option value="British Columbia">British Columbia</option>
+                                <option value="Manitoba">Manitoba</option>
+                                <option value="New Brunswick">New Brunswick</option>
+                                <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+                                <option value="Northwest Territories">Northwest Territories</option>
+                                <option value="Nova Scotia">Nova Scotia</option>
+                                <option value="Nunavut">Nunavut</option>
+                                <option value="Ontario">Ontario</option>
+                                <option value="Prince Edward Island">Prince Edward Island</option>
+                                <option value="Quebec">Québec</option>
+                                <option value="Saskatchewan">Saskatchewan</option>
+                                <option value="Yukon">Yukon</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div className="row">
+                        <div className="col mb-3">
+                            <div className='form-floating mb-0'>
+                                <input type='text' className='form-control' id='mailingpostalcode' placeholder='Postal code'
+                                    value={clientInfo.mailingPostalCode}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                        setClientInfo({ ...clientInfo, mailingPostalCode: e.target.value });
+                                    }}
+                                />
+                                <label htmlFor='floatingInput'>
+                                    Postal code
+                                </label>
+                            </div>
+                        </div>
+                        <div className="col mb-3">
+
+                        </div>
+                    </div>
+
+
+                </>
+            }
             <div className="row">
                 <div className={`col mb-1 mt-4 employment-header${props.num}`} >
                     <h6>
@@ -490,10 +509,40 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
 
                         </div>
                     </div>
-
                 </>
             }
 
+            {
+                clientInfo.addressSameAsProperty === 'YES' &&
+                <>
+
+                    <div className="row">
+                        <div className={`col mb-1 mt-4 employment-header${props.num}`} >
+                            <h6>
+                                <CircleBullet />
+                                Time at property
+                            </h6>
+                        </div>
+                    </div>
+
+                    <div className="row">
+                        <div className="col mb-3">
+                            <div className='form-floating mb-0'>
+                                <input type='text' className='form-control' id='timelivingproperty' placeholder='Time in Property'
+                                    value={clientInfo.timeLivingAtProperty}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                        setClientInfo({ ...clientInfo, timeLivingAtProperty: e.target.value });
+                                    }}
+                                />
+                                <label htmlFor='floatingInput'>
+                                    How long have you lived in the property? Ie '2 years, 3 months'
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </>
+            }
 
             <div className="row">
                 <div className={`col mb-1 mt-4 citizenship-header${props.num}`}>
@@ -569,168 +618,11 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
             </div>
 
             <div className="row">
-                <div className="col mb-1 mt-4">
-                    <h6>
-                        <CircleBullet />
-                        Are you a First-Time Home Buyer?
-                    </h6>
-
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`firsttimehomebuyer${props.num}`} id={`firsttimehomebuyer-yes${props.num}`}
-                            checked={clientInfo.isFirstTimeHomeBuyer === 'YES'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setClientInfo({ ...clientInfo, isFirstTimeHomeBuyer: 'YES' });
-                                }
-                            }} />
-                        <label className="form-check-label" htmlFor={`firsttimehomebuyer-yes${props.num}`}>
-                            Yes
-                        </label>
-                    </div>
-
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`firsttimehomebuyer${props.num}`} id={`firsttimehomebuyer-no${props.num}`}
-                            checked={clientInfo.isFirstTimeHomeBuyer === 'NO'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setClientInfo({ ...clientInfo, isFirstTimeHomeBuyer: 'NO' });
-                                }
-                            }} />
-
-                        <label className="form-check-label" htmlFor={`firsttimehomebuyer-no${props.num}`}>
-                            No
-                        </label>
-                    </div>
-                </div>
-                <div className="col mb-1 mt-4">
-                    <span>Please read our blog for important information! </span>
-                    <a href='https://www.dbmlaw.ca/blog/property-transfer-tax/' target='_blank' rel='noreferrer'>
-                        https://www.dbmlaw.ca/blog/property-transfer-tax/</a>
-                </div>
-            </div>
-
-            {
-                clientInfo.isFirstTimeHomeBuyer === 'YES' &&
-                <>
-                    <div className="row">
-                        <div className="col mb-1 mt-4">
-                            <h6>
-                                <CircleBullet />
-                                Have you been a resident of BC for at least a year?
-                            </h6>
-
-                            <div className="form-check">
-                                <input className="form-check-input" type="radio" name={`residentbc${props.num}`} id={`residentbc-yes${props.num}`}
-                                    checked={clientInfo.hasBeenBCResidentForAYear === 'YES'}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        if (e.target.checked) {
-                                            setClientInfo({ ...clientInfo, hasBeenBCResidentForAYear: 'YES' });
-                                        }
-                                    }} />
-                                <label className="form-check-label" htmlFor={`residentbc-yes${props.num}`}>
-                                    Yes
-                                </label>
-                            </div>
-
-                            <div className="form-check">
-                                <input className="form-check-input" type="radio" name={`residentbc${props.num}`} id={`residentbc-no${props.num}`}
-                                    checked={clientInfo.hasBeenBCResidentForAYear === 'NO'}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        if (e.target.checked) {
-                                            setClientInfo({ ...clientInfo, hasBeenBCResidentForAYear: 'NO' });
-                                        }
-                                    }} />
-
-                                <label className="form-check-label" htmlFor={`residentbc-no${props.num}`}>
-                                    No
-                                </label>
-                            </div>
-                        </div>
-
-                        <div className="col mb-1 mt-4">
-                            <h6>
-                                <CircleBullet />
-                                Have you ever owned a principal residence anywhere in the world?
-                            </h6>
-                            <div className="form-check">
-                                <input className="form-check-input" type="radio" name={`principalresidenceworld${props.num}`} id={`principalresidenceworld-yes${props.num}`}
-                                    checked={clientInfo.hasOwnedPrincipalResidenceSomewhere === 'YES'}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        if (e.target.checked) {
-                                            setClientInfo({ ...clientInfo, hasOwnedPrincipalResidenceSomewhere: 'YES' });
-                                        }
-                                    }} />
-
-                                <label className="form-check-label" htmlFor={`principalresidenceworld-yes${props.num}`}>
-                                    Yes
-                                </label>
-                            </div>
-
-                            <div className="form-check">
-                                <input className="form-check-input" type="radio" name={`principalresidenceworld${props.num}`} id={`principalresidenceworld-no${props.num}`}
-                                    checked={clientInfo.hasOwnedPrincipalResidenceSomewhere === 'NO'}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        if (e.target.checked) {
-                                            setClientInfo({ ...clientInfo, hasOwnedPrincipalResidenceSomewhere: 'NO' });
-                                        }
-                                    }} />
-
-                                <label className="form-check-label" htmlFor={`principalresidenceworld-no${props.num}`}>
-                                    No
-                                </label>
-                            </div>
-                        </div>
-
-                    </div>
-
-                </>
-            }
-
-            <div className="row">
-                <div className="col mb-1 mt-4">
-                    <h6>
-                        <CircleBullet />
-                        Will you be living in the property within three months?
-                    </h6>
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`livewithinthreemonths${props.num}`} id={`livewithinthreemonths-yes${props.num}`}
-                            checked={clientInfo.willBeLivingInPropertyWithinThreeMonths === 'YES'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setClientInfo({ ...clientInfo, willBeLivingInPropertyWithinThreeMonths: 'YES' });
-                                }
-                            }} />
-
-                        <label className="form-check-label" htmlFor={`livewithinthreemonths-yes${props.num}`}>
-                            Yes
-                        </label>
-                    </div>
-
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`livewithinthreemonths${props.num}`} id={`livewithinthreemonths-no${props.num}`}
-                            checked={clientInfo.willBeLivingInPropertyWithinThreeMonths === 'NO'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setClientInfo({ ...clientInfo, willBeLivingInPropertyWithinThreeMonths: 'NO' });
-                                }
-                            }} />
-
-                        <label className="form-check-label" htmlFor={`livewithinthreemonths-no${props.num}`}>
-                            No
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-
-
-
-
-            <div className="row">
                 <div className="col mb-1 mt-4 border border-primary">
 
                 </div>
             </div>
+
 
         </>
     )

@@ -247,7 +247,8 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
     useEffect(() => {
         // eslint-disable-next-line
         if (!document.querySelector('.modal-backdrop')) {
-            new bootstrap.Modal('#formModal').show();
+            const bootModal = new bootstrap.Modal('#formModal');
+            bootModal.show();
 
             const modal = document.querySelector('#formModal');
             if (modal) {

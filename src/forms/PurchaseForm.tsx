@@ -1302,7 +1302,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                 </div>
 
                                                 <div className='col mb-3'>
-                                                    <select className='form-select p-3' aria-label='Province or territory'
+                                                    <select className='form-select p-3' aria-label='number of guarantors'
                                                         value={purchaseInfo.guarantorsInfo.length}
                                                         onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                                                             if (e && e.target && e.target.value) {
