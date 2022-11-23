@@ -34,7 +34,7 @@ const FormButtons = (props: FormButtonsProps): ReactElement => {
                     </div>
 
                     <div className={classesString}>
-                        <input type='button' value='Re-Finance' className='btn btn-primary form-button' onClick={() => props.onFormSelected('REFINANCE')} />
+                        <input type='button' value='Refinance' className='btn btn-primary form-button' onClick={() => props.onFormSelected('REFINANCE')} />
                     </div>
 
                     <div className={classesString}>

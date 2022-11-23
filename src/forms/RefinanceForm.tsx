@@ -377,37 +377,37 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                         <h1 className="modal-title fs-5" id="exampleModalLabel">
                             {
                                 currentPage === 'GET_OWNERS' &&
-                                <span>RE-FINANCE - Owner Information</span>
+                                <span>REFINANCE - Owner Information</span>
                             }
 
                             {
                                 currentPage === 'GET_TRANSFER_INFORMATION' &&
-                                <span>RE-FINANCE - Transfer Information</span>
+                                <span>REFINANCE - Transfer Information</span>
                             }
 
                             {
                                 currentPage === 'GET_PROPERTY_DETAILS' &&
-                                <span>RE-FINANCE - Property Details</span>
+                                <span>REFINANCE - Property Details</span>
                             }
 
                             {
                                 currentPage === 'GET_MORTGAGE_DETAILS' &&
-                                <span>RE-FINANCE - Mortgage Details</span>
+                                <span>REFINANCE - Mortgage Details</span>
                             }
 
                             {
                                 currentPage === 'CONFIRM_SUBMIT' &&
-                                <span>RE-FINANCE - Ready to Submit</span>
+                                <span>REFINANCE - Ready to Submit</span>
                             }
 
                             {
                                 currentPage === 'SUBMITTING' &&
-                                <span>RE-FINANCE - Please Wait</span>
+                                <span>REFINANCE - Please Wait</span>
                             }
 
                             {
                                 currentPage === 'SUBMIT_RESULT' &&
-                                <span>RE-FINANCE - Success!</span>
+                                <span>REFINANCE - Success!</span>
                             }
 
                         </h1>
@@ -432,7 +432,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                 <div className="col mb-1 mt-4">
                                                     <h6>
                                                         <CircleBullet />
-                                                        Address of property
+                                                        Address of mortgage/subject property
                                                     </h6>
                                                 </div>
                                             </div>
@@ -1420,7 +1420,7 @@ const getOutput = (refinanceInfo: RefinanceInfo): string => {
     output.push('<html><b>REFINANCE</b><br /><br />');
 
     output.push('<table>');
-    output.push(getHeader('PROPERTY'));
+    output.push(getHeader('MORTGAGE-SUBJECT PROPERTY'));
     output.push(getEntry('Street Address 1', refinanceInfo.street1));
     output.push(getEntry('Street Address 2', refinanceInfo.street2));
     output.push(getEntry('City', refinanceInfo.city));
