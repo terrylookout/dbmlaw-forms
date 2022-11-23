@@ -7,7 +7,6 @@ import { SubmitConfirm, SubmitDone, Submitting } from '../controls/SubmitConfirm
 import Owner from '../controls/Owner';
 import TransferAdded from '../controls/TransferAdded';
 import Guarantor from '../Guarantor';
-//import DateInput from '../controls/DateInput';
 
 declare var bootstrap: any;
 
@@ -269,9 +268,6 @@ const RefinanceForm = (props: FormProps): ReactElement => {
     };
 
     useEffect(() => {
-
-        console.log(refinanceInfo.clientsInfo, refinanceInfo.clientsAddedInfo, numberOfOwners, numberOfAdded);
-
 
         // eslint-disable-next-line
         if (!document.querySelector('.modal-backdrop')) {
@@ -733,73 +729,109 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                 <div className="col mb-1 mt-4">
                                                     <h6>
                                                         <CircleBullet />
-                                                        {
-                                                            numberOfOwners === 1 ?
-                                                                `Is the owner (${refinanceInfo.clientsInfo[0].fullLegalName}) going to be removed from title?`
-                                                                :
-                                                                `Are any of the owners going to be removed from title?`
-                                                        }
+                                                        Is anyone going to be removed from the title?
                                                     </h6>
                                                 </div>
                                             </div>
 
+                                            <div className="row">
+                                                <div className="col mb-3">
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name={`removeowners`} id={`removeowners-yes`}
+                                                            checked={refinanceInfo.ownersToBeRemoved === 'YES'}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                if (e && e.target && e.target.value && e.target.value === 'on') {
+                                                                    setRefinanceInfo({ ...refinanceInfo, ownersToBeRemoved: 'YES' });
+                                                                }
+                                                            }} />
+                                                        <label className="form-check-label" htmlFor={`removeowners-yes`}>
+                                                            Yes
+                                                        </label>
+                                                    </div>
+
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name={`removeowners`} id={`removeowners-no`}
+                                                            checked={refinanceInfo.ownersToBeAdded === 'NO'}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                if (e && e.target && e.target.value && e.target.value === 'on') {
+                                                                    setRefinanceInfo({ ...refinanceInfo, ownersToBeAdded: 'NO' });
+                                                                }
+                                                            }} />
+                                                        <label className="form-check-label" htmlFor={`removeowners-no`}>
+                                                            No
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             {
-                                                refinanceInfo.clientsInfo.map((owner, idx) => {
-                                                    return (
-                                                        <div className='row mb-1' key={idx}>
-                                                            <div className='col'>
-                                                                <span style={{
-                                                                    textDecoration: refinanceInfo.removedFromTitle.indexOf(owner.fullLegalName) > -1 ? 'line-through' : '',
-                                                                }}>
-                                                                    {owner.fullLegalName}
-                                                                </span>
-                                                            </div>
-                                                            <div className='col' style={{
-                                                                whiteSpace: 'nowrap',
-                                                            }}>
-                                                                <span>
-                                                                    <input type='checkbox' className='btn btn-secondary'
-                                                                        id={`removecheck${idx}`}
-                                                                        value='Remove from title'
-                                                                        checked={refinanceInfo.removedFromTitle.indexOf(owner.fullLegalName) > -1}
-                                                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-
-                                                                            let temp = refinanceInfo.removedFromTitle;
-                                                                            if (e.target.checked) {
-                                                                                temp.push(owner.fullLegalName);
-                                                                            } else {
-                                                                                temp = temp.filter((s) => s !== owner.fullLegalName);
-                                                                            }
-                                                                            setRefinanceInfo({ ...refinanceInfo, removedFromTitle: temp });
-                                                                        }
-
-                                                                        }
-                                                                    />
-                                                                </span>
-                                                                <label htmlFor={`removecheck${idx}`}
-                                                                    className='ps-2'>
-                                                                    Check to remove from title / uncheck to keep
-
-                                                                </label>
-                                                            </div>
-
-                                                            <div className='col'>
-                                                                <span>
-                                                                    {
-
-                                                                    }
-                                                                </span>
-                                                            </div>
+                                                refinanceInfo.ownersToBeRemoved === 'YES' &&
+                                                <>
+                                                    <div className="row">
+                                                        <div className="col mb-1 mt-4">
+                                                            <h6>
+                                                                <CircleBullet />
+                                                                Place a checkmark beside the owner{refinanceInfo.clientsInfo.length !== 1 ? 's' : ''} you want to remove from title
+                                                            </h6>
                                                         </div>
-                                                    )
-                                                })
-                                            }
+                                                    </div>
 
+                                                    {
+                                                        refinanceInfo.clientsInfo.map((owner, idx) => {
+                                                            return (
+                                                                <div className='row mb-1' key={idx}>
+
+                                                                    <div className='col col-1' style={{
+                                                                        whiteSpace: 'nowrap',
+                                                                    }}>
+                                                                        <span>
+                                                                            <input type='checkbox' className='btn btn-secondary'
+                                                                                id={`removecheck${idx}`}
+                                                                                value='Remove from title'
+                                                                                checked={refinanceInfo.removedFromTitle.indexOf(owner.fullLegalName) > -1}
+                                                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+
+                                                                                    let temp = refinanceInfo.removedFromTitle;
+                                                                                    if (e.target.checked) {
+                                                                                        temp.push(owner.fullLegalName);
+                                                                                    } else {
+                                                                                        temp = temp.filter((s) => s !== owner.fullLegalName);
+                                                                                    }
+                                                                                    setRefinanceInfo({ ...refinanceInfo, removedFromTitle: temp });
+                                                                                }
+
+                                                                                }
+                                                                            />
+                                                                        </span>
+                                                                    </div>
+
+                                                                    <div className='col'>
+                                                                        <span style={{
+                                                                            textDecoration: refinanceInfo.removedFromTitle.indexOf(owner.fullLegalName) > -1 ? 'line-through' : '',
+                                                                        }}>
+                                                                            {owner.fullLegalName}
+                                                                        </span>
+                                                                    </div>
+
+                                                                    <div className='col'>
+                                                                        <span>
+                                                                            {
+
+                                                                            }
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            )
+                                                        })
+                                                    }
+
+                                                </>
+                                            }
                                             <div className='row align-items-center mt-5'>
                                                 <div className="col mb-3">
                                                     <h6>
                                                         <CircleBullet />
-                                                        How many people are being ADDED to title?
+                                                        Will anyone be ADDED to title? If so, please specify the number of people here
                                                     </h6>
                                                 </div>
 
@@ -811,7 +843,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                                 setNumberOfAdded(parseInt(e.target.value));
                                                             }
                                                         }}>
-                                                        <option value='0'>Please choose...</option>
+                                                        <option value='0'>None</option>
                                                         <option value="1">1</option>
                                                         <option value="2">2</option>
                                                         <option value="3">3</option>
@@ -1442,10 +1474,10 @@ const getOutput = (refinanceInfo: RefinanceInfo): string => {
         output.push(getEntry('Full Legal Name', client.fullLegalName));
         output.push(getEntry('Phone Number', client.phoneNumber));
         output.push(getEntry('Email', client.emailAddress));
-        output.push(getEntry('Date of Birth', client.dateOfBirth.toDateString() === (new Date()).toDateString()
-            ? ''
-            : client.dateOfBirth.toISOString().split('T')[0]));
-        output.push(getEntry('SIN', client.sinViaPhone ? 'TO BE PROVIDED BY PHONE' : client.socialInsNumber));
+        // output.push(getEntry('Date of Birth', client.dateOfBirth.toDateString() === (new Date()).toDateString()
+        //     ? ''
+        //     : client.dateOfBirth.toISOString().split('T')[0]));
+        // output.push(getEntry('SIN', client.sinViaPhone ? 'TO BE PROVIDED BY PHONE' : client.socialInsNumber));
 
         output.push(getHeader('Current Address'))
 
@@ -1454,7 +1486,8 @@ const getOutput = (refinanceInfo: RefinanceInfo): string => {
             output.push(getEntry('Street 2', client.mailingStreet2));
             output.push(getEntry('City', client.mailingCity));
             output.push(getEntry('Province or Territory', client.mailingProvinceTerritory));
-            output.push(getEntry('Postal Code', client.mailingPostalCode, true));
+            output.push(getEntry('Postal Code', client.mailingPostalCode));
+            output.push(getEntry('Country', client.mailingCountry, true));
         }
         else if (client.addressSameAsProperty === 'YES') {
             output.push(getEntry('Address', 'SAME AS MORTGAGE PROPERTY', true));
@@ -1471,7 +1504,7 @@ const getOutput = (refinanceInfo: RefinanceInfo): string => {
     output.push(getHeader('TO BE REMOVED FROM TITLE'));
 
     if (refinanceInfo.removedFromTitle.length === 0) {
-        output.push('NONE');
+        output.push(getEntry('Remove', 'NONE', true));
     }
     else {
         for (let i = 0; i < refinanceInfo.removedFromTitle.length; i++) {
@@ -1503,7 +1536,8 @@ const getOutput = (refinanceInfo: RefinanceInfo): string => {
             output.push(getEntry('Street 2', client.mailingStreet2));
             output.push(getEntry('City', client.mailingCity));
             output.push(getEntry('Province or Territory', client.mailingProvinceTerritory));
-            output.push(getEntry('Postal Code', client.mailingPostalCode, true));
+            output.push(getEntry('Postal Code', client.mailingPostalCode));
+            output.push(getEntry('Country', client.mailingCountry, true));
 
             output.push(getEntry('Relationship', client.relationship));
 
@@ -1514,7 +1548,8 @@ const getOutput = (refinanceInfo: RefinanceInfo): string => {
             output.push(getEntry('Employer Street 2', client.employerStreet2));
             output.push(getEntry('Employer City', client.employerCity));
             output.push(getEntry('Employer Province or Territory', client.employerProvinceTerritory));
-            output.push(getEntry('Employer Postal Code', client.employerPostalCode, true));
+            output.push(getEntry('Employer Postal Code', client.employerPostalCode));
+            output.push(getEntry('Employer Country', client.employerCountry, true));
 
             let citizenShip = '';
             switch (client.citizenShip) {

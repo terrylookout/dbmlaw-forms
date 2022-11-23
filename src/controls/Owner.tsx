@@ -1,7 +1,7 @@
-import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
+import React, { ChangeEvent, ReactElement, useEffect, useRef, useState } from 'react';
 import CircleBullet from './CircleBullet';
 import { ClientInfo } from '../ClassesInterfaces';
-import DateInput from './DateInput';
+import { getCountries, getProvincesTerritories, getStates } from '../Helpers';
 
 interface BorrowerProps {
     text: string;
@@ -14,7 +14,33 @@ interface BorrowerProps {
 
 const Owner = (props: BorrowerProps): ReactElement => {
 
+    const provinceSelect = useRef<HTMLSelectElement>(null);
+
+    const [countries] = useState<string[]>(() => {
+        return getCountries();
+    });
+
+    const [provinces, setProvinces] = useState<string[]>([]);
+
     const [clientInfo, setClientInfo] = useState(props.clientInfo);
+    useEffect(() => {
+        //
+    }, []);
+
+    useEffect(() => {
+        switch (clientInfo.mailingCountry) {
+            case 'Canada':
+                setProvinces(getProvincesTerritories());
+                break;
+
+            case 'United States':
+                setProvinces(getStates());
+                break;
+
+            default:
+                setProvinces(['Not applicable']);
+        }
+    }, [clientInfo.mailingCountry]);
 
     useEffect(() => {
         props.updated(clientInfo, props.num);
@@ -79,7 +105,7 @@ const Owner = (props: BorrowerProps): ReactElement => {
                 </div>
             </div>
 
-            <div className="row">
+            {/* <div className="row">
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>
                         <DateInput
@@ -122,13 +148,13 @@ const Owner = (props: BorrowerProps): ReactElement => {
                         </label>
                     </div>
                 </div>
-            </div>
+            </div> */}
 
             <div className="row">
                 <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
-                        Is your address the same as mortgage property?
+                        Is your address the same as mortgaged/subject property?
                     </h6>
                 </div>
             </div>
@@ -225,31 +251,30 @@ const Owner = (props: BorrowerProps): ReactElement => {
                         </div>
                         <div className="col mb-3">
                             <select className="form-select p-3" aria-label="Province or territory"
+                                ref={provinceSelect}
                                 value={clientInfo.mailingProvinceTerritory}
                                 onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                                     setClientInfo({ ...clientInfo, mailingProvinceTerritory: e.target.value });
                                 }}
                             >
-                                <option value='0'>Province or territory</option>
-                                <option value="Alberta">Alberta</option>
-                                <option value="British Columbia">British Columbia</option>
-                                <option value="Manitoba">Manitoba</option>
-                                <option value="New Brunswick">New Brunswick</option>
-                                <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
-                                <option value="Northwest Territories">Northwest Territories</option>
-                                <option value="Nova Scotia">Nova Scotia</option>
-                                <option value="Nunavut">Nunavut</option>
-                                <option value="Ontario">Ontario</option>
-                                <option value="Prince Edward Island">Prince Edward Island</option>
-                                <option value="Quebec">Québec</option>
-                                <option value="Saskatchewan">Saskatchewan</option>
-                                <option value="Yukon">Yukon</option>
+                                {
+                                    provinces.map((p, idx) => {
+                                        return (
+                                            <option
+                                                key={idx}
+                                                value={p}>
+                                                {p}
+                                            </option>
+                                        );
+                                    })
+                                }
                             </select>
                         </div>
                     </div>
 
 
                     <div className="row">
+
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
                                 <input type='text' className='form-control' id='mailingpostalcode' placeholder='Postal code'
@@ -263,8 +288,34 @@ const Owner = (props: BorrowerProps): ReactElement => {
                                 </label>
                             </div>
                         </div>
-                        <div className="col mb-3">
 
+                        <div className="col mb-3">
+                            <div className='form-floating mb-0'>
+                                <select className='form-control' id='mailingcountry' placeholder='Country'
+                                    value={clientInfo.mailingCountry}
+                                    onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                                        setClientInfo({ ...clientInfo, mailingCountry: e.target.value });
+                                        if (e.target.value !== 'Canada') {
+                                            //
+                                        }
+                                    }}
+                                >
+                                    {
+                                        countries.map((c, idx) => {
+                                            return (
+                                                <option
+                                                    key={idx}
+                                                    value={c}>
+                                                    {c}
+                                                </option>
+                                            );
+                                        })
+                                    }
+                                </select>
+                                <label htmlFor='mailingcountry'>
+                                    Country
+                                </label>
+                            </div>
                         </div>
                     </div>
 

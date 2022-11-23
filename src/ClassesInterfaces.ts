@@ -17,6 +17,8 @@ export class ClientInfo {
     public mailingProvinceTerritory: string;
     public mailingPostalCode: string;
 
+    public mailingCountry: string;
+
     public employment: 'EMPLOYED' | 'RETIRED' | 'STUDENT' | 'OTHER' | 'TBF';
     public occupation: string;
     public employerName: string;
@@ -26,6 +28,7 @@ export class ClientInfo {
     public employerCity: string;
     public employerProvinceTerritory: string;
     public employerPostalCode: string;
+    public employerCountry: string;
 
     public isFirstTimeHomeBuyer: 'YES' | 'NO' | '';
     public hasBeenBCResidentForAYear: 'YES' | 'NO' | '';
@@ -56,6 +59,8 @@ export class ClientInfo {
         this.mailingProvinceTerritory = '';
         this.mailingPostalCode = '';
 
+        this.mailingCountry = 'Canada';
+
         // to be filled
         this.employment = 'TBF';
 
@@ -67,6 +72,7 @@ export class ClientInfo {
         this.employerCity = '';
         this.employerProvinceTerritory = '';
         this.employerPostalCode = '';
+        this.employerCountry = 'Canada';
 
         this.isFirstTimeHomeBuyer = '';
         this.hasBeenBCResidentForAYear = '';
@@ -169,6 +175,9 @@ export class RefinanceInfo {
     public clientsAddedInfo: ClientInfo[];
     public guarantorsInfo: GuarantorInfo[];
 
+    public ownersToBeRemoved: 'YES' | 'NO' | '';
+    public ownersToBeAdded: 'YES' | 'NO' | '';
+
     public removedFromTitle: string[];
 
     public joinType: 'JOINT_TENANTS' | 'TENANTS_IN_COMMON' | '';
@@ -210,6 +219,9 @@ export class RefinanceInfo {
         this.clientsInfo = [];
         this.clientsAddedInfo = [];
         this.guarantorsInfo = [];
+
+        this.ownersToBeAdded = '';
+        this.ownersToBeRemoved = '';
 
         this.removedFromTitle = [];
         this.joinType = '';
