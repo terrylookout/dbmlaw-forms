@@ -569,7 +569,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                                 setRefinanceInfo({ ...refinanceInfo, insuranceAgentName: e.target.value });
                                                             }}
                                                         />
-                                                        <label htmlFor='floatingInput'>
+                                                        <label htmlFor='insurancename'>
                                                             Agent name
                                                         </label>
                                                     </div>
@@ -583,7 +583,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                                 setRefinanceInfo({ ...refinanceInfo, insuranceAgentPhone: e.target.value });
                                                             }}
                                                         />
-                                                        <label htmlFor='floatingInput'>
+                                                        <label htmlFor='insurancenumber'>
                                                             Phone number - format: 123-456-7890
                                                         </label>
                                                     </div>
