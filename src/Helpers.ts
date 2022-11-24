@@ -83,3 +83,24 @@ export const getProvincesTerritories = (): string[] => {
     ];
 }
 
+export const checkInputs = (): boolean => {
+    let okToGo = true;
+    const inputs = document.querySelectorAll('.is-required');
+    if (inputs) {
+        inputs.forEach((input) => {
+            if (!(input as HTMLInputElement).value) {
+                (input as HTMLInputElement).classList.add('is-invalid');
+                okToGo = false;
+            }
+            else if ((input as HTMLSelectElement).selectedIndex < 1 && (input as HTMLSelectElement).options.length > 1) {
+                (input as HTMLSelectElement).classList.add('is-invalid');
+                okToGo = false;
+            }
+            else {
+                (input as HTMLInputElement).classList.remove('is-invalid');
+            }
+        })
+    }
+    return okToGo;
+}
+

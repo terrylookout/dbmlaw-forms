@@ -7,6 +7,7 @@ import SaleAndPurchaseForm from './forms/SaleAndPurchaseForm';
 import SaleForm from './forms/SaleForm';
 import 'react-day-picker/dist/style.css';
 import RefinanceForm from './forms/RefinanceForm';
+import ProjectPurchaseForm from './forms/ProjectPurchaseForm';
 
 export type FormType =
   'NONE' | 'PURCHASE' | 'SALE' | 'REFINANCE' | 'SALE_AND_PURCHASE' | 'PROJECT_PURCHASE';
@@ -79,6 +80,13 @@ const App = (): ReactElement => {
         {
           selectedForm === 'SALE_AND_PURCHASE' &&
           <SaleAndPurchaseForm key={Math.random()}
+            dismissed={() => setSelectedForm('NONE')}
+          />
+        }
+
+        {
+          selectedForm === 'PROJECT_PURCHASE' &&
+          <ProjectPurchaseForm key={Math.random()}
             dismissed={() => setSelectedForm('NONE')}
           />
         }

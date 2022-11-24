@@ -4,7 +4,7 @@ import { ClientInfo, GuarantorInfo, PurchaseInfo, SaleInfo } from '../ClassesInt
 import Guarantor from '../Guarantor';
 
 import CircleBullet from '../controls/CircleBullet';
-import { FormProps, getEntry, getHeader, sendEmail } from '../Helpers';
+import { checkInputs, FormProps, getEntry, getHeader, sendEmail } from '../Helpers';
 import { SubmitConfirm, SubmitDone, Submitting } from '../controls/SubmitConfirm';
 import Seller from '../controls/Seller';
 import DateInput from '../controls/DateInput';
@@ -29,213 +29,6 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
         'GET_PURCHASERS' | 'PROPERTY_INFO' | 'CONFIRM_SUBMIT' | 'SUBMITTING' | 'SUBMIT_RESULT'
     >('GET_SELLERS');
 
-    const checkPage = () => {
-        //
-
-        if (currentPage === 'GET_SELLERS') {
-            setMissingInfo(false);
-            setCurrentPage('GET_SALE_DETAILS')
-            return;
-
-        }
-        else if (currentPage === 'GET_SALE_DETAILS') {
-            setMissingInfo(false);
-            setCurrentPage('GET_PURCHASERS')
-            return;
-        }
-        else if (currentPage === 'GET_PURCHASERS') {
-            if (purchaseInfo.forCompany) {
-                if (!purchaseInfo.companyName.trim()) {
-                    const el = document.querySelector(`#companyname`);
-                    if (el) {
-                        el.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center',
-                        });
-                        (el as HTMLInputElement).focus();
-                        setMissingInfo(true);
-                        return;
-                    }
-                }
-
-                if (!purchaseInfo.incorporationNumber.trim()) {
-                    const el = document.querySelector(`#incorporationnumber`);
-                    if (el) {
-                        el.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center',
-                        });
-                        (el as HTMLInputElement).focus();
-                        setMissingInfo(true);
-                        return;
-                    }
-                }
-            }
-
-            for (let t = 0; t < purchaseInfo.clientsInfo.length; t++) {
-                const client = purchaseInfo.clientsInfo[t];
-
-                // check legal name
-                if (!client.fullLegalName.trim()) {
-                    const el = document.querySelector(`#clientname${t}`);
-                    if (el) {
-                        el.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center',
-                        });
-                        (el as HTMLInputElement).focus();
-                        setMissingInfo(true);
-                        return;
-                    }
-                }
-
-                let doNotProceed = false;
-
-                // employment
-                if (!purchaseInfo.forCompany && client.employment === 'TBF') {
-                    //employment-header${props.num}
-                    const el = document.querySelector(`.employment-header${t}`);
-                    if (el) {
-                        el.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center',
-                        });
-                        el.className += ' pt-1 border border-danger rounded border-2';
-                    }
-                    doNotProceed = true;
-                }
-
-                if (!purchaseInfo.forCompany && client.employment === 'EMPLOYED') {
-                    if (!client.occupation) {
-                        //`employeroccupation${props.num}`
-                        const el = document.querySelector(`#employeroccupation${t}`);
-                        if (el) {
-                            el.scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'center',
-                            });
-                            (el as HTMLInputElement).focus();
-                            setMissingInfo(true);
-                            return;
-                        }
-                    }
-
-                    if (!purchaseInfo.forCompany && !client.employerName) {
-                        //`employeroccupation${props.num}`
-                        const el = document.querySelector(`#employername${t}`);
-                        if (el) {
-                            el.scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'center',
-                            });
-                            (el as HTMLInputElement).focus();
-                            setMissingInfo(true);
-                            return;
-                        }
-                    }
-                }
-
-                // citizenship
-                if (!purchaseInfo.forCompany && client.citizenShip === '') {
-                    //employment-header${props.num}
-                    const el = document.querySelector(`.citizenship-header${t}`);
-                    if (el) {
-                        el.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center',
-                        });
-                        el.className += ' pt-1 border border-danger rounded border-2';
-                    }
-                    doNotProceed = true;
-                }
-
-                if (doNotProceed) {
-                    setMissingInfo(true);
-                    return;
-                }
-
-                // check to make sure at least an email address and/or phone is provided for purchaser 1
-                if (t === 0 && !client.phoneNumber && !client.emailAddress) {
-                    const phone = document.querySelector(`#phone${t}`);
-                    if (phone) {
-                        phone.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center',
-                        });
-                        (phone as HTMLInputElement).focus();
-                        setMissingInfo(true);
-                        return;
-                    }
-                }
-            }
-
-            setMissingInfo(false);
-            setCurrentPage('PROPERTY_INFO')
-            return;
-        }
-        else if (currentPage === 'PROPERTY_INFO') {
-            // page 2
-            if (!purchaseInfo.purchasePrice) {
-                const el = document.querySelector(`#purchaseprice`);
-                if (el) {
-                    el.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'center',
-                    });
-                    (el as HTMLInputElement).focus();
-                    setMissingInfo(true);
-                    return;
-                }
-            }
-
-            if (purchaseInfo.buildingNewUsed === '') {
-                const el = document.querySelector(`.newused`);
-                if (el) {
-                    el.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'center',
-                    });
-                    el.className += ' pt-1 border border-danger rounded border-2';
-                }
-                setMissingInfo(true);
-                return;
-            }
-
-            for (let t = 0; t < purchaseInfo.guarantorsInfo.length; t++) {
-                const guarantor = purchaseInfo.guarantorsInfo[t];
-                // check legal name
-                if (!guarantor.fullLegalName.trim()) {
-                    const el = document.querySelector(`#guarantorname${t}`);
-                    if (el) {
-                        el.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center',
-                        });
-                        (el as HTMLInputElement).focus();
-                        setMissingInfo(true);
-                        return;
-                    }
-                }
-
-                if (!guarantor.phoneNumber.trim()) {
-                    const el = document.querySelector(`#guarantorphone${t}`);
-                    if (el) {
-                        el.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center',
-                        });
-                        (el as HTMLInputElement).focus();
-                        setMissingInfo(true);
-                        return;
-                    }
-                }
-            }
-
-            // here we are good to submit
-            setCurrentPage('CONFIRM_SUBMIT');
-        }
-    };
-
     const submitSaleAndPurchaseForm = async (purchaseInfo: PurchaseInfo) => {
         const c = getOutput(purchaseInfo, saleInfo);
 
@@ -259,7 +52,6 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
         }
         // eslint-disable-next-line
     }, []);
-
 
     useEffect(() => {
         if (sellersArePurchasers) {
@@ -493,12 +285,15 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
 
                                                         <div className="col mb-3">
                                                             <div className='form-floating mb-0'>
-                                                                <input type='text' className='form-control' id='companynameseller' placeholder='Company name'
+                                                                <input type='text' className='form-control is-required' id='companynameseller' placeholder='Company name'
                                                                     value={saleInfo.companyName}
                                                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                         setSaleInfo({ ...saleInfo, companyName: e.target.value });
                                                                     }}
                                                                 />
+                                                                <div className="invalid-feedback">
+                                                                    Please enter this field
+                                                                </div>
                                                                 <label htmlFor='companynameseller'>
                                                                     Company name (required)
                                                                 </label>
@@ -507,12 +302,15 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
 
                                                         <div className="col mb-3">
                                                             <div className='form-floating mb-0'>
-                                                                <input type='text' className='form-control' id='incorporationnumberseller' placeholder='Incorporation #'
+                                                                <input type='text' className='form-control is-required' id='incorporationnumberseller' placeholder='Incorporation #'
                                                                     value={saleInfo.incorporationNumber}
                                                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                         setSaleInfo({ ...saleInfo, incorporationNumber: e.target.value });
                                                                     }}
                                                                 />
+                                                                <div className="invalid-feedback">
+                                                                    Please enter this field
+                                                                </div>
                                                                 <label htmlFor='incorporationnumberseller'>
                                                                     Incorporation # (required)
                                                                 </label>
@@ -602,14 +400,21 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                                 </div>
                                                 <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
-                                                        <input type='number' className='form-control' id='saleprice' placeholder='Sale price'
+                                                        <input type='number' className='form-control is-required' id='saleprice' placeholder='Sale price'
                                                             value={saleInfo.sellingPrice}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e && e.target && e.target.value) {
-                                                                    setSaleInfo({ ...saleInfo, sellingPrice: parseFloat(e.target.value) });
+                                                                    setSaleInfo({
+                                                                        ...saleInfo, sellingPrice: e.target.value ?
+                                                                            parseFloat(e.target.value).toString() : ''
+                                                                    });
                                                                 }
                                                             }}
                                                         />
+                                                        <div className="invalid-feedback">
+                                                            Please enter this field
+                                                        </div>
+
                                                         <label htmlFor='saleprice'>
                                                             Sale price (CAD) if known
                                                         </label>
@@ -630,12 +435,16 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                             <div className="row">
                                                 <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
-                                                        <input type='text' className='form-control' id='sellingstreet1' placeholder='Street address line 1'
+                                                        <input type='text' className='form-control is-required' id='sellingstreet1' placeholder='Street address line 1'
                                                             value={saleInfo.street1}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 setSaleInfo({ ...saleInfo, street1: e.target.value });
                                                             }}
                                                         />
+                                                        <div className="invalid-feedback">
+                                                            Please enter this field
+                                                        </div>
+
                                                         <label htmlFor='floatingInput'>
                                                             Street address line 1
                                                         </label>
@@ -663,19 +472,23 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                             <div className="row">
                                                 <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
-                                                        <input type='text' className='form-control' id='sellingcity' placeholder='City'
+                                                        <input type='text' className='form-control is-required' id='sellingcity' placeholder='City'
                                                             value={saleInfo.city}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 setSaleInfo({ ...saleInfo, city: e.target.value });
                                                             }}
                                                         />
+                                                        <div className="invalid-feedback">
+                                                            Please enter this field
+                                                        </div>
+
                                                         <label htmlFor='floatingInput'>
                                                             City
                                                         </label>
                                                     </div>
                                                 </div>
                                                 <div className="col mb-3">
-                                                    <select className="form-select p-3" aria-label="Province or territory"
+                                                    <select className="form-select p-3 is-required" aria-label="Province or territory"
                                                         value={saleInfo.provinceTerritory}
                                                         onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                                                             setSaleInfo({ ...saleInfo, provinceTerritory: e.target.value });
@@ -696,21 +509,33 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                                         <option value="Saskatchewan">Saskatchewan</option>
                                                         <option value="Yukon">Yukon</option>
                                                     </select>
+                                                    <div className="invalid-feedback">
+                                                        Please enter this field
+                                                    </div>
+
                                                 </div>
                                             </div>
                                             <div className='row'>
                                                 <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
-                                                        <input type='text' className='form-control' id='sellingpostalcode' placeholder='Postal code'
+                                                        <input type='text' className='form-control is-required' id='sellingpostalcode' placeholder='Postal code'
                                                             value={saleInfo.postalCode}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 setSaleInfo({ ...saleInfo, postalCode: e.target.value });
                                                             }}
                                                         />
+                                                        <div className="invalid-feedback">
+                                                            Please enter this field
+                                                        </div>
+
                                                         <label htmlFor='floatingInput'>
                                                             Postal code
                                                         </label>
                                                     </div>
+                                                </div>
+
+                                                <div className='col'>
+
                                                 </div>
                                             </div>
 
@@ -1025,8 +850,8 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 setPurchaseInfo({ ...purchaseInfo, forCompany: e.target.checked });
                                                             }} />
-                                                        <label htmlFor='iscompany' className='pt-2'>
-                                                            &nbsp;&nbsp;This is for a company
+                                                        <label htmlFor='iscompany' className='pt-2 ps-1'>
+                                                            This is for a company
                                                         </label>
                                                     </div>
                                                     <div className='mt-5'>
@@ -1167,6 +992,7 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 setPurchaseInfo({ ...purchaseInfo, completionDateTBD: e.target.checked });
                                                             }} />
+
                                                         <label htmlFor='chkdatetbd'>
                                                             &nbsp;&nbsp;Date still to be determined
                                                         </label>
@@ -1174,13 +1000,17 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                                 </div>
                                                 <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
-                                                        <input type='number' className='form-control' id='purchaseprice' placeholder='Purchase price'
+                                                        <input type='number' className='form-control is-required' id='purchaseprice' placeholder='Purchase price'
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e && e.target && e.target.value) {
-                                                                    setPurchaseInfo({ ...purchaseInfo, purchasePrice: parseFloat(e.target.value) });
+                                                                    setPurchaseInfo({ ...purchaseInfo, purchasePrice: parseFloat(e.target.value).toString() });
                                                                 }
                                                             }}
                                                         />
+                                                        <div className="invalid-feedback">
+                                                            Please enter this field
+                                                        </div>
+
                                                         <label htmlFor='floatingInput'>
                                                             Purchase price (CAD)
                                                         </label>
@@ -1201,12 +1031,16 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                             <div className="row">
                                                 <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
-                                                        <input type='text' className='form-control' id='purchasestreet1' placeholder='Street address line 1'
+                                                        <input type='text' className='form-control is-required' id='purchasestreet1' placeholder='Street address line 1'
                                                             value={purchaseInfo.street1}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 setPurchaseInfo({ ...purchaseInfo, street1: e.target.value });
                                                             }}
                                                         />
+                                                        <div className="invalid-feedback">
+                                                            Please enter this field
+                                                        </div>
+
                                                         <label htmlFor='floatingInput'>
                                                             Street address line 1
                                                         </label>
@@ -1234,12 +1068,16 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                             <div className="row">
                                                 <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
-                                                        <input type='text' className='form-control' id='purchasecity' placeholder='City'
+                                                        <input type='text' className='form-control is-required' id='purchasecity' placeholder='City'
                                                             value={purchaseInfo.city}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 setPurchaseInfo({ ...purchaseInfo, city: e.target.value });
                                                             }}
                                                         />
+                                                        <div className="invalid-feedback">
+                                                            Please enter this field
+                                                        </div>
+
                                                         <label htmlFor='floatingInput'>
                                                             City
                                                         </label>
@@ -1272,16 +1110,24 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                             <div className='row'>
                                                 <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
-                                                        <input type='text' className='form-control' id='purchasepostalcode' placeholder='Postal code'
+                                                        <input type='text' className='form-control is-required' id='purchasepostalcode' placeholder='Postal code'
                                                             value={purchaseInfo.postalCode}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 setPurchaseInfo({ ...purchaseInfo, postalCode: e.target.value });
                                                             }}
                                                         />
+                                                        <div className="invalid-feedback">
+                                                            Please enter this field
+                                                        </div>
+
                                                         <label htmlFor='floatingInput'>
                                                             Postal code
                                                         </label>
                                                     </div>
+                                                </div>
+
+                                                <div className='col'>
+
                                                 </div>
                                             </div>
 
@@ -2133,7 +1979,13 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                     }}>
                                         <input type='submit' value='Next' className='btn btn-primary form-button'
                                             onClick={() => {
-                                                checkPage();
+                                                if (checkInputs()) {
+                                                    setMissingInfo(false);
+                                                    setCurrentPage('GET_SALE_DETAILS');
+                                                }
+                                                else {
+                                                    setMissingInfo(true);
+                                                }
                                             }} />
                                     </div>
                                 </div>
@@ -2161,7 +2013,14 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
 
                                         <input type='button' value='Next' className='btn btn-primary form-button'
                                             onClick={() => {
-                                                checkPage();
+                                                if (checkInputs()) {
+                                                    setMissingInfo(false);
+                                                    setCurrentPage('GET_PURCHASERS');
+                                                }
+                                                else {
+                                                    setMissingInfo(true);
+                                                }
+
                                             }} />
                                     </div>
                                 </div>
@@ -2192,7 +2051,13 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                                 visibility: purchaseInfo.forCompany || numberOfClients !== 0 ? 'visible' : 'hidden',
                                             }}
                                             onClick={() => {
-                                                checkPage();
+                                                if (checkInputs()) {
+                                                    setMissingInfo(false);
+                                                    setCurrentPage('PROPERTY_INFO');
+                                                }
+                                                else {
+                                                    setMissingInfo(true);
+                                                }
                                             }} />
                                     </div>
                                 </div>
@@ -2220,7 +2085,14 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
 
                                         <input type='button' value='Submit' className='btn btn-primary form-button'
                                             onClick={() => {
-                                                checkPage();
+                                                if (checkInputs()) {
+                                                    setMissingInfo(false);
+                                                    setCurrentPage('CONFIRM_SUBMIT');
+                                                }
+                                                else {
+                                                    setMissingInfo(true);
+                                                }
+
                                             }} />
                                     </div>
                                 </div>

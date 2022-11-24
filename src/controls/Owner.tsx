@@ -60,12 +60,15 @@ const Owner = (props: BorrowerProps): ReactElement => {
             <div className="row">
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>
-                        <input type='text' className='form-control' id={`clientname${props.num}`} placeholder={`${props.text} ${props.num + 1} full legal name`}
+                        <input type='text' className='form-control is-required' id={`clientname${props.num}`} placeholder={`${props.text} ${props.num + 1} full legal name`}
                             value={clientInfo.fullLegalName}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setClientInfo({ ...clientInfo, fullLegalName: e.target.value });
                             }}
                         />
+                        <div className="invalid-feedback">
+                            Please enter the full legal name.
+                        </div>
                         <label htmlFor='floatingInput'>
                             {`${props.text} ${props.num + 1} full legal name - required`}
                         </label>
@@ -79,12 +82,16 @@ const Owner = (props: BorrowerProps): ReactElement => {
             <div className="row">
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>
-                        <input type='tel' className='form-control' id={`phone${props.num}`} placeholder='Phone number'
+                        <input type='tel' className='form-control is-required' id={`phone${props.num}`} placeholder='Phone number'
                             pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" value={clientInfo.phoneNumber}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setClientInfo({ ...clientInfo, phoneNumber: e.target.value });
                             }}
                         />
+                        <div className="invalid-feedback">
+                            Please enter the phone number.
+                        </div>
+
                         <label htmlFor='floatingInput'>
                             Phone number - format: 123-456-7890
                         </label>
@@ -104,51 +111,6 @@ const Owner = (props: BorrowerProps): ReactElement => {
                     </div>
                 </div>
             </div>
-
-            {/* <div className="row">
-                <div className="col mb-3">
-                    <div className='form-floating mb-0'>
-                        <DateInput
-                            className='form-control'
-                            id={`dob${props.num}`}
-                            value={clientInfo.dateOfBirth}
-                            max={new Date()}
-                            label='Date of birth'
-                            onChange={(e) => {
-                                if (e) {
-                                    setClientInfo({ ...clientInfo, dateOfBirth: e })
-                                }
-
-                            }} />
-
-                    </div>
-                </div>
-                <div className="col mb-3">
-                    <div className='form-floating mb-0'>
-                        <input type='number' className='form-control' id={`sin${props.num}`} placeholder='Social Insurance Number'
-                            disabled={clientInfo.sinViaPhone}
-                            value={clientInfo.sinViaPhone ? '' : clientInfo.socialInsNumber}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setClientInfo({ ...clientInfo, socialInsNumber: e.target.value });
-                            }} />
-                        <label htmlFor='floatingInput'>
-                            Social Insurance Number
-                        </label>
-                    </div>
-                    <div className='d-flex flex-nowrap pt-2'>
-                        <input type='checkbox' id={`chksin${props.num.toString()}`} checked={clientInfo.sinViaPhone}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setClientInfo({ ...clientInfo, sinViaPhone: e.target.checked });
-                                // if (e.target.checked) {
-                                //     setClientInfo({ ...clientInfo, socialInsNumber: '' });
-                                // }
-                            }} />
-                        <label htmlFor={`chksin${props.num.toString()}`} className='ps-2'>
-                            I will provide later via phone
-                        </label>
-                    </div>
-                </div>
-            </div> */}
 
             <div className="row">
                 <div className="col mb-1 mt-4">
@@ -205,12 +167,16 @@ const Owner = (props: BorrowerProps): ReactElement => {
                     <div className="row">
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id='mailingstreet1' placeholder='Street address line 1'
+                                <input type='text' className='form-control is-required' id='mailingstreet1' placeholder='Street address line 1'
                                     value={clientInfo.mailingStreet1}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         setClientInfo({ ...clientInfo, mailingStreet1: e.target.value });
                                     }}
                                 />
+                                <div className="invalid-feedback">
+                                    Please enter the street 1 address
+                                </div>
+
                                 <label htmlFor='floatingInput'>
                                     Street address line 1
                                 </label>
@@ -238,19 +204,23 @@ const Owner = (props: BorrowerProps): ReactElement => {
                     <div className="row">
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id='mailingcity' placeholder='City'
+                                <input type='text' className='form-control is-required' id='mailingcity' placeholder='City'
                                     value={clientInfo.mailingCity}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         setClientInfo({ ...clientInfo, mailingCity: e.target.value });
                                     }}
                                 />
+                                <div className="invalid-feedback">
+                                    Please enter the city.
+                                </div>
+
                                 <label htmlFor='floatingInput'>
                                     City
                                 </label>
                             </div>
                         </div>
                         <div className="col mb-3">
-                            <select className="form-select p-3" aria-label="Province or territory"
+                            <select className="form-select p-3 is-required" aria-label="Province or territory"
                                 ref={provinceSelect}
                                 value={clientInfo.mailingProvinceTerritory}
                                 onChange={(e: ChangeEvent<HTMLSelectElement>) => {
@@ -269,6 +239,10 @@ const Owner = (props: BorrowerProps): ReactElement => {
                                     })
                                 }
                             </select>
+                            <div className="invalid-feedback">
+                                Please enter this field
+                            </div>
+
                         </div>
                     </div>
 

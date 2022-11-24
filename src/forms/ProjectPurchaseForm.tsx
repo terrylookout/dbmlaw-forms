@@ -12,7 +12,7 @@ import DateInput from '../controls/DateInput';
 declare var bootstrap: any;
 
 
-const PurchaseForm = (props: FormProps): ReactElement => {
+const ProjectPurchaseForm = (props: FormProps): ReactElement => {
 
     const [purchaseInfo, setPurchaseInfo] = useState(() => new PurchaseInfo());
     const [missingInfo, setMissingInfo] = useState(false);
@@ -26,7 +26,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
     const submitPurchaseForm = async (purchaseInfo: PurchaseInfo) => {
         const c = getOutput(purchaseInfo);
 
-        await sendEmail('Purchase submission', c);
+        await sendEmail('Project Purchase submission', c);
 
         setCurrentPage('SUBMIT_RESULT');
     };
@@ -119,27 +119,27 @@ const PurchaseForm = (props: FormProps): ReactElement => {
 
                             {
                                 currentPage === 'GET_PURCHASERS' &&
-                                <span>PURCHASE - Purchaser Information</span>
+                                <span>PROJECT PURCHASE - Purchaser Information</span>
                             }
 
                             {
                                 currentPage === 'PROPERTY_INFO' &&
-                                <span>PURCHASE - Property Details</span>
+                                <span>PROJECT PURCHASE - Property Details</span>
                             }
 
                             {
                                 currentPage === 'CONFIRM_SUBMIT' &&
-                                <span>PURCHASE - Ready to Submit</span>
+                                <span>PROJECT PURCHASE - Ready to Submit</span>
                             }
 
                             {
                                 currentPage === 'SUBMITTING' &&
-                                <span>PURCHASE - Please Wait</span>
+                                <span>PROJECT PURCHASE - Please Wait</span>
                             }
 
                             {
                                 currentPage === 'SUBMIT_RESULT' &&
-                                <span>PURCHASE - Success!</span>
+                                <span>PROJECT PURCHASE - Success!</span>
                             }
 
 
@@ -1410,7 +1410,7 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
 
     const output: string[] = [];
 
-    output.push('<html><b>PURCHASE</b><br />');
+    output.push('<html><b>PROJECT PURCHASE</b><br />');
     output.push('<table>');
 
     if (purchaseInfo.forCompany) {
@@ -1600,4 +1600,4 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
 }
 
 
-export default PurchaseForm;
+export default ProjectPurchaseForm;

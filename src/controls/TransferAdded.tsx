@@ -76,12 +76,15 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
             <div className="row">
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>
-                        <input type='text' className='form-control' id={`clientname${props.num}`} placeholder={`${props.text} ${props.num + 1} full legal name`}
+                        <input type='text' className='form-control is-required' id={`clientname${props.num}`} placeholder={`${props.text} ${props.num + 1} full legal name`}
                             value={clientInfo.fullLegalName}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setClientInfo({ ...clientInfo, fullLegalName: e.target.value });
                             }}
                         />
+                        <div className="invalid-feedback">
+                            Please enter this field
+                        </div>
                         <label htmlFor='floatingInput'>
                             {`${props.text} ${props.num + 1} full legal name - required`}
                         </label>
@@ -95,12 +98,15 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
             <div className="row">
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>
-                        <input type='tel' className='form-control' id={`phone${props.num}`} placeholder='Phone number'
+                        <input type='tel' className='form-control is-required' id={`phone${props.num}`} placeholder='Phone number'
                             pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" value={clientInfo.phoneNumber}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setClientInfo({ ...clientInfo, phoneNumber: e.target.value });
                             }}
                         />
+                        <div className="invalid-feedback">
+                            Please enter this field
+                        </div>
                         <label htmlFor='floatingInput'>
                             Phone number - format: 123-456-7890
                         </label>
@@ -125,7 +131,7 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>
                         <DateInput
-                            className='form-control'
+                            className='form-control is-required'
                             id={`dob${props.num}`}
                             value={clientInfo.dateOfBirth}
                             max={new Date()}
@@ -136,6 +142,9 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                                 }
 
                             }} />
+                        <div className="invalid-feedback">
+                            Please enter this field
+                        </div>
 
                     </div>
                 </div>
@@ -215,12 +224,15 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                     <div className="row">
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id='mailingstreet1' placeholder='Street address line 1'
+                                <input type='text' className='form-control is-required' id='mailingstreet1' placeholder='Street address line 1'
                                     value={clientInfo.mailingStreet1}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         setClientInfo({ ...clientInfo, mailingStreet1: e.target.value });
                                     }}
                                 />
+                                <div className="invalid-feedback">
+                                    Please enter this field
+                                </div>
                                 <label htmlFor='floatingInput'>
                                     Street address line 1
                                 </label>
@@ -248,19 +260,23 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                     <div className="row">
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id='mailingcity' placeholder='City'
+                                <input type='text' className='form-control is-required' id='mailingcity' placeholder='City'
                                     value={clientInfo.mailingCity}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         setClientInfo({ ...clientInfo, mailingCity: e.target.value });
                                     }}
                                 />
+                                <div className="invalid-feedback">
+                                    Please enter this field
+                                </div>
+
                                 <label htmlFor='floatingInput'>
                                     City
                                 </label>
                             </div>
                         </div>
                         <div className="col mb-3">
-                            <select className="form-select p-3" aria-label="Province or territory"
+                            <select className="form-select p-3 is-required" aria-label="Province or territory"
                                 ref={provinceSelect}
                                 value={clientInfo.mailingProvinceTerritory}
                                 onChange={(e: ChangeEvent<HTMLSelectElement>) => {
@@ -279,19 +295,27 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                                     })
                                 }
                             </select>
+                            <div className="invalid-feedback">
+                                Please enter this field
+                            </div>
+
                         </div>
                     </div>
 
 
                     <div className="row">
                         <div className="col mb-3">
-                            <div className='form-floating mb-0'>
+                            <div className='form-floating mb-0 is-required'>
                                 <input type='text' className='form-control' id='mailingpostalcode' placeholder='Postal code'
                                     value={clientInfo.mailingPostalCode}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         setClientInfo({ ...clientInfo, mailingPostalCode: e.target.value });
                                     }}
                                 />
+                                <div className="invalid-feedback">
+                                    Please enter this field
+                                </div>
+
                                 <label htmlFor='floatingInput'>
                                     Postal code
                                 </label>
@@ -301,7 +325,7 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
 
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <select className='form-control' id='mailingcountry' placeholder='Country'
+                                <select className='form-control is-required' id='mailingcountry' placeholder='Country'
                                     value={clientInfo.mailingCountry}
                                     onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                                         setClientInfo({ ...clientInfo, mailingCountry: e.target.value });
@@ -322,6 +346,10 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                                         })
                                     }
                                 </select>
+                                <div className="invalid-feedback">
+                                    Please enter this field
+                                </div>
+
                                 <label htmlFor='mailingcountry'>
                                     Country
                                 </label>
@@ -440,12 +468,16 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                     <div className="row">
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id={`employeroccupation${props.num}`} placeholder='Your occupation - required'
+                                <input type='text' className='form-control is-required' id={`employeroccupation${props.num}`} placeholder='Your occupation - required'
                                     value={clientInfo.occupation}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         setClientInfo({ ...clientInfo, occupation: e.target.value });
                                     }}
                                 />
+                                <div className="invalid-feedback">
+                                    Please enter this field
+                                </div>
+
                                 <label htmlFor='floatingInput'>
                                     Your occupation (required)
                                 </label>
@@ -457,12 +489,16 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                     <div className="row">
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id={`employername${props.num}`} placeholder='Employer name - required'
+                                <input type='text' className='form-control is-required' id={`employername${props.num}`} placeholder='Employer name - required'
                                     value={clientInfo.employerName}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         setClientInfo({ ...clientInfo, employerName: e.target.value });
                                     }}
                                 />
+                                <div className="invalid-feedback">
+                                    Please enter this field
+                                </div>
+
                                 <label htmlFor='floatingInput'>
                                     Employer name (required)
                                 </label>
@@ -470,13 +506,17 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                         </div>
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <input type='tel' className='form-control' id='employerphone' placeholder='Phone number'
+                                <input type='tel' className='form-control is-required' id='employerphone' placeholder='Phone number'
                                     pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                                     value={clientInfo.employerPhone}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         setClientInfo({ ...clientInfo, employerPhone: e.target.value });
                                     }}
                                 />
+                                <div className="invalid-feedback">
+                                    Please enter this field
+                                </div>
+
                                 <label htmlFor='floatingInput'>
                                     Phone number - format: 123-456-7890
                                 </label>
@@ -488,12 +528,16 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                     <div className="row">
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id='employerstreet1' placeholder='Street address line 1'
+                                <input type='text' className='form-control is-required' id='employerstreet1' placeholder='Street address line 1'
                                     value={clientInfo.employerStreet1}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         setClientInfo({ ...clientInfo, employerStreet1: e.target.value });
                                     }}
                                 />
+                                <div className="invalid-feedback">
+                                    Please enter this field
+                                </div>
+
                                 <label htmlFor='floatingInput'>
                                     Street address line 1
                                 </label>
@@ -521,19 +565,23 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                     <div className="row">
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id='employercity' placeholder='City'
+                                <input type='text' className='form-control is-required' id='employercity' placeholder='City'
                                     value={clientInfo.employerCity}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         setClientInfo({ ...clientInfo, employerCity: e.target.value });
                                     }}
                                 />
+                                <div className="invalid-feedback">
+                                    Please enter this field
+                                </div>
+
                                 <label htmlFor='floatingInput'>
                                     City
                                 </label>
                             </div>
                         </div>
                         <div className="col mb-3">
-                            <select className="form-select p-3" aria-label="Province or territory"
+                            <select className="form-select p-3 is-required" aria-label="Province or territory"
                                 ref={employerProvinceSelect}
                                 value={clientInfo.employerProvinceTerritory}
                                 onChange={(e: ChangeEvent<HTMLSelectElement>) => {
@@ -552,18 +600,26 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                                     })
                                 }
                             </select>
+                            <div className="invalid-feedback">
+                                Please enter this field
+                            </div>
+
                         </div>
                     </div>
 
                     <div className="row">
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id='employerpostalcode' placeholder='Postal code'
+                                <input type='text' className='form-control is-required' id='employerpostalcode' placeholder='Postal code'
                                     value={clientInfo.employerPostalCode}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         setClientInfo({ ...clientInfo, employerPostalCode: e.target.value });
                                     }}
                                 />
+                                <div className="invalid-feedback">
+                                    Please enter this field
+                                </div>
+
                                 <label htmlFor='floatingInput'>
                                     Postal code
                                 </label>
@@ -572,7 +628,7 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
 
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <select className='form-control' id='employercountry' placeholder='Country'
+                                <select className='form-control is-required' id='employercountry' placeholder='Country'
                                     value={clientInfo.employerCountry}
                                     onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                                         setClientInfo({ ...clientInfo, employerCountry: e.target.value });
@@ -593,6 +649,10 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                                         })
                                     }
                                 </select>
+                                <div className="invalid-feedback">
+                                    Please enter this field
+                                </div>
+
                                 <label htmlFor='employercountry'>
                                     Country
                                 </label>

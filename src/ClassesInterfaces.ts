@@ -82,7 +82,7 @@ export class ClientInfo {
 
         this.timeLivingAtProperty = '';
 
-        this.citizenShip = '';
+        this.citizenShip = 'CANADIAN_CITIZEN';
     }
 
 }
@@ -111,7 +111,7 @@ export class SaleInfo {
     public closingDate: Date;
     public closingDateTBD: boolean;
 
-    public sellingPrice: number;
+    public sellingPrice: string;
 
     public street1: string;
     public street2: string;
@@ -142,7 +142,7 @@ export class SaleInfo {
         this.companyName = '';
         this.incorporationNumber = '';
 
-        this.sellingPrice = 0;
+        this.sellingPrice = '';
 
         this.closingDate = new Date();
         this.closingDateTBD = false;
@@ -271,7 +271,7 @@ export class PurchaseInfo {
 
     public completionDate: Date;
     public completionDateTBD: boolean;
-    public purchasePrice: number;
+    public purchasePrice: string;
 
     public street1: string;
     public street2: string;
@@ -328,7 +328,7 @@ export class PurchaseInfo {
 
         this.completionDate = new Date();
         this.completionDateTBD = false;
-        this.purchasePrice = 0;
+        this.purchasePrice = '';
 
         this.street1 = '';
         this.street2 = '';

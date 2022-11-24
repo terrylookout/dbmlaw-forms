@@ -2,7 +2,7 @@ import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
 import { ClientInfo, GuarantorInfo, RefinanceInfo } from '../ClassesInterfaces';
 
 import CircleBullet from '../controls/CircleBullet';
-import { FormProps, getEntry, getHeader, sendEmail } from '../Helpers';
+import { checkInputs, FormProps, getEntry, getHeader, sendEmail } from '../Helpers';
 import { SubmitConfirm, SubmitDone, Submitting } from '../controls/SubmitConfirm';
 import Owner from '../controls/Owner';
 import TransferAdded from '../controls/TransferAdded';
@@ -26,238 +26,6 @@ const RefinanceForm = (props: FormProps): ReactElement => {
         'GET_PROPERTY_DETAILS' | 'GET_OWNERS' | 'GET_TRANSFER_INFORMATION' | 'GET_MORTGAGE_DETAILS' |
         'CONFIRM_SUBMIT' | 'SUBMITTING' | 'SUBMIT_RESULT'
     >('GET_PROPERTY_DETAILS');
-
-    const checkPage = () => {
-        //
-        //
-        switch (currentPage) {
-            case 'GET_PROPERTY_DETAILS':
-                setMissingInfo(false);
-                setCurrentPage('GET_OWNERS');
-                break;
-
-            case 'GET_OWNERS':
-                setMissingInfo(false);
-                setCurrentPage('GET_TRANSFER_INFORMATION');
-                break;
-
-            case 'GET_TRANSFER_INFORMATION':
-                setMissingInfo(false);
-                setCurrentPage('GET_MORTGAGE_DETAILS');
-                break;
-
-            case 'GET_MORTGAGE_DETAILS':
-                setMissingInfo(false);
-                setCurrentPage('CONFIRM_SUBMIT');
-                break;
-
-        }
-
-
-
-        // if (currentPage === 'GET_BORROWERS') {
-        //     setMissingInfo(false);
-        //     setCurrentPage('GET_PROPERTY_DETAILS')
-        //     return;
-
-        // }
-        // else {
-        //     // here we are good to submit
-        //     setCurrentPage('CONFIRM_SUBMIT');
-
-        // }
-        // else if (currentPage === 'GET_PURCHASERS') {
-        //     if (purchaseInfo.forCompany) {
-        //         if (!purchaseInfo.companyName.trim()) {
-        //             const el = document.querySelector(`#companyname`);
-        //             if (el) {
-        //                 el.scrollIntoView({
-        //                     behavior: 'smooth',
-        //                     block: 'center',
-        //                 });
-        //                 (el as HTMLInputElement).focus();
-        //                 setMissingInfo(true);
-        //                 return;
-        //             }
-        //         }
-
-        //         if (!purchaseInfo.incorporationNumber.trim()) {
-        //             const el = document.querySelector(`#incorporationnumber`);
-        //             if (el) {
-        //                 el.scrollIntoView({
-        //                     behavior: 'smooth',
-        //                     block: 'center',
-        //                 });
-        //                 (el as HTMLInputElement).focus();
-        //                 setMissingInfo(true);
-        //                 return;
-        //             }
-        //         }
-        //     }
-
-        //     for (let t = 0; t < purchaseInfo.clientsInfo.length; t++) {
-        //         const client = purchaseInfo.clientsInfo[t];
-
-        //         // check legal name
-        //         if (!client.fullLegalName.trim()) {
-        //             const el = document.querySelector(`#clientname${t}`);
-        //             if (el) {
-        //                 el.scrollIntoView({
-        //                     behavior: 'smooth',
-        //                     block: 'center',
-        //                 });
-        //                 (el as HTMLInputElement).focus();
-        //                 setMissingInfo(true);
-        //                 return;
-        //             }
-        //         }
-
-        //         let doNotProceed = false;
-
-        //         // employment
-        //         if (!purchaseInfo.forCompany && client.employment === 'TBF') {
-        //             //employment-header${props.num}
-        //             const el = document.querySelector(`.employment-header${t}`);
-        //             if (el) {
-        //                 el.scrollIntoView({
-        //                     behavior: 'smooth',
-        //                     block: 'center',
-        //                 });
-        //                 el.className += ' pt-1 border border-danger rounded border-2';
-        //             }
-        //             doNotProceed = true;
-        //         }
-
-        //         if (!purchaseInfo.forCompany && client.employment === 'EMPLOYED') {
-        //             if (!client.occupation) {
-        //                 //`employeroccupation${props.num}`
-        //                 const el = document.querySelector(`#employeroccupation${t}`);
-        //                 if (el) {
-        //                     el.scrollIntoView({
-        //                         behavior: 'smooth',
-        //                         block: 'center',
-        //                     });
-        //                     (el as HTMLInputElement).focus();
-        //                     setMissingInfo(true);
-        //                     return;
-        //                 }
-        //             }
-
-        //             if (!purchaseInfo.forCompany && !client.employerName) {
-        //                 //`employeroccupation${props.num}`
-        //                 const el = document.querySelector(`#employername${t}`);
-        //                 if (el) {
-        //                     el.scrollIntoView({
-        //                         behavior: 'smooth',
-        //                         block: 'center',
-        //                     });
-        //                     (el as HTMLInputElement).focus();
-        //                     setMissingInfo(true);
-        //                     return;
-        //                 }
-        //             }
-        //         }
-
-        //         // citizenship
-        //         if (!purchaseInfo.forCompany && client.citizenShip === '') {
-        //             //employment-header${props.num}
-        //             const el = document.querySelector(`.citizenship-header${t}`);
-        //             if (el) {
-        //                 el.scrollIntoView({
-        //                     behavior: 'smooth',
-        //                     block: 'center',
-        //                 });
-        //                 el.className += ' pt-1 border border-danger rounded border-2';
-        //             }
-        //             doNotProceed = true;
-        //         }
-
-        //         if (doNotProceed) {
-        //             setMissingInfo(true);
-        //             return;
-        //         }
-
-        //         // check to make sure at least an email address and/or phone is provided for purchaser 1
-        //         if (t === 0 && !client.phoneNumber && !client.emailAddress) {
-        //             const phone = document.querySelector(`#phone${t}`);
-        //             if (phone) {
-        //                 phone.scrollIntoView({
-        //                     behavior: 'smooth',
-        //                     block: 'center',
-        //                 });
-        //                 (phone as HTMLInputElement).focus();
-        //                 setMissingInfo(true);
-        //                 return;
-        //             }
-        //         }
-        //     }
-
-        //     setMissingInfo(false);
-        //     setCurrentPage('PROPERTY_INFO')
-        //     return;
-        // }
-        // else if (currentPage === 'PROPERTY_INFO') {
-        //     // page 2
-        //     if (!purchaseInfo.purchasePrice) {
-        //         const el = document.querySelector(`#purchaseprice`);
-        //         if (el) {
-        //             el.scrollIntoView({
-        //                 behavior: 'smooth',
-        //                 block: 'center',
-        //             });
-        //             (el as HTMLInputElement).focus();
-        //             setMissingInfo(true);
-        //             return;
-        //         }
-        //     }
-
-        //     if (purchaseInfo.buildingNewUsed === '') {
-        //         const el = document.querySelector(`.newused`);
-        //         if (el) {
-        //             el.scrollIntoView({
-        //                 behavior: 'smooth',
-        //                 block: 'center',
-        //             });
-        //             el.className += ' pt-1 border border-danger rounded border-2';
-        //         }
-        //         setMissingInfo(true);
-        //         return;
-        //     }
-
-        //     for (let t = 0; t < purchaseInfo.guarantorsInfo.length; t++) {
-        //         const guarantor = purchaseInfo.guarantorsInfo[t];
-        //         // check legal name
-        //         if (!guarantor.fullLegalName.trim()) {
-        //             const el = document.querySelector(`#guarantorname${t}`);
-        //             if (el) {
-        //                 el.scrollIntoView({
-        //                     behavior: 'smooth',
-        //                     block: 'center',
-        //                 });
-        //                 (el as HTMLInputElement).focus();
-        //                 setMissingInfo(true);
-        //                 return;
-        //             }
-        //         }
-
-        //         if (!guarantor.phoneNumber.trim()) {
-        //             const el = document.querySelector(`#guarantorphone${t}`);
-        //             if (el) {
-        //                 el.scrollIntoView({
-        //                     behavior: 'smooth',
-        //                     block: 'center',
-        //                 });
-        //                 (el as HTMLInputElement).focus();
-        //                 setMissingInfo(true);
-        //                 return;
-        //             }
-        //         }
-        //     }
-
-        //     // here we are good to submit
-        //     setCurrentPage('CONFIRM_SUBMIT');
-        // }
-    };
 
     const submitSaleForm = async () => {
         const c = getOutput(refinanceInfo);
@@ -436,12 +204,15 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                             <div className="row">
                                                 <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
-                                                        <input type='text' className='form-control' id='sellingstreet1' placeholder='Street address line 1'
+                                                        <input type='text' className='form-control is-required' id='sellingstreet1' placeholder='Street address line 1'
                                                             value={refinanceInfo.street1}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 setRefinanceInfo({ ...refinanceInfo, street1: e.target.value });
                                                             }}
                                                         />
+                                                        <div className="invalid-feedback">
+                                                            Please choose a street.
+                                                        </div>
                                                         <label htmlFor='floatingInput'>
                                                             Street address line 1
                                                         </label>
@@ -469,19 +240,22 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                             <div className="row">
                                                 <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
-                                                        <input type='text' className='form-control' id='sellingcity' placeholder='City'
+                                                        <input type='text' className='form-control is-required' id='sellingcity' placeholder='City'
                                                             value={refinanceInfo.city}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 setRefinanceInfo({ ...refinanceInfo, city: e.target.value });
                                                             }}
                                                         />
+                                                        <div className="invalid-feedback">
+                                                            Please choose a city.
+                                                        </div>
                                                         <label htmlFor='floatingInput'>
                                                             City
                                                         </label>
                                                     </div>
                                                 </div>
                                                 <div className="col mb-3">
-                                                    <select className="form-select p-3" aria-label="Province or territory"
+                                                    <select className="form-select p-3 is-required" aria-label="Province or territory"
                                                         value={refinanceInfo.provinceTerritory}
                                                         onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                                                             setRefinanceInfo({ ...refinanceInfo, provinceTerritory: e.target.value });
@@ -502,6 +276,9 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                         <option value="Saskatchewan">Saskatchewan</option>
                                                         <option value="Yukon">Yukon</option>
                                                     </select>
+                                                    <div className="invalid-feedback">
+                                                        Please choose a Province or Territory.
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div className='row'>
@@ -513,6 +290,9 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                                 setRefinanceInfo({ ...refinanceInfo, postalCode: e.target.value });
                                                             }}
                                                         />
+                                                        <div className="invalid-feedback">
+                                                            Please choose a Postal Code.
+                                                        </div>
                                                         <label htmlFor='floatingInput'>
                                                             Postal code
                                                         </label>
@@ -827,33 +607,41 @@ const RefinanceForm = (props: FormProps): ReactElement => {
 
                                                 </>
                                             }
-                                            <div className='row align-items-center mt-5'>
-                                                <div className="col mb-3">
-                                                    <h6>
-                                                        <CircleBullet />
-                                                        Will anyone be ADDED to title? If so, please specify the number of people here
-                                                    </h6>
-                                                </div>
 
-                                                <div className="col col-6 mb-3">
-                                                    <select className="form-select p-3" aria-label="Added"
-                                                        value={numberOfAdded}
-                                                        onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                                                            if (e && e.target && e.target.value) {
-                                                                setNumberOfAdded(parseInt(e.target.value));
-                                                            }
-                                                        }}>
-                                                        <option value='0'>None</option>
-                                                        <option value="1">1</option>
-                                                        <option value="2">2</option>
-                                                        <option value="3">3</option>
-                                                        <option value="4">4</option>
-                                                        <option value="5">5</option>
-                                                        <option value="6">6</option>
-                                                    </select>
+                                            {
+                                                (refinanceInfo.ownersToBeRemoved !== '' || refinanceInfo.ownersToBeAdded !== '') &&
+                                                <>
 
-                                                </div>
-                                            </div>
+                                                    <div className='row align-items-center mt-5'>
+                                                        <div className="col mb-3">
+                                                            <h6>
+                                                                <CircleBullet />
+                                                                Will anyone be ADDED to title? If so, please specify the number of people here
+                                                            </h6>
+                                                        </div>
+
+                                                        <div className="col col-6 mb-3">
+                                                            <select className="form-select p-3" aria-label="Added"
+                                                                value={numberOfAdded}
+                                                                onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                                                                    if (e && e.target && e.target.value) {
+                                                                        setNumberOfAdded(parseInt(e.target.value));
+                                                                    }
+                                                                }}>
+                                                                <option value='0'>None</option>
+                                                                <option value="1">1</option>
+                                                                <option value="2">2</option>
+                                                                <option value="3">3</option>
+                                                                <option value="4">4</option>
+                                                                <option value="5">5</option>
+                                                                <option value="6">6</option>
+                                                            </select>
+
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            }
+
 
                                             {
                                                 numberOfAdded > 0 &&
@@ -906,12 +694,16 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                             <div className="row">
                                                 <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
-                                                        <input type='text' className='form-control' id='mortgagelendername' placeholder='Mortgage Lender name'
+                                                        <input type='text' className='form-control is-required' id='mortgagelendername' placeholder='Mortgage Lender name'
                                                             value={refinanceInfo.mortgageLenderName}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 setRefinanceInfo({ ...refinanceInfo, mortgageLenderName: e.target.value });
                                                             }}
                                                         />
+                                                        <div className="invalid-feedback">
+                                                            Please enter this field
+                                                        </div>
+
                                                         <label htmlFor='mortgagelendername'>
                                                             Mortgage Lender name
                                                         </label>
@@ -1308,15 +1100,22 @@ const RefinanceForm = (props: FormProps): ReactElement => {
 
                                         <input type='button' value='Next' className='btn btn-primary form-button'
                                             onClick={() => {
-                                                checkPage();
-                                            }} />
+                                                if (checkInputs()) {
+                                                    setMissingInfo(false);
+                                                    setCurrentPage('GET_OWNERS');
+                                                }
+                                                else {
+                                                    setMissingInfo(true);
+                                                }
+                                            }}
+                                        />
                                     </div>
                                 </div>
                             </>
                         }
 
                         {
-                            (currentPage === 'GET_OWNERS' && (refinanceInfo.forCompany || numberOfOwners !== 0)) &&
+                            currentPage === 'GET_OWNERS' &&
                             <>
                                 <div className="row">
                                     <div className="col mb-3 mt-4 text-danger fw-semibold error-label">
@@ -1334,10 +1133,20 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                         <input type='button' value='Back to Property Details' className='btn btn-secondary form-button me-2'
                                             onClick={() => setCurrentPage('GET_PROPERTY_DETAILS')} />
 
-                                        <input type='submit' value='Next' className='btn btn-primary form-button'
-                                            onClick={() => {
-                                                checkPage();
-                                            }} />
+                                        {
+                                            (refinanceInfo.forCompany || numberOfOwners !== 0) &&
+                                            <input type='submit' value='Next' className='btn btn-primary form-button'
+                                                onClick={() => {
+                                                    if (checkInputs()) {
+                                                        setMissingInfo(false);
+                                                        setCurrentPage('GET_TRANSFER_INFORMATION');
+                                                    }
+                                                    else {
+                                                        setMissingInfo(true);
+                                                    }
+                                                }} />
+
+                                        }
                                     </div>
                                 </div>
 
@@ -1364,7 +1173,13 @@ const RefinanceForm = (props: FormProps): ReactElement => {
 
                                         <input type='button' value='Next' className='btn btn-primary form-button'
                                             onClick={() => {
-                                                checkPage();
+                                                if (checkInputs()) {
+                                                    setMissingInfo(false);
+                                                    setCurrentPage('GET_MORTGAGE_DETAILS');
+                                                }
+                                                else {
+                                                    setMissingInfo(true);
+                                                }
                                             }} />
                                     </div>
                                 </div>
@@ -1391,7 +1206,13 @@ const RefinanceForm = (props: FormProps): ReactElement => {
 
                                         <input type='button' value='Next' className='btn btn-primary form-button'
                                             onClick={() => {
-                                                checkPage();
+                                                if (checkInputs()) {
+                                                    setMissingInfo(false);
+                                                    setCurrentPage('CONFIRM_SUBMIT');
+                                                }
+                                                else {
+                                                    setMissingInfo(true);
+                                                }
                                             }} />
                                     </div>
                                 </div>
