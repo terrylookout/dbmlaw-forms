@@ -38,7 +38,7 @@ const App = (): ReactElement => {
             style={{
               height: '80px',
             }}
-            title='11-22-2022 1'
+            title='11-24-2022 1'
             src={DbmLogo} alt='DBM Law' />
         </div>
 

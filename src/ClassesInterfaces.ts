@@ -272,7 +272,23 @@ export class PurchaseInfo {
     public completionDate: Date;
     public completionDateTBD: boolean;
     public purchasePrice: string;
+    public depositPaid: string = '';
 
+    public upgradesOrExtras: 'YES' | 'NO' | '' = '';
+
+    public relativeLivingInstead: 'YES' | 'NO' | '' = '';
+    public relativeLivingInsteadName: string = '';
+    public relativeLivingInsteadRelationship: string = '';
+
+    public buyingThroughAssignment: 'YES' | 'NO' | '' = '';
+    public assignorGeneratingProfit: 'YES' | 'NO' | '' = '';
+    public moneysDisbursed: 'REALTORS' | 'LAWYERS' | '' = '';
+    public lawyerForAssignor: string = '';
+    public assignorResidentCanada: 'YES' | 'NO' | '' = '';
+
+
+    public unitNumber: string;
+    public strataLot: string;
     public street1: string;
     public street2: string;
     public city: string;
@@ -330,6 +346,8 @@ export class PurchaseInfo {
         this.completionDateTBD = false;
         this.purchasePrice = '';
 
+        this.unitNumber = '';
+        this.strataLot = '';
         this.street1 = '';
         this.street2 = '';
         this.city = '';
