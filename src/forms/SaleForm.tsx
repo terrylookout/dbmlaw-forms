@@ -91,6 +91,7 @@ const SaleForm = (props: FormProps): ReactElement => {
         <div className="modal fade" id="formModal" tabIndex={-1} aria-labelledby="formModalLabel" aria-hidden="true"
             data-bs-backdrop="static" data-bs-keyboard="false">
             <div className={`modal-dialog modal-lg ${(currentPage === 'GET_SELLERS' && saleInfo.clientsInfo.length !== 0)
+                || currentPage === 'GET_SALE_DETAILS'
                 ? 'modal-dialog-centered' : 'modal-near-top'} modal-dialog-scrollable`}>
                 <div className="modal-content">
                     <div className="modal-header">
@@ -178,6 +179,10 @@ const SaleForm = (props: FormProps): ReactElement => {
                                                 <>
                                                     <div className="row">
                                                         <div className="col mb-1 mt-4">
+                                                            <p className='mb-4'>
+                                                                If this purchase involves a corporation, a trustee of a trust or a partner of a
+                                                                partnership, please advise our office immediately. Additional fees and disbursements will apply.
+                                                            </p>
                                                             <h6>
                                                                 Please fill in company name, incorporation number, and signatory. Note that you will be contacted
                                                                 for additional information such as minutes books and company share registry.
@@ -278,7 +283,7 @@ const SaleForm = (props: FormProps): ReactElement => {
                                                         <DateInput
                                                             className='form-control'
                                                             id={`closingdate`}
-                                                            value={saleInfo.closingDateTBD ? new Date() : saleInfo.closingDate}
+                                                            value={saleInfo.closingDateTBD ? null : saleInfo.closingDate}
                                                             min={new Date((new Date()).setFullYear(new Date().getFullYear() - 5))}
                                                             label='Closing date'
                                                             onChange={(e) => {
@@ -299,7 +304,7 @@ const SaleForm = (props: FormProps): ReactElement => {
                                                 </div>
                                                 <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
-                                                        <input type='number' className='form-control is-required' id='saleprice' placeholder='Sale price'
+                                                        <input type='number' className='form-control' id='saleprice' placeholder='Sale price'
                                                             value={saleInfo.sellingPrice}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e && e.target) {
@@ -310,9 +315,6 @@ const SaleForm = (props: FormProps): ReactElement => {
                                                                 }
                                                             }}
                                                         />
-                                                        <div className="invalid-feedback">
-                                                            Please enter this field
-                                                        </div>
                                                         <label htmlFor='saleprice'>
                                                             Sale price (CAD) if known
                                                         </label>

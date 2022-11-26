@@ -10,7 +10,6 @@ interface ClientProps {
     client1Info: ClientInfo | null;
     clientInfo: ClientInfo;
     company: boolean;
-    doNotShowWithinThreeMonths?: boolean;
     updated: (c: ClientInfo, idx: number) => void;
 }
 
@@ -183,7 +182,7 @@ const Client = (props: ClientProps): ReactElement => {
             <div className="row align-items-center mt-4">
                 <div className="col mb-1">
                     <h6>
-                        <CircleBullet />Your current address
+                        <CircleBullet />Your current / mailing address
                     </h6>
                 </div>
 
@@ -810,7 +809,7 @@ const Client = (props: ClientProps): ReactElement => {
                         <div className="col mb-1 mt-4">
                             <h6>
                                 <CircleBullet />
-                                Will you be living in the property{props.doNotShowWithinThreeMonths ? '' : ' within three months'}?
+                                Will you be living in the property within three months?
                             </h6>
                             <div className="form-check">
                                 <input className="form-check-input" type="radio" name={`livewithinthreemonths${props.num}`} id={`livewithinthreemonths-yes${props.num}`}

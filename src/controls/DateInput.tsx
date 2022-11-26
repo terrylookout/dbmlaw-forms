@@ -3,7 +3,7 @@ import { DayPicker } from 'react-day-picker';
 
 interface DateInputProps {
     id?: string;
-    value: Date;
+    value: Date | null;
     onChange: (e: Date) => void;
     className?: string;
     min?: Date;
@@ -13,7 +13,7 @@ interface DateInputProps {
 
 const DateInput = (props: DateInputProps): ReactElement => {
 
-    const [dateValue, setDateValue] = useState<Date>(props.value);
+    const [dateValue, setDateValue] = useState<Date | null>(props.value);
     const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
@@ -21,7 +21,11 @@ const DateInput = (props: DateInputProps): ReactElement => {
             props.onChange(dateValue);
         }
         // eslint-disable-next-line
-    }, [dateValue,]);
+    }, [dateValue]);
+
+    useEffect(() => {
+        setDateValue(props.value);
+    }, [props.value]);
 
     useEffect(() => {
         if (isOpen) {
@@ -38,7 +42,9 @@ const DateInput = (props: DateInputProps): ReactElement => {
                 <input type='text' className='form-control' id={`${props.id}`}
                     value={dateValue ? dateValue.toISOString().split('T')[0] : ''}
                     onClick={() => {
-                        setIsOpen(!isOpen);
+                        if (dateValue) {
+                            setIsOpen(!isOpen);
+                        }
                     }}
                     onChange={() => {
                         //
@@ -53,7 +59,7 @@ const DateInput = (props: DateInputProps): ReactElement => {
                 {
                     isOpen &&
                     <DayPicker
-                        selected={dateValue}
+                        selected={dateValue ? dateValue : undefined}
                         mode='single'
                         captionLayout='dropdown'
                         fromYear={1900}

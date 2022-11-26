@@ -281,10 +281,10 @@ export class PurchaseInfo {
     public relativeLivingInsteadRelationship: string = '';
 
     public buyingThroughAssignment: 'YES' | 'NO' | '' = '';
-    public assignorGeneratingProfit: 'YES' | 'NO' | '' = '';
-    public moneysDisbursed: 'REALTORS' | 'LAWYERS' | '' = '';
+    public assignorGeneratingProfit: 'YES' | 'NO' | 'UNKNOWN' | '' = '';
+    public moneysDisbursed: 'REALTORS' | 'LAWYERS' | 'UNKNOWN' | '' = '';
     public lawyerForAssignor: string = '';
-    public assignorResidentCanada: 'YES' | 'NO' | '' = '';
+    public assignorResidentCanada: 'YES' | 'NO' | 'UNKNOWN' | '' = '';
 
 
     public unitNumber: string;

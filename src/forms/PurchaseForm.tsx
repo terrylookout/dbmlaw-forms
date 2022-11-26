@@ -87,15 +87,15 @@ const PurchaseForm = (props: FormProps): ReactElement => {
         // eslint-disable-next-line
     }, [numberOfGuarantors]);
 
-    useEffect(() => {
-        if (purchaseInfo.forCompany) {
-            setNumberOfClients(1);
-        }
-        else {
-            setNumberOfClients(0);
-        }
+    // useEffect(() => {
+    //     if (purchaseInfo.forCompany) {
+    //         setNumberOfClients(1);
+    //     }
+    //     else {
+    //         setNumberOfClients(0);
+    //     }
 
-    }, [purchaseInfo.forCompany]);
+    // }, [purchaseInfo.forCompany]);
 
     useEffect(() => {
         if (currentPage === 'PROPERTY_INFO') {
@@ -188,6 +188,13 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                         <input type='checkbox' id='iscompany' checked={purchaseInfo.forCompany}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 setPurchaseInfo({ ...purchaseInfo, forCompany: e.target.checked });
+
+                                                                if (e.target.checked) {
+                                                                    setNumberOfClients(1);
+                                                                }
+                                                                else {
+                                                                    setNumberOfClients(0);
+                                                                }
                                                             }} />
                                                         <label htmlFor='iscompany' className='ps-2'>
                                                             This is for a company
@@ -201,6 +208,10 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                 <>
                                                     <div className='row'>
                                                         <div className='col mb-1 mt-4'>
+                                                            <p className='mb-4'>
+                                                                If this purchase involves a corporation, a trustee of a trust or a partner of a
+                                                                partnership, please advise our office immediately. Additional fees and disbursements will apply.
+                                                            </p>
                                                             <h6>
                                                                 Please fill in company name, incorporation number, and signatory. Note that you will be contacted
                                                                 for additional information such as minutes books and company share registry.
@@ -302,7 +313,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                         <DateInput
                                                             className='form-control'
                                                             id={`completiondate`}
-                                                            value={purchaseInfo.completionDateTBD ? new Date() : purchaseInfo.completionDate}
+                                                            value={purchaseInfo.completionDateTBD ? null : purchaseInfo.completionDate}
                                                             min={new Date((new Date()).setFullYear(new Date().getFullYear() - 5))}
                                                             label='Completion date'
                                                             onChange={(e) => {
@@ -318,7 +329,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 setPurchaseInfo({ ...purchaseInfo, completionDateTBD: e.target.checked });
                                                             }} />
-                                                        <label htmlFor='chkdatetbd' className='me-1'>
+                                                        <label htmlFor='chkdatetbd' className='me-1 ms-1'>
                                                             Date still to be determined
                                                         </label>
                                                     </div>

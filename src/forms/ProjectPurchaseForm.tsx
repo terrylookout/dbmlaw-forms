@@ -17,8 +17,8 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
     const [numberOfClients, setNumberOfClients] = useState(0);
 
     const [currentPage, setCurrentPage] = useState<
-        'OPENING_INFO' | 'GET_PURCHASERS' | 'PROPERTY_INFO' | 'CONFIRM_SUBMIT' | 'SUBMITTING' | 'SUBMIT_RESULT'
-    >('OPENING_INFO');
+        'GET_PURCHASERS' | 'PROPERTY_INFO' | 'CONFIRM_SUBMIT' | 'SUBMITTING' | 'SUBMIT_RESULT'
+    >('GET_PURCHASERS');
 
     const submitPurchaseForm = async (purchaseInfo: PurchaseInfo) => {
         const c = getOutput(purchaseInfo);
@@ -27,7 +27,6 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
 
         setCurrentPage('SUBMIT_RESULT');
     };
-
 
     useEffect(() => {
         // eslint-disable-next-line
@@ -98,11 +97,6 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                         <h1 className='modal-title fs-5' id='exampleModalLabel'>
 
                             {
-                                currentPage === 'OPENING_INFO' &&
-                                <span>PROJECT PURCHASE - Before We Start</span>
-                            }
-
-                            {
                                 currentPage === 'GET_PURCHASERS' &&
                                 <span>PROJECT PURCHASE - Purchaser Information</span>
                             }
@@ -135,34 +129,6 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                         {
                             <div className='container'>
                                 <div className='container'>
-                                    {
-                                        currentPage === 'OPENING_INFO' &&
-                                        <>
-                                            <p>
-                                                If this purchase involves a corporation, a trustee of a trust or a partner of a
-                                                partnership, please advise our office immediately. Additional fees and disbursements will apply.
-                                            </p>
-                                            <p>
-                                                Please advise the sales office and your mortgage broker that you have hired Drysdale Bacon McStravick LLP to assist you in this transaction.
-                                            </p>
-                                            <p>
-                                                <span style={{
-                                                    fontWeight: '600',
-                                                }}>
-                                                    PLEASE FORWARD A COPY OF YOUR CONTRACT OUR OFFICE VIA
-                                                    EMAIL OR FAX 604-939-8340
-                                                </span>
-
-                                            </p>
-                                            <p>
-                                                Make sure your broker knows that if we receive mortgage instructions less
-                                                than 3 business days before your appointment there will be an additional
-                                                charge for rush service.  While we will try to contact the broker on your behalf,
-                                                it is the responsibility of the broker to ensure that instructions are received by our
-                                                offices on time in order to avoid rush charges from our offices.
-                                            </p>
-                                        </>
-                                    }
 
                                     {
                                         currentPage === 'GET_PURCHASERS' &&
@@ -221,11 +187,16 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                                 purchaseInfo.forCompany &&
                                                 <>
                                                     <div className='row'>
-                                                        <div className='col mb-1 mt-4'>
+                                                        <div className='col mb-1 mt-3'>
+                                                            <p className='mb-4'>
+                                                                If this purchase involves a corporation, a trustee of a trust or a partner of a
+                                                                partnership, please advise our office immediately. Additional fees and disbursements will apply.
+                                                            </p>
                                                             <h6>
                                                                 Please fill in company name, incorporation number, and signatory. Note that you will be contacted
                                                                 for additional information such as minutes books and company share registry.
                                                             </h6>
+
                                                         </div>
                                                     </div>
 
@@ -294,7 +265,6 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                                                 <Client text={purchaseInfo.forCompany ? 'Signatory' : 'Purchaser'}
                                                                     num={i}
                                                                     key={i}
-                                                                    doNotShowWithinThreeMonths={true}
                                                                     clientInfo={purchaseInfo.clientsInfo[i]}
                                                                     client1Info={purchaseInfo.clientsInfo.length > 1 ? purchaseInfo.clientsInfo[0] : null}
                                                                     company={purchaseInfo.forCompany}
@@ -345,7 +315,7 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                                         <DateInput
                                                             className='form-control'
                                                             id={`completiondate`}
-                                                            value={purchaseInfo.completionDateTBD ? new Date() : purchaseInfo.completionDate}
+                                                            value={purchaseInfo.completionDateTBD ? null : purchaseInfo.completionDate}
                                                             min={new Date((new Date()).setFullYear(new Date().getFullYear() - 5))}
                                                             label='Completion date'
                                                             onChange={(e) => {
@@ -360,7 +330,7 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
 
                                                 <div className='col'>
                                                     <div className='form-floating mb-0'>
-                                                        <input type='number' className='form-control is-required' id='purchaseprice' placeholder='Purchase price'
+                                                        <input type='number' className='form-control' id='purchaseprice' placeholder='Purchase price'
                                                             value={purchaseInfo.purchasePrice}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e && e.target) {
@@ -371,9 +341,6 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                                                 }
                                                             }}
                                                         />
-                                                        <div className="invalid-feedback">
-                                                            Please enter this field
-                                                        </div>
 
                                                         <label htmlFor='floatingInput'>
                                                             Purchase price (CAD)
@@ -398,7 +365,7 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
 
                                                 <div className='col mt-3'>
                                                     <div className='form-floating mb-0'>
-                                                        <input type='number' className='form-control is-required' id='depositpaid' placeholder='Deposit Paid'
+                                                        <input type='number' className='form-control' id='depositpaid' placeholder='Deposit Paid'
                                                             value={purchaseInfo.depositPaid}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e && e.target) {
@@ -409,9 +376,6 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                                                 }
                                                             }}
                                                         />
-                                                        <div className="invalid-feedback">
-                                                            Please enter this field
-                                                        </div>
 
                                                         <label htmlFor='floatingInput'>
                                                             Deposit Paid to Developer (CAD)
@@ -454,18 +418,15 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                                 <div className='col mb-3'>
                                                     <div className='col'>
                                                         <div className='form-floating mb-0'>
-                                                            <input type='text' className='form-control is-required' id='purchasestratalot' placeholder='Strata Lot'
+                                                            <input type='text' className='form-control' id='purchasestratalot' placeholder='Strata Lot'
                                                                 value={purchaseInfo.strataLot}
                                                                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                     setPurchaseInfo({ ...purchaseInfo, strataLot: e.target.value });
                                                                 }}
                                                             />
-                                                            <div className="invalid-feedback">
-                                                                Please enter this field
-                                                            </div>
 
                                                             <label htmlFor='floatingInput'>
-                                                                Strata Lot
+                                                                Strata Lot (if known)
                                                             </label>
                                                         </div>
                                                     </div>
@@ -1257,8 +1218,21 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                                                             setPurchaseInfo({ ...purchaseInfo, assignorResidentCanada: 'NO' });
                                                                         }
                                                                     }} />
-                                                                <label className='form-check-label' htmlFor='assignment-no'>
+                                                                <label className='form-check-label' htmlFor='assignorResidentCanada-no'>
                                                                     No
+                                                                </label>
+                                                            </div>
+
+                                                            <div className='form-check'>
+                                                                <input className='form-check-input' type='radio' name='assignorResidentCanada' id='assignorResidentCanada-unknown'
+                                                                    checked={purchaseInfo.assignorResidentCanada === 'UNKNOWN'}
+                                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                        if (e && e.target && e.target.value && e.target.value === 'on') {
+                                                                            setPurchaseInfo({ ...purchaseInfo, assignorResidentCanada: 'UNKNOWN' });
+                                                                        }
+                                                                    }} />
+                                                                <label className='form-check-label' htmlFor='assignorResidentCanada-no'>
+                                                                    Unknown
                                                                 </label>
                                                             </div>
                                                         </div>
@@ -1316,6 +1290,19 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                                                     No
                                                                 </label>
                                                             </div>
+
+                                                            <div className='form-check'>
+                                                                <input className='form-check-input' type='radio' name='assignorGeneratingProfit' id='assignorGeneratingProfit-unknown'
+                                                                    checked={purchaseInfo.assignorGeneratingProfit === 'UNKNOWN'}
+                                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                        if (e && e.target && e.target.value && e.target.value === 'on') {
+                                                                            setPurchaseInfo({ ...purchaseInfo, assignorGeneratingProfit: 'UNKNOWN' });
+                                                                        }
+                                                                    }} />
+                                                                <label className='form-check-label' htmlFor='assignorGeneratingProfit-unknown'>
+                                                                    Unknown
+                                                                </label>
+                                                            </div>
                                                         </div>
 
 
@@ -1345,6 +1332,21 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                                                     Lawyers (additional fees will apply)
                                                                 </label>
                                                             </div>
+
+                                                            <div className='form-check'>
+                                                                <input className='form-check-input' type='radio' name='moneysDisbursed' id='moneysDisbursed-unknown'
+                                                                    checked={purchaseInfo.moneysDisbursed === 'UNKNOWN'}
+                                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                        if (e && e.target && e.target.value && e.target.value === 'on') {
+                                                                            setPurchaseInfo({ ...purchaseInfo, moneysDisbursed: 'UNKNOWN' });
+                                                                        }
+                                                                    }} />
+                                                                <label className='form-check-label' htmlFor='moneysDisbursed-unknown'>
+                                                                    Unknown
+                                                                </label>
+                                                            </div>
+
+
                                                         </div>
 
                                                     </div>
@@ -1358,7 +1360,7 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                                         <div className='col mb-1 mt-4'>
                                                             <h6>
                                                                 <CircleBullet />
-                                                                Please provide the name of the lawyer representing the assignor (or ask your realtor to provide us with the name)
+                                                                If you know, please provide the name of the lawyer representing the assignor (or ask your realtor to provide us with the name)
                                                             </h6>
                                                         </div>
                                                     </div>
@@ -1373,7 +1375,7 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                                                     }}
                                                                 />
                                                                 <label htmlFor='floatingInput'>
-                                                                    Lawyer name
+                                                                    Lawyer name, if known
                                                                 </label>
                                                             </div>
                                                         </div>
@@ -1473,30 +1475,6 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                         }
                     </div>
                     <div className='modal-footer'>
-                        {
-                            currentPage === 'OPENING_INFO' &&
-                            <>
-                                <div className='row'>
-                                    <div className='col mb-3 mt-4 text-danger fw-semibold error-label'>
-                                    </div>
-                                    <div className='col mb-3 mt-4' style={{
-                                        textAlign: 'right',
-                                    }}>
-                                        <input type='submit' value='Start' className='btn btn-primary form-button'
-                                            onClick={() => {
-                                                if (checkInputs()) {
-                                                    setCurrentPage('GET_PURCHASERS');
-                                                    setMissingInfo(false);
-                                                }
-                                                else {
-                                                    setMissingInfo(true);
-                                                }
-                                            }} />
-                                    </div>
-                                </div>
-
-                            </>
-                        }
 
                         {
                             (currentPage === 'GET_PURCHASERS' && (purchaseInfo.forCompany || numberOfClients !== 0)) &&
@@ -1514,9 +1492,6 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                         textAlign: 'right',
                                         whiteSpace: 'nowrap',
                                     }}>
-                                        <input type='button' value='Back to Start' className='btn btn-secondary form-button me-2'
-                                            onClick={() => setCurrentPage('OPENING_INFO')} />
-
                                         <input type='submit' value='Next' className='btn btn-primary form-button'
                                             onClick={() => {
                                                 if (checkInputs()) {
@@ -1688,7 +1663,7 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
 
             output.push(getEntry('BC Resident 1 yr+', client.hasBeenBCResidentForAYear));
             output.push(getEntry('First Time Home Buyer', client.isFirstTimeHomeBuyer));
-            output.push(getEntry('Will live in property', client.willBeLivingInPropertyWithinThreeMonths));
+            output.push(getEntry('Will live in property within 3 months', client.willBeLivingInPropertyWithinThreeMonths));
             output.push(getEntry('Has owned principal residence elsewhere', client.hasOwnedPrincipalResidenceSomewhere, true));
         }
     }

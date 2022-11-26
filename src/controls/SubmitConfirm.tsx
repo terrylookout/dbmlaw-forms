@@ -39,6 +39,26 @@ export const SubmitDone = (): ReactElement => {
                 You will be contacted by Drysdale Bacon McStravick soon!
             </p>
             <p>
+                Please advise the sales office and your mortgage broker that you have hired Drysdale Bacon McStravick LLP to assist you in this transaction.
+            </p>
+            <p>
+                <span style={{
+                    fontWeight: '600',
+                }}>
+                    PLEASE FORWARD A COPY OF YOUR CONTRACT OUR OFFICE VIA
+                    EMAIL OR FAX 604-939-8340
+                </span>
+
+            </p>
+            <p>
+                Make sure your broker knows that if we receive mortgage instructions less
+                than 3 business days before your appointment there will be an additional
+                charge for rush service. While we will try to contact the broker on your behalf,
+                it is the responsibility of the broker to ensure that instructions are received by our
+                offices on time in order to avoid rush charges from our offices.
+            </p>
+
+            <p>
                 If you have any questions or concerns, please feel free to call&nbsp;
                 <a href="tel:1-604-939-8321">604 939 8321</a>
             </p>
