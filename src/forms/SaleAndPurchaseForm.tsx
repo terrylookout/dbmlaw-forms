@@ -5,9 +5,10 @@ import Guarantor from '../Guarantor';
 
 import CircleBullet from '../controls/CircleBullet';
 import { checkInputs, FormProps, getEntry, getHeader, sendEmail } from '../Helpers';
-import { SubmitConfirm, SubmitDone, Submitting } from '../controls/SubmitConfirm';
+import { SubmitConfirm, SubmitDone, SubmitError, Submitting } from '../controls/SubmitForms';
 import Seller from '../controls/Seller';
 import DateInput from '../controls/DateInput';
+import House from '../controls/House';
 
 declare var bootstrap: any;
 
@@ -26,16 +27,31 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
 
     const [currentPage, setCurrentPage] = useState<
         'GET_SELLERS' | 'GET_SALE_DETAILS' |
-        'GET_PURCHASERS' | 'PROPERTY_INFO' | 'CONFIRM_SUBMIT' | 'SUBMITTING' | 'SUBMIT_RESULT'
+        'GET_PURCHASERS' | 'PROPERTY_INFO' | 'CONFIRM_SUBMIT' | 'SUBMITTING' | 'SUBMIT_RESULT' |
+        'SUBMIT_ERROR'
     >('GET_SELLERS');
 
-    const submitSaleAndPurchaseForm = async (purchaseInfo: PurchaseInfo) => {
-        const c = getOutput(purchaseInfo, saleInfo);
+    const [sendResult, setSendResult] = useState(-1);
 
-        await sendEmail('Sale and Purchase submission', c);
+    const submitSaleAndPurchaseForm = async () => {
 
-        setCurrentPage('SUBMIT_RESULT');
+        setCurrentPage('SUBMITTING');
+        setSendResult(-1);
+        setTimeout(async () => {
+            const result = await sendEmail('Sale and Purchase submission', getOutput(purchaseInfo, saleInfo));
+            setSendResult(result);
+        }, 250);
     };
+
+    useEffect(() => {
+        if (sendResult === 200) {
+            setCurrentPage('SUBMIT_RESULT');
+        }
+        else if (sendResult !== -1) {
+            setCurrentPage('SUBMIT_ERROR');
+        }
+
+    }, [sendResult]);
 
     useEffect(() => {
         // eslint-disable-next-line
@@ -180,6 +196,7 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                 <div className="modal-content">
                     <div className="modal-header">
                         <h1 className="modal-title fs-5" id="exampleModalLabel">
+                            <House />
                             {
                                 currentPage === 'GET_SELLERS' &&
                                 <span>SALE &amp; PURCHASE - Seller Information</span>
@@ -207,6 +224,11 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                             {
                                 currentPage === 'SUBMITTING' &&
                                 <span>SALE &amp; PURCHASE - Please Wait</span>
+                            }
+
+                            {
+                                currentPage === 'SUBMIT_ERROR' &&
+                                <span>SALE &amp; PURCHASE - Error!</span>
                             }
 
                             {
@@ -1946,6 +1968,11 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                     }
 
                                     {
+                                        currentPage === 'SUBMIT_ERROR' &&
+                                        <SubmitError onClick={() => submitSaleAndPurchaseForm()} />
+                                    }
+
+                                    {
                                         currentPage === 'SUBMIT_RESULT' &&
                                         <SubmitDone />
                                     }
@@ -2114,7 +2141,7 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                             onClick={() => {
                                                 setCurrentPage('SUBMITTING');
                                                 setTimeout(() => {
-                                                    submitSaleAndPurchaseForm(purchaseInfo);
+                                                    submitSaleAndPurchaseForm();
                                                 }, 250);
                                             }} />
                                     </div>

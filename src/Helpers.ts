@@ -1,4 +1,4 @@
-import emailjs from 'emailjs-com';
+import emailjs, { EmailJSResponseStatus } from 'emailjs-com';
 
 export interface FormProps {
     dismissed: () => void;
@@ -20,8 +20,9 @@ export const getHeader = (headerText: string): string => {
     );
 }
 
-export const sendEmail = async (formTitle: string, messageBody: string): Promise<void> => {
-    const sendResult = await emailjs.send(
+export const sendEmail = async (formTitle: string, messageBody: string): Promise<number> => {
+
+    const sendResult: EmailJSResponseStatus = await emailjs.send(
         'service_keeosye',
         'template_coruqjt', {
         formtitle: formTitle,
@@ -29,7 +30,8 @@ export const sendEmail = async (formTitle: string, messageBody: string): Promise
     }, 'QrfLKkXmnG6mF2P_1',
     );
 
-    console.log('sendResult', sendResult);
+    console.log(formTitle, sendResult);
+    return Promise.resolve(sendResult.status);
 }
 
 export const getCountries = (lang = 'en') => {

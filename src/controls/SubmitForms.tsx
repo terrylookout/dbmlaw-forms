@@ -65,3 +65,34 @@ export const SubmitDone = (): ReactElement => {
         </>
     )
 }
+
+export const SubmitError = (props: {
+    onClick: () => void,
+}): ReactElement => {
+
+    return (
+        <>
+            <h6>
+                <p>
+                    Oops!
+                </p>
+            </h6>
+
+            <p>
+                There was an error submitting your information.
+            </p>
+            <p>
+                Please click the 'Retry' button to re-submit.
+            </p>
+
+            <p>
+                <input type='button' className='btn btn-primary' value='Retry' onClick={props.onClick} />
+            </p>
+
+            <p>
+                If you have any questions or concerns, please feel free to call&nbsp;
+                <a href="tel:1-604-939-8321">604 939 8321</a>
+            </p>
+        </>
+    )
+}

@@ -3,10 +3,11 @@ import { ClientInfo, GuarantorInfo, RefinanceInfo } from '../ClassesInterfaces';
 
 import CircleBullet from '../controls/CircleBullet';
 import { checkInputs, FormProps, getEntry, getHeader, sendEmail } from '../Helpers';
-import { SubmitConfirm, SubmitDone, Submitting } from '../controls/SubmitConfirm';
+import { SubmitConfirm, SubmitDone, SubmitError, Submitting } from '../controls/SubmitForms';
 import Owner from '../controls/Owner';
 import TransferAdded from '../controls/TransferAdded';
 import Guarantor from '../Guarantor';
+import House from '../controls/House';
 
 declare var bootstrap: any;
 
@@ -24,16 +25,30 @@ const RefinanceForm = (props: FormProps): ReactElement => {
 
     const [currentPage, setCurrentPage] = useState<
         'GET_PROPERTY_DETAILS' | 'GET_OWNERS' | 'GET_TRANSFER_INFORMATION' | 'GET_MORTGAGE_DETAILS' |
-        'CONFIRM_SUBMIT' | 'SUBMITTING' | 'SUBMIT_RESULT'
+        'CONFIRM_SUBMIT' | 'SUBMITTING' | 'SUBMIT_RESULT' | 'SUBMIT_ERROR'
     >('GET_PROPERTY_DETAILS');
 
+    const [sendResult, setSendResult] = useState(-1);
+
     const submitSaleForm = async () => {
-        const c = getOutput(refinanceInfo);
 
-        await sendEmail('Refinance submission', c);
-
-        setCurrentPage('SUBMIT_RESULT');
+        setCurrentPage('SUBMITTING');
+        setSendResult(-1);
+        setTimeout(async () => {
+            const result = await sendEmail('Refinance submission', getOutput(refinanceInfo));
+            setSendResult(result);
+        }, 250);
     };
+
+    useEffect(() => {
+        if (sendResult === 200) {
+            setCurrentPage('SUBMIT_RESULT');
+        }
+        else if (sendResult !== -1) {
+            setCurrentPage('SUBMIT_ERROR');
+        }
+
+    }, [sendResult]);
 
     useEffect(() => {
 
@@ -139,6 +154,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                 <div className="modal-content">
                     <div className="modal-header">
                         <h1 className="modal-title fs-5" id="exampleModalLabel">
+                            <House />
                             {
                                 currentPage === 'GET_OWNERS' &&
                                 <span>REFINANCE - Owner Information</span>
@@ -167,6 +183,11 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                             {
                                 currentPage === 'SUBMITTING' &&
                                 <span>REFINANCE - Please Wait</span>
+                            }
+
+                            {
+                                currentPage === 'SUBMIT_ERROR' &&
+                                <span>REFINANCE - Error!</span>
                             }
 
                             {
@@ -1068,6 +1089,11 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                     {
                                         currentPage === 'SUBMIT_RESULT' &&
                                         <SubmitDone />
+                                    }
+
+                                    {
+                                        currentPage === 'SUBMIT_ERROR' &&
+                                        <SubmitError onClick={() => submitSaleForm()} />
                                     }
 
                                     {

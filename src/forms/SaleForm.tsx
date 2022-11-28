@@ -3,9 +3,10 @@ import { ClientInfo, SaleInfo } from '../ClassesInterfaces';
 
 import CircleBullet from '../controls/CircleBullet';
 import { checkInputs, FormProps, getEntry, getHeader, sendEmail } from '../Helpers';
-import { SubmitConfirm, SubmitDone, Submitting } from '../controls/SubmitConfirm';
+import { SubmitConfirm, SubmitDone, SubmitError, Submitting } from '../controls/SubmitForms';
 import Seller from '../controls/Seller';
 import DateInput from '../controls/DateInput';
+import House from '../controls/House';
 
 declare var bootstrap: any;
 
@@ -19,16 +20,32 @@ const SaleForm = (props: FormProps): ReactElement => {
 
     const [currentPage, setCurrentPage] = useState<
         'GET_SELLERS' | 'GET_SALE_DETAILS' |
-        'CONFIRM_SUBMIT' | 'SUBMITTING' | 'SUBMIT_RESULT'
+        'CONFIRM_SUBMIT' | 'SUBMITTING' | 'SUBMIT_RESULT' |
+        'SUBMIT_ERROR'
     >('GET_SELLERS');
 
+    const [sendResult, setSendResult] = useState(-1);
+
     const submitSaleForm = async () => {
-        const c = getOutput(saleInfo);
 
-        await sendEmail('Sale submission', c);
-
-        setCurrentPage('SUBMIT_RESULT');
+        setCurrentPage('SUBMITTING');
+        setSendResult(-1);
+        setTimeout(async () => {
+            const result = await sendEmail('Sale submission', getOutput(saleInfo));
+            setSendResult(result);
+        }, 250);
     };
+
+    useEffect(() => {
+        if (sendResult === 200) {
+            setCurrentPage('SUBMIT_RESULT');
+        }
+        else if (sendResult !== -1) {
+            setCurrentPage('SUBMIT_ERROR');
+        }
+
+    }, [sendResult]);
+
 
     useEffect(() => {
         // eslint-disable-next-line
@@ -96,6 +113,7 @@ const SaleForm = (props: FormProps): ReactElement => {
                 <div className="modal-content">
                     <div className="modal-header">
                         <h1 className="modal-title fs-5" id="exampleModalLabel">
+                            <House />
                             {
                                 currentPage === 'GET_SELLERS' &&
                                 <span>SALE - Seller Information</span>
@@ -118,6 +136,11 @@ const SaleForm = (props: FormProps): ReactElement => {
                             {
                                 currentPage === 'SUBMIT_RESULT' &&
                                 <span>SALE - Success!</span>
+                            }
+
+                            {
+                                currentPage === 'SUBMIT_ERROR' &&
+                                <span>SALE - Error!</span>
                             }
 
                         </h1>
@@ -741,6 +764,11 @@ const SaleForm = (props: FormProps): ReactElement => {
                                     {
                                         currentPage === 'SUBMIT_RESULT' &&
                                         <SubmitDone />
+                                    }
+
+                                    {
+                                        currentPage === 'SUBMIT_ERROR' &&
+                                        <SubmitError onClick={() => submitSaleForm()} />
                                     }
 
                                     {

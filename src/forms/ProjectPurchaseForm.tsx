@@ -3,8 +3,9 @@ import Client from '../controls/Client';
 import { ClientInfo, PurchaseInfo } from '../ClassesInterfaces';
 import CircleBullet from '../controls/CircleBullet';
 import { checkInputs, FormProps, getEntry, getHeader, sendEmail } from '../Helpers';
-import { SubmitConfirm, SubmitDone, Submitting } from '../controls/SubmitConfirm';
+import { SubmitConfirm, SubmitDone, SubmitError, Submitting } from '../controls/SubmitForms';
 import DateInput from '../controls/DateInput';
+import House from '../controls/House';
 
 
 declare var bootstrap: any;
@@ -17,16 +18,31 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
     const [numberOfClients, setNumberOfClients] = useState(0);
 
     const [currentPage, setCurrentPage] = useState<
-        'GET_PURCHASERS' | 'PROPERTY_INFO' | 'CONFIRM_SUBMIT' | 'SUBMITTING' | 'SUBMIT_RESULT'
+        'GET_PURCHASERS' | 'PROPERTY_INFO' | 'CONFIRM_SUBMIT' | 'SUBMITTING' | 'SUBMIT_RESULT' |
+        'SUBMIT_ERROR'
     >('GET_PURCHASERS');
 
-    const submitPurchaseForm = async (purchaseInfo: PurchaseInfo) => {
-        const c = getOutput(purchaseInfo);
+    const [sendResult, setSendResult] = useState(-1);
 
-        await sendEmail('Project Purchase submission', c);
+    const submitPurchaseForm = async () => {
 
-        setCurrentPage('SUBMIT_RESULT');
+        setCurrentPage('SUBMITTING');
+        setSendResult(-1);
+        setTimeout(async () => {
+            const result = await sendEmail('Project Purchase submission', getOutput(purchaseInfo));
+            setSendResult(result);
+        }, 250);
     };
+
+    useEffect(() => {
+        if (sendResult === 200) {
+            setCurrentPage('SUBMIT_RESULT');
+        }
+        else if (sendResult !== -1) {
+            setCurrentPage('SUBMIT_ERROR');
+        }
+
+    }, [sendResult]);
 
     useEffect(() => {
         // eslint-disable-next-line
@@ -95,7 +111,7 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                 <div className='modal-content'>
                     <div className='modal-header'>
                         <h1 className='modal-title fs-5' id='exampleModalLabel'>
-
+                            <House />
                             {
                                 currentPage === 'GET_PURCHASERS' &&
                                 <span>PROJECT PURCHASE - Purchaser Information</span>
@@ -121,6 +137,10 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                 <span>PROJECT PURCHASE - Success!</span>
                             }
 
+                            {
+                                currentPage === 'SUBMIT_ERROR' &&
+                                <span>PROJECT PURCHASE - Error!</span>
+                            }
 
                         </h1>
                         <button type='button' className='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
@@ -1465,6 +1485,11 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                     }
 
                                     {
+                                        currentPage === 'SUBMIT_ERROR' &&
+                                        <SubmitError onClick={() => submitPurchaseForm()} />
+                                    }
+
+                                    {
                                         currentPage === 'CONFIRM_SUBMIT' &&
                                         <SubmitConfirm
                                             text='Submit your purchase information to Drysdale Bacon McStravick?'
@@ -1557,7 +1582,7 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                             onClick={() => {
                                                 setCurrentPage('SUBMITTING');
                                                 setTimeout(() => {
-                                                    submitPurchaseForm(purchaseInfo);
+                                                    submitPurchaseForm();
                                                 }, 250);
                                             }} />
                                     </div>
