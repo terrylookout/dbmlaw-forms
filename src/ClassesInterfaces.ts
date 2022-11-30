@@ -41,6 +41,8 @@ export class ClientInfo {
 
     public citizenShip: '' | 'CANADIAN_CITIZEN' | 'PERMANENT_RESIDENT' | 'BC_PROV_NOMINEE' | 'RESIDENT_OTHER_COUNTRY';
 
+    public tenantInCommonPercent: number = 0;
+
     constructor() {
         this.fullLegalName = '';
         this.phoneNumber = '';
@@ -128,7 +130,8 @@ export class SaleInfo {
 
     public involvesSeparationDivorce: 'YES' | 'NO' | '';
 
-    public paidPropertyTaxesOrClaimedHownOwnersGrant: 'YES' | 'NO' | '';
+    public paidPropertyTaxes: 'YES' | 'NO' | '';
+    public claimedHownOwnersGrant: 'YES' | 'NO' | '';
 
     public emptyHomesDeclaration: 'OCCUPIED' | 'VACANT' | 'NOT_APPLICABLE' | 'NOT_COMPLETED' | '';
 
@@ -162,7 +165,8 @@ export class SaleInfo {
 
         this.involvesSeparationDivorce = '';
 
-        this.paidPropertyTaxesOrClaimedHownOwnersGrant = '';
+        this.paidPropertyTaxes = '';
+        this.claimedHownOwnersGrant = '';
 
         this.emptyHomesDeclaration = '';
 
@@ -285,7 +289,6 @@ export class PurchaseInfo {
     public moneysDisbursed: 'REALTORS' | 'LAWYERS' | 'UNKNOWN' | '' = '';
     public lawyerForAssignor: string = '';
     public assignorResidentCanada: 'YES' | 'NO' | 'UNKNOWN' | '' = '';
-
 
     public unitNumber: string;
     public strataLot: string;

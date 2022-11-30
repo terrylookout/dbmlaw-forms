@@ -45,8 +45,8 @@ export const SubmitDone = (): ReactElement => {
                 <span style={{
                     fontWeight: '600',
                 }}>
-                    PLEASE FORWARD A COPY OF YOUR CONTRACT OUR OFFICE VIA
-                    EMAIL OR FAX 604-939-8340
+                    PLEASE FORWARD A COPY OF YOUR CONTRACT TO OUR OFFICE VIA
+                    EMAIL (<a href={`mailto:convey@dbmlaw.ca`}>convey@dbmlaw</a>) OR FAX 604-939-8340
                 </span>
 
             </p>

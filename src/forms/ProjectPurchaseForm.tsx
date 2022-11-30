@@ -1,4 +1,4 @@
-import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
+import React, { ChangeEvent, Fragment, ReactElement, useEffect, useState } from 'react';
 import Client from '../controls/Client';
 import { ClientInfo, PurchaseInfo } from '../ClassesInterfaces';
 import CircleBullet from '../controls/CircleBullet';
@@ -6,7 +6,6 @@ import { checkInputs, FormProps, getEntry, getHeader, sendEmail } from '../Helpe
 import { SubmitConfirm, SubmitDone, SubmitError, Submitting } from '../controls/SubmitForms';
 import DateInput from '../controls/DateInput';
 import House from '../controls/House';
-
 
 declare var bootstrap: any;
 
@@ -25,6 +24,8 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
     const [sendResult, setSendResult] = useState(-1);
 
     const submitPurchaseForm = async () => {
+
+        console.log(getOutput(purchaseInfo));
 
         setCurrentPage('SUBMITTING');
         setSendResult(-1);
@@ -576,13 +577,18 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
 
                                                     <div className='row'>
                                                         <div className='col mb-3'>
-
                                                             <div className='form-check'>
                                                                 <input className='form-check-input' type='radio' name='ownertype' id='jointtenants'
                                                                     checked={purchaseInfo.joinType === 'JOINT_TENANTS'}
                                                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                         if (e.target.checked) {
-                                                                            setPurchaseInfo({ ...purchaseInfo, joinType: 'JOINT_TENANTS' });
+                                                                            const tempClients = [];
+                                                                            for (const client of purchaseInfo.clientsInfo) {
+                                                                                client.tenantInCommonPercent = 0;
+                                                                                tempClients.push(client);
+                                                                            }
+
+                                                                            setPurchaseInfo({ ...purchaseInfo, joinType: 'JOINT_TENANTS', clientsInfo: tempClients, });
                                                                         }
                                                                     }}
                                                                 />
@@ -596,7 +602,13 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                                                     checked={purchaseInfo.joinType === 'TENANTS_IN_COMMON'}
                                                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                         if (e.target.checked) {
-                                                                            setPurchaseInfo({ ...purchaseInfo, joinType: 'TENANTS_IN_COMMON' });
+                                                                            const tempClients = [];
+                                                                            for (const client of purchaseInfo.clientsInfo) {
+                                                                                client.tenantInCommonPercent = 0;
+                                                                                tempClients.push(client);
+                                                                            }
+
+                                                                            setPurchaseInfo({ ...purchaseInfo, joinType: 'TENANTS_IN_COMMON', clientsInfo: tempClients, });
                                                                         }
                                                                     }}
 
@@ -620,6 +632,73 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                                         </div>
 
                                                     </div>
+                                                </>
+                                            }
+
+                                            {
+                                                purchaseInfo.joinType === 'TENANTS_IN_COMMON' &&
+                                                <>
+                                                    <div className='row'>
+                                                        <div className='col mb-1 mt-4 newused'>
+                                                            <h6>
+                                                                <CircleBullet />
+                                                                Tenants-In-Common Percentages (leave at zero if unknown)
+                                                            </h6>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className='row'>
+                                                        <div className='col'>
+                                                            <div style={{
+                                                                display: 'grid',
+                                                                gridTemplateColumns: 'auto 1fr',
+                                                                columnGap: '20px',
+                                                                rowGap: '10px',
+                                                            }}>
+                                                                {purchaseInfo.clientsInfo.map((c, idx) => {
+                                                                    return (
+                                                                        <Fragment key={idx}>
+                                                                            <div >
+                                                                                <span>
+                                                                                    {c.fullLegalName}
+                                                                                </span>
+                                                                            </div>
+
+                                                                            <div key={idx}>
+                                                                                <input type='number' min={0} max={100}
+                                                                                    className='tenantscommonpercentage'
+                                                                                    value={c.tenantInCommonPercent}
+                                                                                    onChange={((e) => {
+                                                                                        const temp = [];
+
+                                                                                        for (const t of purchaseInfo.clientsInfo) {
+                                                                                            if (t.fullLegalName === c.fullLegalName) {
+                                                                                                t.tenantInCommonPercent = parseFloat(e.target.value);
+                                                                                            }
+
+                                                                                            temp.push(t);
+                                                                                        }
+
+                                                                                        setPurchaseInfo({ ...purchaseInfo, clientsInfo: temp });
+                                                                                    })}
+                                                                                />
+                                                                            </div>
+                                                                        </Fragment>
+                                                                    );
+                                                                })}
+                                                                <div>
+
+                                                                </div>
+                                                                <div className='tenantscommonerror' style={{
+                                                                    display: 'none',
+                                                                    color: 'red',
+                                                                }}>
+                                                                    These must either all be zero or add to 100
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
                                                 </>
                                             }
 
@@ -1730,7 +1809,14 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
         }
     }
 
-    output.push(getEntry('Tenancy', joinType, true));
+    output.push(getEntry('Tenancy', joinType, purchaseInfo.joinType !== 'TENANTS_IN_COMMON'));
+
+    if (purchaseInfo.joinType === 'TENANTS_IN_COMMON') {
+        for (const client of purchaseInfo.clientsInfo) {
+            output.push(getEntry(`${client.fullLegalName}`, `${client.tenantInCommonPercent}%`));
+        }
+        output.push(getEntry('', '', true));
+    }
 
     if (purchaseInfo.relativeLivingInstead === 'YES') {
         output.push(getEntry('Other Relative Residing Instead', purchaseInfo.relativeLivingInsteadName));

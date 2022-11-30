@@ -618,7 +618,7 @@ const SaleForm = (props: FormProps): ReactElement => {
                                                 <div className="col mb-1 mt-4">
                                                     <h6>
                                                         <CircleBullet />
-                                                        Have you paid the property taxes and/or claimed the Home Owner&apos;s Grant for {new Date().getFullYear()}?
+                                                        Have you paid the property taxes for the current applicable year?
                                                     </h6>
                                                 </div>
                                             </div>
@@ -626,10 +626,10 @@ const SaleForm = (props: FormProps): ReactElement => {
                                                 <div className="col mb-1">
                                                     <div className="form-check">
                                                         <input className="form-check-input" type="radio" name={`propertytaxes`} id={`propertytaxes-yes`}
-                                                            checked={saleInfo.paidPropertyTaxesOrClaimedHownOwnersGrant === 'YES'}
+                                                            checked={saleInfo.paidPropertyTaxes === 'YES'}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e.target.checked) {
-                                                                    setSaleInfo({ ...saleInfo, paidPropertyTaxesOrClaimedHownOwnersGrant: 'YES' });
+                                                                    setSaleInfo({ ...saleInfo, paidPropertyTaxes: 'YES' });
                                                                 }
                                                             }} />
 
@@ -640,14 +640,55 @@ const SaleForm = (props: FormProps): ReactElement => {
 
                                                     <div className="form-check">
                                                         <input className="form-check-input" type="radio" name={`propertytaxes`} id={`propertytaxes-no`}
-                                                            checked={saleInfo.paidPropertyTaxesOrClaimedHownOwnersGrant === 'NO'}
+                                                            checked={saleInfo.paidPropertyTaxes === 'NO'}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e.target.checked) {
-                                                                    setSaleInfo({ ...saleInfo, paidPropertyTaxesOrClaimedHownOwnersGrant: 'NO' });
+                                                                    setSaleInfo({ ...saleInfo, paidPropertyTaxes: 'NO' });
                                                                 }
                                                             }} />
 
                                                         <label className="form-check-label" htmlFor={`propertytaxes-no`}>
+                                                            No
+                                                        </label>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            <div className="row">
+                                                <div className="col mb-1 mt-4">
+                                                    <h6>
+                                                        <CircleBullet />
+                                                        Have you claimed the Home Owner&apos;s Grant for the current applicable year?
+                                                    </h6>
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col mb-1">
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name={`homeownersgrant`} id={`homeownersgrant-yes`}
+                                                            checked={saleInfo.claimedHownOwnersGrant === 'YES'}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                if (e.target.checked) {
+                                                                    setSaleInfo({ ...saleInfo, claimedHownOwnersGrant: 'YES' });
+                                                                }
+                                                            }} />
+
+                                                        <label className="form-check-label" htmlFor={`homeownersgrant-yes`}>
+                                                            Yes
+                                                        </label>
+                                                    </div>
+
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name={`homeownersgrant`} id={`homeownersgrant-no`}
+                                                            checked={saleInfo.claimedHownOwnersGrant === 'NO'}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                if (e.target.checked) {
+                                                                    setSaleInfo({ ...saleInfo, claimedHownOwnersGrant: 'NO' });
+                                                                }
+                                                            }} />
+
+                                                        <label className="form-check-label" htmlFor={`homeownersgrant-no`}>
                                                             No
                                                         </label>
                                                     </div>
@@ -967,7 +1008,9 @@ const getOutput = (saleInfo: SaleInfo): string => {
 
     output.push('</table><table>');
 
-    output.push(getEntry(`Property Taxes Paid and or Home Owners Grant Claimed for ${(new Date().getFullYear())}`, saleInfo.paidPropertyTaxesOrClaimedHownOwnersGrant, true));
+    output.push(getEntry(`Property Taxes Paid for current applicable year`, saleInfo.paidPropertyTaxes));
+
+    output.push(getEntry(`Home Owners Grant Claimed for current applicable year`, saleInfo.claimedHownOwnersGrant, true));
 
     output.push('</table><table>');
 

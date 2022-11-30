@@ -32,6 +32,8 @@ export const sendEmail = async (formTitle: string, messageBody: string): Promise
 
     console.log(formTitle, sendResult);
     return Promise.resolve(sendResult.status);
+
+    //return Promise.resolve(200);
 }
 
 export const getCountries = (lang = 'en') => {
@@ -103,6 +105,19 @@ export const checkInputs = (): boolean => {
             }
         })
     }
+
+    const tenantsInCommonPerc = document.querySelectorAll('.tenantscommonpercentage');
+    if (tenantsInCommonPerc && tenantsInCommonPerc.length > 0) {
+        let total = 0;
+        for (let i = 0; i < tenantsInCommonPerc.length; i++) {
+            total += parseFloat((tenantsInCommonPerc[i] as HTMLInputElement).value);
+        }
+        if (total !== 100 && total !== 0) {
+            (document.querySelector('.tenantscommonerror') as HTMLElement).style.display = '';
+            okToGo = false;
+        }
+    }
+
     return okToGo;
 }
 

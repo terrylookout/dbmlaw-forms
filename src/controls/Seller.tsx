@@ -137,7 +137,7 @@ const Seller = (props: SellerProps): ReactElement => {
             <div className="row align-items-center mt-4">
                 <div className="col mb-1">
                     <h6>
-                        <CircleBullet />Mailing or forwarding address
+                        <CircleBullet />Mailing or forwarding address after date of completion
                     </h6>
                 </div>
 

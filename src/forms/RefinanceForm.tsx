@@ -1,4 +1,4 @@
-import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
+import React, { ChangeEvent, Fragment, ReactElement, useEffect, useState } from 'react';
 import { ClientInfo, GuarantorInfo, RefinanceInfo } from '../ClassesInterfaces';
 
 import CircleBullet from '../controls/CircleBullet';
@@ -908,7 +908,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                             </div>
 
                                             {
-                                                ((refinanceInfo.clientsInfo.length + refinanceInfo.clientsAddedInfo.length) > 1) &&
+                                                refinanceInfo.clientsInfo.length > 1 &&
                                                 <>
                                                     <div className='row'>
                                                         <div className='col mb-1 mt-4'>
@@ -922,13 +922,27 @@ const RefinanceForm = (props: FormProps): ReactElement => {
 
                                                     <div className='row'>
                                                         <div className='col mb-3'>
-
                                                             <div className='form-check'>
                                                                 <input className='form-check-input' type='radio' name='ownertype' id='jointtenants'
                                                                     checked={refinanceInfo.joinType === 'JOINT_TENANTS'}
                                                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                         if (e.target.checked) {
-                                                                            setRefinanceInfo({ ...refinanceInfo, joinType: 'JOINT_TENANTS' });
+                                                                            const tempClients = [];
+                                                                            for (const client of refinanceInfo.clientsInfo) {
+                                                                                client.tenantInCommonPercent = 0;
+                                                                                tempClients.push(client);
+                                                                            }
+
+                                                                            const tempAddedClients = [];
+                                                                            for (const client of refinanceInfo.clientsAddedInfo) {
+                                                                                client.tenantInCommonPercent = 0;
+                                                                                tempAddedClients.push(client);
+                                                                            }
+
+                                                                            setRefinanceInfo({
+                                                                                ...refinanceInfo, joinType: 'JOINT_TENANTS',
+                                                                                clientsInfo: tempClients, clientsAddedInfo: tempAddedClients
+                                                                            });
                                                                         }
                                                                     }}
                                                                 />
@@ -942,7 +956,22 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                                     checked={refinanceInfo.joinType === 'TENANTS_IN_COMMON'}
                                                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                         if (e.target.checked) {
-                                                                            setRefinanceInfo({ ...refinanceInfo, joinType: 'TENANTS_IN_COMMON' });
+                                                                            const tempClients = [];
+                                                                            for (const client of refinanceInfo.clientsInfo) {
+                                                                                client.tenantInCommonPercent = 0;
+                                                                                tempClients.push(client);
+                                                                            }
+
+                                                                            const tempAddedClients = [];
+                                                                            for (const client of refinanceInfo.clientsAddedInfo) {
+                                                                                client.tenantInCommonPercent = 0;
+                                                                                tempAddedClients.push(client);
+                                                                            }
+
+                                                                            setRefinanceInfo({
+                                                                                ...refinanceInfo, joinType: 'TENANTS_IN_COMMON',
+                                                                                clientsInfo: tempClients, clientsAddedInfo: tempAddedClients
+                                                                            });
                                                                         }
                                                                     }}
 
@@ -966,6 +995,105 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                         </div>
 
                                                     </div>
+                                                </>
+                                            }
+
+                                            {
+                                                refinanceInfo.joinType === 'TENANTS_IN_COMMON' &&
+                                                <>
+                                                    <div className='row'>
+                                                        <div className='col mb-1 mt-4 newused'>
+                                                            <h6>
+                                                                <CircleBullet />
+                                                                Tenants-In-Common Percentages (leave at zero if unknown)
+                                                            </h6>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className='row'>
+                                                        <div className='col'>
+                                                            <div style={{
+                                                                display: 'grid',
+                                                                gridTemplateColumns: 'auto 1fr',
+                                                                columnGap: '20px',
+                                                                rowGap: '10px',
+                                                            }}>
+                                                                {refinanceInfo.clientsInfo.map((c, idx) => {
+                                                                    return (
+                                                                        <Fragment key={idx}>
+                                                                            <div >
+                                                                                <span>
+                                                                                    {c.fullLegalName}
+                                                                                </span>
+                                                                            </div>
+
+                                                                            <div key={idx}>
+                                                                                <input type='number' min={0} max={100}
+                                                                                    className='tenantscommonpercentage'
+                                                                                    value={c.tenantInCommonPercent}
+                                                                                    onChange={((e) => {
+                                                                                        const temp = [];
+
+                                                                                        for (const t of refinanceInfo.clientsInfo) {
+                                                                                            if (t.fullLegalName === c.fullLegalName) {
+                                                                                                t.tenantInCommonPercent = parseFloat(e.target.value);
+                                                                                            }
+
+                                                                                            temp.push(t);
+                                                                                        }
+
+                                                                                        setRefinanceInfo({ ...refinanceInfo, clientsInfo: temp });
+                                                                                    })}
+                                                                                />
+                                                                            </div>
+                                                                        </Fragment>
+                                                                    );
+                                                                })}
+
+                                                                {refinanceInfo.clientsAddedInfo.map((c, idx) => {
+                                                                    return (
+                                                                        <Fragment key={idx}>
+                                                                            <div >
+                                                                                <span>
+                                                                                    {c.fullLegalName}
+                                                                                </span>
+                                                                            </div>
+
+                                                                            <div key={idx}>
+                                                                                <input type='number' min={0} max={100}
+                                                                                    className='tenantscommonpercentage'
+                                                                                    value={c.tenantInCommonPercent}
+                                                                                    onChange={((e) => {
+                                                                                        const temp = [];
+
+                                                                                        for (const t of refinanceInfo.clientsAddedInfo) {
+                                                                                            if (t.fullLegalName === c.fullLegalName) {
+                                                                                                t.tenantInCommonPercent = parseFloat(e.target.value);
+                                                                                            }
+
+                                                                                            temp.push(t);
+                                                                                        }
+
+                                                                                        setRefinanceInfo({ ...refinanceInfo, clientsAddedInfo: temp });
+                                                                                    })}
+                                                                                />
+                                                                            </div>
+                                                                        </Fragment>
+                                                                    );
+                                                                })}
+                                                                <div>
+
+                                                                </div>
+                                                                <div className='tenantscommonerror' style={{
+                                                                    display: 'none',
+                                                                    color: 'red',
+                                                                }}>
+                                                                    These must either all be zero or add to 100
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
                                                 </>
                                             }
 
@@ -1460,7 +1588,17 @@ const getOutput = (refinanceInfo: RefinanceInfo): string => {
         }
     }
 
-    output.push(getEntry('Tenancy', joinType, true));
+    output.push(getEntry('Tenancy', joinType, refinanceInfo.joinType !== 'TENANTS_IN_COMMON'));
+
+    if (refinanceInfo.joinType === 'TENANTS_IN_COMMON') {
+        for (const client of refinanceInfo.clientsInfo) {
+            output.push(getEntry(`${client.fullLegalName}`, `${client.tenantInCommonPercent}%`));
+        }
+        for (const client of refinanceInfo.clientsAddedInfo) {
+            output.push(getEntry(`${client.fullLegalName}`, `${client.tenantInCommonPercent}%`));
+        }
+        output.push(getEntry('', '', true));
+    }
 
     for (let i = 0; i < refinanceInfo.guarantorsInfo.length; i++) {
 

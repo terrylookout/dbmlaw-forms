@@ -1,4 +1,4 @@
-import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
+import React, { ChangeEvent, Fragment, ReactElement, useEffect, useState } from 'react';
 import Client from '../controls/Client';
 import { ClientInfo, GuarantorInfo, PurchaseInfo, SaleInfo } from '../ClassesInterfaces';
 import Guarantor from '../Guarantor';
@@ -722,7 +722,7 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                                 <div className="col mb-1 mt-4">
                                                     <h6>
                                                         <CircleBullet />
-                                                        Have you paid the property taxes and/or claimed the Home Owner&apos;s Grant for {new Date().getFullYear()}?
+                                                        Have you paid the property taxes for the current applicable year?
                                                     </h6>
                                                 </div>
                                             </div>
@@ -730,10 +730,10 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                                 <div className="col mb-1">
                                                     <div className="form-check">
                                                         <input className="form-check-input" type="radio" name={`propertytaxes`} id={`propertytaxes-yes`}
-                                                            checked={saleInfo.paidPropertyTaxesOrClaimedHownOwnersGrant === 'YES'}
+                                                            checked={saleInfo.paidPropertyTaxes === 'YES'}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e.target.checked) {
-                                                                    setSaleInfo({ ...saleInfo, paidPropertyTaxesOrClaimedHownOwnersGrant: 'YES' });
+                                                                    setSaleInfo({ ...saleInfo, paidPropertyTaxes: 'YES' });
                                                                 }
                                                             }} />
 
@@ -744,14 +744,56 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
 
                                                     <div className="form-check">
                                                         <input className="form-check-input" type="radio" name={`propertytaxes`} id={`propertytaxes-no`}
-                                                            checked={saleInfo.paidPropertyTaxesOrClaimedHownOwnersGrant === 'NO'}
+                                                            checked={saleInfo.paidPropertyTaxes === 'NO'}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e.target.checked) {
-                                                                    setSaleInfo({ ...saleInfo, paidPropertyTaxesOrClaimedHownOwnersGrant: 'NO' });
+                                                                    setSaleInfo({ ...saleInfo, paidPropertyTaxes: 'NO' });
                                                                 }
                                                             }} />
 
                                                         <label className="form-check-label" htmlFor={`propertytaxes-no`}>
+                                                            No
+                                                        </label>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+
+                                            <div className="row">
+                                                <div className="col mb-1 mt-4">
+                                                    <h6>
+                                                        <CircleBullet />
+                                                        Have you claimed the Home Owner&apos;s Grant for the current applicable year?
+                                                    </h6>
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col mb-1">
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name={`homeownersgrant`} id={`homeownersgrant-yes`}
+                                                            checked={saleInfo.claimedHownOwnersGrant === 'YES'}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                if (e.target.checked) {
+                                                                    setSaleInfo({ ...saleInfo, claimedHownOwnersGrant: 'YES' });
+                                                                }
+                                                            }} />
+
+                                                        <label className="form-check-label" htmlFor={`homeownersgrant-yes`}>
+                                                            Yes
+                                                        </label>
+                                                    </div>
+
+                                                    <div className="form-check">
+                                                        <input className="form-check-input" type="radio" name={`homeownersgrant`} id={`homeownersgrant-no`}
+                                                            checked={saleInfo.claimedHownOwnersGrant === 'NO'}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                if (e.target.checked) {
+                                                                    setSaleInfo({ ...saleInfo, claimedHownOwnersGrant: 'NO' });
+                                                                }
+                                                            }} />
+
+                                                        <label className="form-check-label" htmlFor={`homeownersgrant-no`}>
                                                             No
                                                         </label>
                                                     </div>
@@ -1156,8 +1198,8 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                             {
                                                 purchaseInfo.clientsInfo.length > 1 &&
                                                 <>
-                                                    <div className="row">
-                                                        <div className="col mb-1 mt-4">
+                                                    <div className='row'>
+                                                        <div className='col mb-1 mt-4'>
                                                             <h6>
                                                                 <CircleBullet />
                                                                 Do you want to own the property as Joint Tenants or as Tenants-In-Common?
@@ -1166,41 +1208,52 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                                     </div>
 
 
-                                                    <div className="row">
-                                                        <div className="col mb-3">
-
-                                                            <div className="form-check">
-                                                                <input className="form-check-input" type="radio" name="ownertype" id="jointtenants"
+                                                    <div className='row'>
+                                                        <div className='col mb-3'>
+                                                            <div className='form-check'>
+                                                                <input className='form-check-input' type='radio' name='ownertype' id='jointtenants'
                                                                     checked={purchaseInfo.joinType === 'JOINT_TENANTS'}
                                                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                         if (e.target.checked) {
-                                                                            setPurchaseInfo({ ...purchaseInfo, joinType: 'JOINT_TENANTS' });
+                                                                            const tempClients = [];
+                                                                            for (const client of purchaseInfo.clientsInfo) {
+                                                                                client.tenantInCommonPercent = 0;
+                                                                                tempClients.push(client);
+                                                                            }
+
+                                                                            setPurchaseInfo({ ...purchaseInfo, joinType: 'JOINT_TENANTS', clientsInfo: tempClients, });
                                                                         }
                                                                     }}
                                                                 />
-                                                                <label className="form-check-label" htmlFor="jointtenants">
+                                                                <label className='form-check-label' htmlFor='jointtenants'>
                                                                     Joint Tenants
                                                                 </label>
                                                             </div>
 
-                                                            <div className="form-check">
-                                                                <input className="form-check-input" type="radio" name="ownertype" id="tenantsincommon"
+                                                            <div className='form-check'>
+                                                                <input className='form-check-input' type='radio' name='ownertype' id='tenantsincommon'
                                                                     checked={purchaseInfo.joinType === 'TENANTS_IN_COMMON'}
                                                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                         if (e.target.checked) {
-                                                                            setPurchaseInfo({ ...purchaseInfo, joinType: 'TENANTS_IN_COMMON' });
+                                                                            const tempClients = [];
+                                                                            for (const client of purchaseInfo.clientsInfo) {
+                                                                                client.tenantInCommonPercent = 0;
+                                                                                tempClients.push(client);
+                                                                            }
+
+                                                                            setPurchaseInfo({ ...purchaseInfo, joinType: 'TENANTS_IN_COMMON', clientsInfo: tempClients, });
                                                                         }
                                                                     }}
 
                                                                 />
-                                                                <label className="form-check-label" htmlFor="tenantsincommon">
+                                                                <label className='form-check-label' htmlFor='tenantsincommon'>
                                                                     Tenants-In-Common
                                                                 </label>
                                                             </div>
 
                                                         </div>
 
-                                                        <div className="col-7 mb-3">
+                                                        <div className='col-7 mb-3'>
 
                                                             <span>
                                                                 For more information between Joint Tenancy and Tenancy In Common, click on the following link to our blog post:&nbsp;&nbsp;
@@ -1214,6 +1267,74 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                                     </div>
                                                 </>
                                             }
+
+                                            {
+                                                purchaseInfo.joinType === 'TENANTS_IN_COMMON' &&
+                                                <>
+                                                    <div className='row'>
+                                                        <div className='col mb-1 mt-4 newused'>
+                                                            <h6>
+                                                                <CircleBullet />
+                                                                Tenants-In-Common Percentages (leave at zero if unknown)
+                                                            </h6>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className='row'>
+                                                        <div className='col'>
+                                                            <div style={{
+                                                                display: 'grid',
+                                                                gridTemplateColumns: 'auto 1fr',
+                                                                columnGap: '20px',
+                                                                rowGap: '10px',
+                                                            }}>
+                                                                {purchaseInfo.clientsInfo.map((c, idx) => {
+                                                                    return (
+                                                                        <Fragment key={idx}>
+                                                                            <div >
+                                                                                <span>
+                                                                                    {c.fullLegalName}
+                                                                                </span>
+                                                                            </div>
+
+                                                                            <div key={idx}>
+                                                                                <input type='number' min={0} max={100}
+                                                                                    className='tenantscommonpercentage'
+                                                                                    value={c.tenantInCommonPercent}
+                                                                                    onChange={((e) => {
+                                                                                        const temp = [];
+
+                                                                                        for (const t of purchaseInfo.clientsInfo) {
+                                                                                            if (t.fullLegalName === c.fullLegalName) {
+                                                                                                t.tenantInCommonPercent = parseFloat(e.target.value);
+                                                                                            }
+
+                                                                                            temp.push(t);
+                                                                                        }
+
+                                                                                        setPurchaseInfo({ ...purchaseInfo, clientsInfo: temp });
+                                                                                    })}
+                                                                                />
+                                                                            </div>
+                                                                        </Fragment>
+                                                                    );
+                                                                })}
+                                                                <div>
+
+                                                                </div>
+                                                                <div className='tenantscommonerror' style={{
+                                                                    display: 'none',
+                                                                    color: 'red',
+                                                                }}>
+                                                                    These must either all be zero or add to 100
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </>
+                                            }
+
 
 
                                             <div className="row">
@@ -2245,7 +2366,8 @@ const getOutput = (purchaseInfo: PurchaseInfo, saleInfo: SaleInfo): string => {
 
     output.push('</table><table>');
 
-    output.push(getEntry(`Property Taxes Paid and or Home Owners Grant Claimed for ${(new Date().getFullYear())}`, saleInfo.paidPropertyTaxesOrClaimedHownOwnersGrant, true));
+    output.push(getEntry(`Property Taxes Paid for current applicable year`, saleInfo.paidPropertyTaxes));
+    output.push(getEntry(`Home Owners Grant Claimed for current applicable year`, saleInfo.claimedHownOwnersGrant, true));
 
     output.push('</table><table>');
 
@@ -2358,7 +2480,14 @@ const getOutput = (purchaseInfo: PurchaseInfo, saleInfo: SaleInfo): string => {
         }
     }
 
-    output.push(getEntry('Tenancy', joinType, true));
+    output.push(getEntry('Tenancy', joinType, purchaseInfo.joinType !== 'TENANTS_IN_COMMON'));
+
+    if (purchaseInfo.joinType === 'TENANTS_IN_COMMON') {
+        for (const client of purchaseInfo.clientsInfo) {
+            output.push(getEntry(`${client.fullLegalName}`, `${client.tenantInCommonPercent}%`));
+        }
+        output.push(getEntry('', '', true));
+    }
 
     output.push(getEntry('Building New or Used', purchaseInfo.buildingNewUsed, true));
 

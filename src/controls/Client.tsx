@@ -182,7 +182,7 @@ const Client = (props: ClientProps): ReactElement => {
             <div className="row align-items-center mt-4">
                 <div className="col mb-1">
                     <h6>
-                        <CircleBullet />Your current / mailing address
+                        <CircleBullet />Your current / mailing address after date of completion
                     </h6>
                 </div>
 
@@ -835,7 +835,7 @@ const Client = (props: ClientProps): ReactElement => {
                                     }} />
 
                                 <label className="form-check-label" htmlFor={`livewithinthreemonths-no${props.num}`}>
-                                    No
+                                    No, use current / mailing address above
                                 </label>
                             </div>
                         </div>
