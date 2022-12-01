@@ -626,8 +626,8 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                                                 For more information between Joint Tenancy and Tenancy In Common, click on the following link to our blog post:&nbsp;&nbsp;
                                                             </span>
 
-                                                            <a href='http://www.dbmrealestatelaw.com/joint-tenancy-vs-tenancy-common/' target='_blank' rel='noreferrer'>
-                                                                http://www.dbmrealestatelaw.com/joint-tenancy-vs-tenancy-common/
+                                                            <a href='https://www.dbmrealestatelaw.com/joint-tenancy-vs-tenancy-common/' target='_blank' rel='noreferrer'>
+                                                                https://www.dbmrealestatelaw.com/joint-tenancy-vs-tenancy-common/
                                                             </a>
                                                         </div>
 
