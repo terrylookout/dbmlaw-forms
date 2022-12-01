@@ -24,6 +24,11 @@ const FormButtons = (props: FormButtonsProps): ReactElement => {
     return (
         <>
             <div className='container-fluid'>
+                <div className='row mb-5' style={{
+                    fontWeight: 600,
+                }}>
+                    <a href='https://dbmlaw.ca'>Go back to DBM homepage</a>
+                </div>
                 <div className='row gy-3 justify-content-center'>
                     <div className={classesString}>
                         <input type='button' value='Purchase' className='btn btn-primary form-button' onClick={() => props.onFormSelected('PURCHASE')} />

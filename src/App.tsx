@@ -8,13 +8,14 @@ import SaleForm from './forms/SaleForm';
 import 'react-day-picker/dist/style.css';
 import RefinanceForm from './forms/RefinanceForm';
 import ProjectPurchaseForm from './forms/ProjectPurchaseForm';
+import IntroForm from './forms/IntroForm';
 
 export type FormType =
-  'NONE' | 'PURCHASE' | 'SALE' | 'REFINANCE' | 'SALE_AND_PURCHASE' | 'PROJECT_PURCHASE';
+  'INTRO' | 'NONE' | 'PURCHASE' | 'SALE' | 'REFINANCE' | 'SALE_AND_PURCHASE' | 'PROJECT_PURCHASE';
 
 const App = (): ReactElement => {
 
-  const [selectedForm, setSelectedForm] = useState<FormType>('NONE');
+  const [selectedForm, setSelectedForm] = useState<FormType>('INTRO');
 
   useEffect(() => {
 
@@ -38,7 +39,7 @@ const App = (): ReactElement => {
             style={{
               height: '80px',
             }}
-            title='11-29-2022 2'
+            title='11-30-2022 2'
             src={DbmLogo} alt='DBM Law' />
         </div>
 
@@ -54,6 +55,13 @@ const App = (): ReactElement => {
               setSelectedForm(formSelected);
             }} />
           </div>
+        }
+
+        {
+          selectedForm === 'INTRO' &&
+          <IntroForm key={Math.random()}
+            dismissed={() => setSelectedForm('NONE')}
+          />
         }
 
         {
