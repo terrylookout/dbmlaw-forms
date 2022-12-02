@@ -126,7 +126,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
 
         <div className='modal fade' id='formModal' tabIndex={-1} aria-labelledby='formModalLabel' aria-hidden='true'
             data-bs-backdrop='static' data-bs-keyboard='false'>
-            <div className={`modal-dialog modal-lg modal-fullscreen-sm-down ${currentPage === 'PROPERTY_INFO' || (currentPage === 'GET_PURCHASERS' && purchaseInfo.clientsInfo.length !== 0) ? 'modal-dialog-centered' : 'modal-near-top'} modal-dialog-scrollable`}>
+            <div className={`modal-dialog modal-lg ${currentPage === 'PROPERTY_INFO' || (currentPage === 'GET_PURCHASERS' && purchaseInfo.clientsInfo.length !== 0) ? 'modal-dialog-centered' : 'modal-near-top'} modal-dialog-scrollable`}>
                 <div className='modal-content'>
                     <div className='modal-header'>
                         <h1 className='modal-title fs-5' id='exampleModalLabel'>
@@ -1441,20 +1441,21 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                         {
                             currentPage === 'PROPERTY_INFO' &&
                             <>
-                                <div className='row'>
-                                    <div className='col mb-3 mt-4 text-danger fw-semibold error-label'>
+                                <div className='row gy-3'>
+                                    <div className='col col-auto mb-3 mt-4 text-danger fw-semibold error-label'>
                                         <h6 style={{
                                             visibility: missingInfo ? 'visible' : 'hidden',
                                         }}>
                                             Please fill in all required information
                                         </h6>
                                     </div>
-                                    <div className='col mb-3 mt-4' style={{
-                                        textAlign: 'right',
-                                        whiteSpace: 'nowrap',
-                                    }}>
+
+                                    <div className='col text-end'>
                                         <input type='button' value='Back to Purchasers' className='btn btn-secondary form-button me-2'
                                             onClick={() => setCurrentPage('GET_PURCHASERS')} />
+                                    </div>
+
+                                    <div className='col text-end'>
 
                                         <input type='button' value='Submit' className='btn btn-primary form-button'
                                             onClick={() => {

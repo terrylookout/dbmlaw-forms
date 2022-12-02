@@ -1,0 +1,54 @@
+.dbm-x-top-menu {
+    margin: 24px 69px 25px 52px;
+    flex-wrap: nowrap;
+}
+
+.dbm-x-top-menu-right {
+    font-family: Open Sauce Sans,-apple-system,BlinkMacSystemFont,avenir next,avenir,helvetica neue,helvetica,Ubuntu,roboto,noto,segoe ui,arial,sans-serif;
+    font-weight: 900;
+    font-size: 20px;    
+}
+
+.dbm-x-top-menu-phone a {
+    color: #1d81ab;
+    text-decoration: none;
+}
+
+.dbm-x-top-menu-phone a:hover {
+    text-decoration: underline;
+}
+
+.dbm-x-top-menu-links {
+    margin-right: 12px;
+}
+
+.dbm-x-top-menu-links .col {
+    padding: 0 20px;
+    border-right: solid #777 4px;
+    white-space: nowrap;
+    height: 24px;
+    line-height: 24px;
+    margin-top: -3px;    
+    flex-grow: 0;
+}
+
+.dbm-x-top-menu-links a {
+    color: #090c0d;
+    text-decoration: none;
+}
+
+.dbm-x-top-menu-links a:hover {
+    color: #1d81ab;
+}
+
+.dbm-x-top-menu-links .col:last-child {
+    border-right: none;
+}
+
+
+@media only screen and (max-width: 920px) {
+    .dbm-x-top-menu-right {
+        display: none;
+    }
+}
+

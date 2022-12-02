@@ -25,7 +25,7 @@ const IntroForm = (props: FormProps): ReactElement => {
     return (
         <div className='modal fade' id='formModal' tabIndex={-1} aria-labelledby='formModalLabel' aria-hidden='true'
             data-bs-backdrop='static' data-bs-keyboard='false'>
-            <div className={`modal-dialog modal-lg modal-fullscreen-sm-down modal-near-top modal-dialog-scrollable`}>
+            <div className={`modal-dialog modal-lg modal-near-top modal-dialog-scrollable`}>
                 <div className='modal-content'>
                     <div className='modal-header'>
                         <h5 className="modal-title">Start A New Real Estate File</h5>
@@ -75,6 +75,9 @@ const IntroForm = (props: FormProps): ReactElement => {
                         <div style={{
                             visibility: navigating ? 'hidden' : 'visible',
                         }}>
+
+
+
                             <button type="button" className="btn btn-secondary me-4" data-dismiss="modal"
                                 onClick={() => {
                                     setNavigating(true);
