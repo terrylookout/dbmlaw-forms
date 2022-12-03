@@ -2,7 +2,8 @@ import { ReactElement } from "react";
 
 
 interface ModalBottomButtonsProps {
-    showError: boolean;
+    visibility?: 'VISIBLE' | 'HIDDEN'
+    showError?: boolean;
     leftButtonText?: string;
     rightButtonText?: string;
     leftButtonClicked?: () => void;
@@ -12,11 +13,13 @@ interface ModalBottomButtonsProps {
 const ModalBottomButtons = (props: ModalBottomButtonsProps): ReactElement => {
 
     return (
-        <div className='row gy-3'>
+        <div className='row gy-3' style={{
+            visibility: props.visibility && props.visibility === 'HIDDEN' ? 'hidden' : 'visible',
+        }}>
 
             <div className="col text-danger fw-semibold error-label">
                 <h6 style={{
-                    visibility: props.showError ? 'visible' : 'hidden',
+                    visibility: props.showError !== undefined && props.showError ? 'visible' : 'hidden',
                 }}>
                     Please fill in all required information
                 </h6>
@@ -39,7 +42,7 @@ const ModalBottomButtons = (props: ModalBottomButtonsProps): ReactElement => {
                 <input style={{
                     display: props.rightButtonText ? '' : 'none',
                 }}
-                    type='button' className="btn btn-secondary form-button"
+                    type='button' className="btn btn-primary form-button"
                     value={props.rightButtonText ? props.rightButtonText : ''}
                     onClick={() => {
                         props.rightButtonClicked ? props.rightButtonClicked() : void (0);

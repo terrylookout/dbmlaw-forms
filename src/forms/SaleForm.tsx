@@ -7,6 +7,7 @@ import { SubmitConfirm, SubmitDone, SubmitError, Submitting } from '../controls/
 import Seller from '../controls/Seller';
 import DateInput from '../controls/DateInput';
 import House from '../controls/House';
+import ModalBottomButtons from '../controls/ModalBottomButtons';
 
 declare var bootstrap: any;
 
@@ -315,7 +316,7 @@ const SaleForm = (props: FormProps): ReactElement => {
                                                                 }
                                                             }} />
                                                     </div>
-                                                    <div className='mt-1'>
+                                                    <div className='d-flex flex-nowrap pt-2'>
                                                         <input type='checkbox' id='chkclosingdatetbd' checked={saleInfo.closingDateTBD}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 setSaleInfo({ ...saleInfo, closingDateTBD: e.target.checked });
@@ -826,107 +827,65 @@ const SaleForm = (props: FormProps): ReactElement => {
 
                         {
                             (currentPage === 'GET_SELLERS' && (saleInfo.forCompany || numberOfSellers !== 0)) &&
-                            <>
-                                <div className="row">
-                                    <div className="col mb-3 mt-4 text-danger fw-semibold error-label">
-                                        {
-                                            missingInfo &&
-                                            <h6>
-                                                Please fill in all required information
-                                            </h6>
-                                        }
-                                    </div>
-                                    <div className="col mb-3 mt-4" style={{
-                                        textAlign: 'right',
-                                    }}>
-                                        <input type='submit' value='Next' className='btn btn-primary form-button'
-                                            onClick={() => {
-                                                if (checkInputs()) {
-                                                    setMissingInfo(false);
-                                                    setCurrentPage('GET_SALE_DETAILS');
-                                                }
-                                                else {
-                                                    setMissingInfo(true);
-                                                }
-                                            }} />
-                                    </div>
-                                </div>
 
-                            </>
+                            <ModalBottomButtons
+                                showError={missingInfo}
+                                rightButtonText='Next'
+                                rightButtonClicked={() => {
+                                    if (checkInputs()) {
+                                        setMissingInfo(false);
+                                        setCurrentPage('GET_SALE_DETAILS');
+                                    }
+                                    else {
+                                        setMissingInfo(true);
+                                    }
+                                }} />
+
                         }
 
                         {
                             currentPage === 'GET_SALE_DETAILS' &&
-                            <>
-                                <div className="row">
-                                    <div className="col mb-3 mt-4 text-danger fw-semibold error-label">
-                                        <h6 style={{
-                                            visibility: missingInfo ? 'visible' : 'hidden',
-                                        }}>
-                                            Please fill in all required information
-                                        </h6>
-                                    </div>
-                                    <div className="col mb-3 mt-4" style={{
-                                        textAlign: 'right',
-                                        whiteSpace: 'nowrap',
-                                    }}>
-                                        <input type='button' value='Back to Sellers' className='btn btn-secondary form-button me-2'
-                                            onClick={() => setCurrentPage('GET_SELLERS')} />
 
-                                        <input type='button' value='Next' className='btn btn-primary form-button'
-                                            onClick={() => {
-                                                if (checkInputs()) {
-                                                    setMissingInfo(false);
-                                                    setCurrentPage('CONFIRM_SUBMIT');
-                                                }
-                                                else {
-                                                    setMissingInfo(true);
-                                                }
+                            <ModalBottomButtons
+                                showError={missingInfo}
+                                leftButtonText='Back to Sellers'
+                                leftButtonClicked={() => setCurrentPage('GET_SELLERS')}
+                                rightButtonText='Next'
+                                rightButtonClicked={() => {
+                                    if (checkInputs()) {
+                                        setMissingInfo(false);
+                                        setCurrentPage('CONFIRM_SUBMIT');
+                                    }
+                                    else {
+                                        setMissingInfo(true);
+                                    }
 
-                                            }} />
-                                    </div>
-                                </div>
-                            </>
+                                }} />
+
                         }
 
                         {
                             currentPage === 'CONFIRM_SUBMIT' &&
-                            <>
-                                <div className="row">
-                                    <div className="col mb-3 mt-4" style={{
-                                        textAlign: 'right',
-                                        whiteSpace: 'nowrap',
-                                    }}>
-                                        <input type='button' value='Go back' className='btn btn-secondary form-button me-2'
-                                            onClick={() => setCurrentPage('GET_SALE_DETAILS')} />
-
-                                        <input type='button' value='Submit to DBM' className='btn btn-primary form-button'
-                                            onClick={() => {
-                                                setCurrentPage('SUBMITTING');
-                                                setTimeout(() => {
-                                                    submitSaleForm();
-                                                }, 250);
-                                            }} />
-                                    </div>
-                                </div>
-                            </>
+                            <ModalBottomButtons
+                                leftButtonText='Go back'
+                                leftButtonClicked={() => setCurrentPage('GET_SALE_DETAILS')}
+                                rightButtonText='Submit to DBM'
+                                rightButtonClicked={() => {
+                                    setCurrentPage('SUBMITTING');
+                                    setTimeout(() => {
+                                        submitSaleForm();
+                                    }, 250);
+                                }} />
                         }
 
                         {
                             currentPage === 'SUBMIT_RESULT' &&
-                            <>
-                                <div className="row">
-                                    <div className="col mb-3 mt-4" style={{
-                                        textAlign: 'right',
-                                        whiteSpace: 'nowrap',
-                                    }}>
-                                        <input
-                                            type='button' value='Finish' className='btn btn-primary form-button'
-                                            data-bs-dismiss="modal" aria-label="Close"
-                                        />
-                                    </div>
-                                </div>
-                            </>
+
+                            <ModalBottomButtons
+                                rightButtonText='Finish'
+                                rightButtonClicked={() => {
+                                    props.dismissed();
+                                }} />
                         }
                     </div>
                 </div>

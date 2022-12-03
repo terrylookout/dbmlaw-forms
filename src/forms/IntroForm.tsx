@@ -1,4 +1,5 @@
 import { ReactElement, useEffect, useState } from "react";
+import ModalBottomButtons from "../controls/ModalBottomButtons";
 import { FormProps } from "../Helpers";
 
 declare var bootstrap: any;
@@ -76,21 +77,22 @@ const IntroForm = (props: FormProps): ReactElement => {
                             visibility: navigating ? 'hidden' : 'visible',
                         }}>
 
-
-
-                            <button type="button" className="btn btn-secondary me-4" data-dismiss="modal"
-                                onClick={() => {
+                            <ModalBottomButtons
+                                visibility={navigating ? 'HIDDEN' : 'VISIBLE'}
+                                leftButtonText='Go back to DBM homepage'
+                                leftButtonClicked={() => {
                                     setNavigating(true);
                                     setTimeout(() => {
                                         window.location.href = 'https://dbmlaw.ca';
                                     }, 250);
-                                }}>
-                                Go back to DBM homepage
-                            </button>
-                            <input
-                                type='button' value='Continue with creating file' className='btn btn-primary form-button'
-                                data-bs-dismiss='modal' aria-label='Continue with creating file'
+                                }}
+                                rightButtonText='Continue with creating file'
+                                rightButtonClicked={() => {
+                                    props.dismissed();
+                                }}
                             />
+
+
                         </div>
                     </div>
                 </div>

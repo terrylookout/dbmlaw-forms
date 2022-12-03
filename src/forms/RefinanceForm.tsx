@@ -8,6 +8,7 @@ import Owner from '../controls/Owner';
 import TransferAdded from '../controls/TransferAdded';
 import Guarantor from '../Guarantor';
 import House from '../controls/House';
+import ModalBottomButtons from '../controls/ModalBottomButtons';
 
 declare var bootstrap: any;
 
@@ -1238,179 +1239,103 @@ const RefinanceForm = (props: FormProps): ReactElement => {
 
                         {
                             currentPage === 'GET_PROPERTY_DETAILS' &&
-                            <>
-                                <div className="row">
-                                    <div className="col mb-3 mt-4 text-danger fw-semibold error-label">
-                                        <h6 style={{
-                                            visibility: missingInfo ? 'visible' : 'hidden',
-                                        }}>
-                                            Please fill in all required information
-                                        </h6>
-                                    </div>
-                                    <div className="col mb-3 mt-4" style={{
-                                        textAlign: 'right',
-                                        whiteSpace: 'nowrap',
-                                    }}>
 
-                                        <input type='button' value='Next' className='btn btn-primary form-button'
-                                            onClick={() => {
-                                                if (checkInputs()) {
-                                                    setMissingInfo(false);
-                                                    setCurrentPage('GET_OWNERS');
-                                                }
-                                                else {
-                                                    setMissingInfo(true);
-                                                }
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-                            </>
+                            <ModalBottomButtons
+                                showError={missingInfo}
+                                rightButtonText='Next'
+                                rightButtonClicked={() => {
+                                    if (checkInputs()) {
+                                        setMissingInfo(false);
+                                        setCurrentPage('GET_OWNERS');
+                                    }
+                                    else {
+                                        setMissingInfo(true);
+                                    }
+                                }} />
                         }
 
                         {
                             currentPage === 'GET_OWNERS' &&
-                            <>
-                                <div className="row">
-                                    <div className="col mb-3 mt-4 text-danger fw-semibold error-label">
-                                        {
-                                            missingInfo &&
-                                            <h6>
-                                                Please fill in all required information
-                                            </h6>
-                                        }
-                                    </div>
-                                    <div className="col mb-3 mt-4" style={{
-                                        textAlign: 'right',
-                                        whiteSpace: 'nowrap',
-                                    }}>
-                                        <input type='button' value='Back to Property Details' className='btn btn-secondary form-button me-2'
-                                            onClick={() => setCurrentPage('GET_PROPERTY_DETAILS')} />
 
-                                        {
-                                            (refinanceInfo.forCompany || numberOfOwners !== 0) &&
-                                            <input type='submit' value='Next' className='btn btn-primary form-button'
-                                                onClick={() => {
-                                                    if (checkInputs()) {
-                                                        setMissingInfo(false);
-                                                        setCurrentPage('GET_TRANSFER_INFORMATION');
-                                                    }
-                                                    else {
-                                                        setMissingInfo(true);
-                                                    }
-                                                }} />
-
-                                        }
-                                    </div>
-                                </div>
-
-                            </>
+                            <ModalBottomButtons
+                                showError={missingInfo}
+                                leftButtonText='Back to Property Details'
+                                leftButtonClicked={() => setCurrentPage('GET_PROPERTY_DETAILS')}
+                                rightButtonText='Next'
+                                rightButtonClicked={() => {
+                                    if (checkInputs()) {
+                                        setMissingInfo(false);
+                                        setCurrentPage('GET_TRANSFER_INFORMATION');
+                                    }
+                                    else {
+                                        setMissingInfo(true);
+                                    }
+                                }} />
                         }
 
                         {
                             currentPage === 'GET_TRANSFER_INFORMATION' &&
-                            <>
-                                <div className="row">
-                                    <div className="col mb-3 mt-4 text-danger fw-semibold error-label">
-                                        <h6 style={{
-                                            visibility: missingInfo ? 'visible' : 'hidden',
-                                        }}>
-                                            Please fill in all required information
-                                        </h6>
-                                    </div>
-                                    <div className="col mb-3 mt-4" style={{
-                                        textAlign: 'right',
-                                        whiteSpace: 'nowrap',
-                                    }}>
-                                        <input type='button' value='Back to Owners' className='btn btn-secondary form-button me-2'
-                                            onClick={() => setCurrentPage('GET_OWNERS')} />
 
-                                        <input type='button' value='Next' className='btn btn-primary form-button'
-                                            onClick={() => {
-                                                if (checkInputs()) {
-                                                    setMissingInfo(false);
-                                                    setCurrentPage('GET_MORTGAGE_DETAILS');
-                                                }
-                                                else {
-                                                    setMissingInfo(true);
-                                                }
-                                            }} />
-                                    </div>
-                                </div>
-                            </>
+                            <ModalBottomButtons
+                                showError={missingInfo}
+                                leftButtonText='Back to Owners'
+                                leftButtonClicked={() => setCurrentPage('GET_OWNERS')}
+                                rightButtonText='Next'
+                                rightButtonClicked={() => {
+                                    if (checkInputs()) {
+                                        setMissingInfo(false);
+                                        setCurrentPage('GET_MORTGAGE_DETAILS');
+                                    }
+                                    else {
+                                        setMissingInfo(true);
+                                    }
+                                }} />
+
                         }
 
                         {
                             currentPage === 'GET_MORTGAGE_DETAILS' &&
-                            <>
-                                <div className="row">
-                                    <div className="col mb-3 mt-4 text-danger fw-semibold error-label">
-                                        <h6 style={{
-                                            visibility: missingInfo ? 'visible' : 'hidden',
-                                        }}>
-                                            Please fill in all required information
-                                        </h6>
-                                    </div>
-                                    <div className="col mb-3 mt-4" style={{
-                                        textAlign: 'right',
-                                        whiteSpace: 'nowrap',
-                                    }}>
-                                        <input type='button' value='Back to Transfer Information' className='btn btn-secondary form-button me-2'
-                                            onClick={() => setCurrentPage('GET_TRANSFER_INFORMATION')} />
 
-                                        <input type='button' value='Next' className='btn btn-primary form-button'
-                                            onClick={() => {
-                                                if (checkInputs()) {
-                                                    setMissingInfo(false);
-                                                    setCurrentPage('CONFIRM_SUBMIT');
-                                                }
-                                                else {
-                                                    setMissingInfo(true);
-                                                }
-                                            }} />
-                                    </div>
-                                </div>
-                            </>
+                            <ModalBottomButtons
+                                showError={missingInfo}
+                                leftButtonText='Back to Transfer Information'
+                                leftButtonClicked={() => setCurrentPage('GET_TRANSFER_INFORMATION')}
+                                rightButtonText='Next'
+                                rightButtonClicked={() => {
+                                    if (checkInputs()) {
+                                        setMissingInfo(false);
+                                        setCurrentPage('CONFIRM_SUBMIT');
+                                    }
+                                    else {
+                                        setMissingInfo(true);
+                                    }
+                                }} />
+
                         }
 
                         {
                             currentPage === 'CONFIRM_SUBMIT' &&
-                            <>
-                                <div className="row">
-                                    <div className="col mb-3 mt-4" style={{
-                                        textAlign: 'right',
-                                        whiteSpace: 'nowrap',
-                                    }}>
-                                        <input type='button' value='Back to Mortgage Information' className='btn btn-secondary form-button me-2'
-                                            onClick={() => setCurrentPage('GET_MORTGAGE_DETAILS')} />
 
-                                        <input type='button' value='Submit to DBM' className='btn btn-primary form-button'
-                                            onClick={() => {
-                                                setCurrentPage('SUBMITTING');
-                                                setTimeout(() => {
-                                                    submitSaleForm();
-                                                }, 250);
-                                            }} />
-                                    </div>
-                                </div>
-                            </>
+                            <ModalBottomButtons
+                                leftButtonText='Back to Mortgage Information'
+                                leftButtonClicked={() => setCurrentPage('GET_MORTGAGE_DETAILS')}
+                                rightButtonText='Submit to DBM'
+                                rightButtonClicked={() => {
+                                    setCurrentPage('SUBMITTING');
+                                    setTimeout(() => {
+                                        submitSaleForm();
+                                    }, 250);
+                                }} />
+
                         }
 
                         {
                             currentPage === 'SUBMIT_RESULT' &&
-                            <>
-                                <div className="row">
-                                    <div className="col mb-3 mt-4" style={{
-                                        textAlign: 'right',
-                                        whiteSpace: 'nowrap',
-                                    }}>
-                                        <input
-                                            type='button' value='Finish' className='btn btn-primary form-button'
-                                            data-bs-dismiss="modal" aria-label="Close"
-                                        />
-                                    </div>
-                                </div>
-                            </>
+                            <ModalBottomButtons
+                                rightButtonText='Finish'
+                                rightButtonClicked={() => {
+                                    props.dismissed();
+                                }} />
                         }
                     </div>
                 </div>
