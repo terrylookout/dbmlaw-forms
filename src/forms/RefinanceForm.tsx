@@ -15,13 +15,9 @@ declare var bootstrap: any;
 const RefinanceForm = (props: FormProps): ReactElement => {
 
     const [refinanceInfo, setRefinanceInfo] = useState<RefinanceInfo>(() => new RefinanceInfo());
-
     const [missingInfo, setMissingInfo] = useState(false);
-
     const [numberOfOwners, setNumberOfOwners] = useState(0);
-
     const [numberOfGuarantors, setNumberOfGuarantors] = useState(0);
-
     const [numberOfAdded, setNumberOfAdded] = useState(0);
 
     const [currentPage, setCurrentPage] = useState<
@@ -30,6 +26,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
     >('GET_PROPERTY_DETAILS');
 
     const [sendResult, setSendResult] = useState(-1);
+    const [submitOk, setSubmitOk] = useState(false);
 
     const submitSaleForm = async () => {
 
@@ -136,6 +133,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
     useEffect(() => {
         //if (currentPage !== 'PROPERTY_INFO') {
         //
+        setSubmitOk(false);
         const top = document.querySelector('.top-second-page');
         if (top) {
             top.scrollIntoView({
@@ -1229,6 +1227,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                         currentPage === 'CONFIRM_SUBMIT' &&
                                         <SubmitConfirm
                                             text='Submit your refinance information to Drysdale Bacon McStravick?'
+                                            submitOk={(e) => setSubmitOk(e)}
                                         />
                                     }
                                 </div>
@@ -1320,6 +1319,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                 leftButtonText='Back to Mortgage Information'
                                 leftButtonClicked={() => setCurrentPage('GET_MORTGAGE_DETAILS')}
                                 rightButtonText='Submit to DBM'
+                                rightButtonDisabled={!submitOk}
                                 rightButtonClicked={() => {
                                     setCurrentPage('SUBMITTING');
                                     setTimeout(() => {
@@ -1541,7 +1541,7 @@ const getOutput = (refinanceInfo: RefinanceInfo): string => {
     output.push(getEntry('Additional Comments', ''));
     output.push(getEntry(refinanceInfo.additionalComments, '', true));
 
-    output.push('</table></html>');
+    output.push('</table>');
 
     return output.join('');
 

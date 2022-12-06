@@ -33,6 +33,7 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
     >('GET_SELLERS');
 
     const [sendResult, setSendResult] = useState(-1);
+    const [submitOk, setSubmitOk] = useState(false);
 
     const submitSaleAndPurchaseForm = async () => {
 
@@ -177,6 +178,7 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
 
     useEffect(() => {
         //if (currentPage !== 'PROPERTY_INFO') {
+        setSubmitOk(false);
         const top = document.querySelector('.top-second-page');
         if (top) {
             top.scrollIntoView({
@@ -2103,6 +2105,7 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                         currentPage === 'CONFIRM_SUBMIT' &&
                                         <SubmitConfirm
                                             text='Submit your sale and purchase information to Drysdale Bacon McStravick?'
+                                            submitOk={(e) => setSubmitOk(e)}
                                         />
                                     }
                                 </div>
@@ -2194,6 +2197,7 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                                 leftButtonText='Go back'
                                 leftButtonClicked={() => setCurrentPage('PROPERTY_INFO')}
                                 rightButtonText='Submit to DBM'
+                                rightButtonDisabled={!submitOk}
                                 rightButtonClicked={() => {
                                     setCurrentPage('SUBMITTING');
                                     setTimeout(() => {
@@ -2490,7 +2494,7 @@ const getOutput = (purchaseInfo: PurchaseInfo, saleInfo: SaleInfo): string => {
     output.push(getEntry('Additional Comments', ''));
     output.push(getEntry(purchaseInfo.additionalComments, '', true));
 
-    output.push('</table></html>');
+    output.push('</table>');
 
     return output.join('');
 }

@@ -14,11 +14,8 @@ declare var bootstrap: any;
 const SaleForm = (props: FormProps): ReactElement => {
 
     const [saleInfo, setSaleInfo] = useState(() => new SaleInfo());
-
     const [missingInfo, setMissingInfo] = useState(false);
-
     const [numberOfSellers, setNumberOfSellers] = useState(0);
-
     const [currentPage, setCurrentPage] = useState<
         'GET_SELLERS' | 'GET_SALE_DETAILS' |
         'CONFIRM_SUBMIT' | 'SUBMITTING' | 'SUBMIT_RESULT' |
@@ -26,6 +23,7 @@ const SaleForm = (props: FormProps): ReactElement => {
     >('GET_SELLERS');
 
     const [sendResult, setSendResult] = useState(-1);
+    const [submitOk, setSubmitOk] = useState(false);
 
     const submitSaleForm = async () => {
 
@@ -95,6 +93,7 @@ const SaleForm = (props: FormProps): ReactElement => {
 
     useEffect(() => {
         //if (currentPage !== 'PROPERTY_INFO') {
+        setSubmitOk(false);
         const top = document.querySelector('.top-second-page');
         if (top) {
             top.scrollIntoView({
@@ -817,6 +816,7 @@ const SaleForm = (props: FormProps): ReactElement => {
                                         currentPage === 'CONFIRM_SUBMIT' &&
                                         <SubmitConfirm
                                             text='Submit your sale information to Drysdale Bacon McStravick?'
+                                            submitOk={(e) => setSubmitOk(e)}
                                         />
                                     }
                                 </div>
@@ -870,6 +870,7 @@ const SaleForm = (props: FormProps): ReactElement => {
                                 leftButtonText='Go back'
                                 leftButtonClicked={() => setCurrentPage('GET_SALE_DETAILS')}
                                 rightButtonText='Submit to DBM'
+                                rightButtonDisabled={!submitOk}
                                 rightButtonClicked={() => {
                                     setCurrentPage('SUBMITTING');
                                     setTimeout(() => {
@@ -980,7 +981,7 @@ const getOutput = (saleInfo: SaleInfo): string => {
     output.push(getEntry('Additional Comments', ''));
     output.push(getEntry(saleInfo.additionalComments, '', true));
 
-    output.push('</table></html>');
+    output.push('</table>');
 
     return output.join('');
 

@@ -6,6 +6,7 @@ interface ModalBottomButtonsProps {
     showError?: boolean;
     leftButtonText?: string;
     rightButtonText?: string;
+    rightButtonDisabled?: boolean;
     leftButtonClicked?: () => void;
     rightButtonClicked?: () => void;
 }
@@ -42,10 +43,14 @@ const ModalBottomButtons = (props: ModalBottomButtonsProps): ReactElement => {
                 <input style={{
                     display: props.rightButtonText ? '' : 'none',
                 }}
-                    type='button' className="btn btn-primary form-button"
+                    type='button' className={`btn ${props.rightButtonDisabled !== undefined && props.rightButtonDisabled ? 'dbm-button-disabled' : 'btn-primary'} form-button`}
                     value={props.rightButtonText ? props.rightButtonText : ''}
                     onClick={() => {
-                        props.rightButtonClicked ? props.rightButtonClicked() : void (0);
+
+                        ((props.rightButtonDisabled !== undefined && !props.rightButtonDisabled) || props.rightButtonDisabled === undefined) &&
+                            props.rightButtonClicked
+                            ? props.rightButtonClicked() : void (0);
+
                     }} />
             </div>
 

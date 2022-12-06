@@ -20,6 +20,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
     const [missingInfo, setMissingInfo] = useState(false);
     const [numberOfClients, setNumberOfClients] = useState(0);
     const [numberOfGuarantors, setNumberOfGuarantors] = useState(0);
+    const [submitOk, setSubmitOk] = useState(false);
 
     const [currentPage, setCurrentPage] = useState<
         'GET_PURCHASERS' | 'PROPERTY_INFO' | 'CONFIRM_SUBMIT' | 'SUBMITTING' | 'SUBMIT_RESULT' | 'SUBMIT_ERROR'
@@ -113,6 +114,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
     // }, [purchaseInfo.forCompany]);
 
     useEffect(() => {
+        setSubmitOk(false);
         if (currentPage === 'PROPERTY_INFO') {
             const top = document.querySelector('.top-second-page');
             if (top) {
@@ -1401,6 +1403,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                         currentPage === 'CONFIRM_SUBMIT' &&
                                         <SubmitConfirm
                                             text='Submit your purchase information to Drysdale Bacon McStravick?'
+                                            submitOk={(e) => setSubmitOk(e)}
                                         />
                                     }
                                 </div>
@@ -1452,6 +1455,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                 leftButtonText='Go back'
                                 leftButtonClicked={() => setCurrentPage('PROPERTY_INFO')}
                                 rightButtonText='Submit to DBM'
+                                rightButtonDisabled={!submitOk}
                                 rightButtonClicked={() => {
                                     setCurrentPage('SUBMITTING');
                                     submitPurchaseForm();
@@ -1670,7 +1674,7 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
     output.push(getEntry('Additional Comments', ''));
     output.push(getEntry(purchaseInfo.additionalComments, '', true));
 
-    output.push('</table></html>');
+    output.push('</table>');
 
     return output.join('');
 }

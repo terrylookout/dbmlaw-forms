@@ -22,11 +22,30 @@ export const getHeader = (headerText: string): string => {
 
 export const sendEmail = async (formTitle: string, messageBody: string): Promise<number> => {
 
+    let newMessageBody = messageBody;
+
+    try {
+
+        const res = await fetch('https://api.ipify.org?format=json');
+        const data = await res.json();
+
+        if (data) {
+            newMessageBody += `<table><tr><td>IP ADDRESS:</td><td>${data.ip}</td></tr></table>`;
+        }
+
+    }
+    catch (err) {
+        console.log(38, err);
+    }
+    finally {
+        newMessageBody += '</html>'
+    }
+
     const sendResult: EmailJSResponseStatus = await emailjs.send(
         'service_keeosye',
         'template_coruqjt', {
         formtitle: formTitle,
-        message: messageBody,
+        message: newMessageBody,
     }, 'QrfLKkXmnG6mF2P_1',
     );
 

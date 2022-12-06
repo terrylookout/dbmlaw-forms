@@ -1,16 +1,22 @@
 import { ReactElement } from "react";
+import ReCaptcha from "./ReCaptcha";
 
 
 export const SubmitConfirm = (props: {
     text: string;
+    submitOk: (e: boolean) => void;
 }): ReactElement => {
 
     return (
+        <>
+            <p>
+                {props.text}
+            </p>
 
-        <p>
-            {props.text}
-        </p>
-
+            <ReCaptcha
+                changed={(e) => props.submitOk(e)}
+            />
+        </>
     );
 }
 

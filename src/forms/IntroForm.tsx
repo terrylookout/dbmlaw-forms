@@ -57,7 +57,7 @@ const IntroForm = (props: FormProps): ReactElement => {
                             }}>
                                 <p>At this time the online file application is for <b>residential conveyancing</b> only.</p>
                                 <p>Please contact our office directly at <a href="tel:1-604-939-8321">604 939 8321</a>
-                                    for all other matters and we will gladly assist you.</p>
+                                    &nbsp;for all other matters and we will gladly assist you.</p>
 
                             </div>
 
@@ -67,6 +67,8 @@ const IntroForm = (props: FormProps): ReactElement => {
                                 <p className='text-center'>Please wait....</p>
 
                             </div>
+
+
 
                         </div>
 

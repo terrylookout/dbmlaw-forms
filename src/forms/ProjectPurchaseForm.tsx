@@ -16,6 +16,7 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
     const [purchaseInfo, setPurchaseInfo] = useState(() => new PurchaseInfo());
     const [missingInfo, setMissingInfo] = useState(false);
     const [numberOfClients, setNumberOfClients] = useState(0);
+    const [submitOk, setSubmitOk] = useState(false);
 
     const [currentPage, setCurrentPage] = useState<
         'GET_PURCHASERS' | 'PROPERTY_INFO' | 'CONFIRM_SUBMIT' | 'SUBMITTING' | 'SUBMIT_RESULT' |
@@ -95,6 +96,7 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
 
     useEffect(() => {
         //
+        setSubmitOk(false);
         if (currentPage === 'PROPERTY_INFO') {
             const top = document.querySelector('.top-second-page');
             if (top) {
@@ -1573,6 +1575,9 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                         currentPage === 'CONFIRM_SUBMIT' &&
                                         <SubmitConfirm
                                             text='Submit your purchase information to Drysdale Bacon McStravick?'
+                                            submitOk={(e) => {
+                                                setSubmitOk(e);
+                                            }}
                                         />
                                     }
                                 </div>
@@ -1624,6 +1629,7 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                 leftButtonText='Go back'
                                 leftButtonClicked={() => setCurrentPage('PROPERTY_INFO')}
                                 rightButtonText='Submit to DBM'
+                                rightButtonDisabled={!submitOk}
                                 rightButtonClicked={() => {
                                     setCurrentPage('SUBMITTING');
                                     setTimeout(() => {
@@ -1843,7 +1849,7 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
     output.push(getEntry('Additional Comments', ''));
     output.push(getEntry(purchaseInfo.additionalComments, '', true));
 
-    output.push('</table></html>');
+    output.push('</table>');
 
     return output.join('');
 }
