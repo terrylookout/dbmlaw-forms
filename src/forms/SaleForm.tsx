@@ -256,7 +256,7 @@ const SaleForm = (props: FormProps): ReactElement => {
                                                             return (
                                                                 <Seller text={saleInfo.forCompany ? 'Signatory' : 'Seller'}
                                                                     num={i}
-                                                                    key={i}
+                                                                    key={c.id}
                                                                     clientInfo={saleInfo.clientsInfo[i]}
                                                                     client1Info={saleInfo.clientsInfo.length > 1 ? saleInfo.clientsInfo[0] : null}
                                                                     company={saleInfo.forCompany}

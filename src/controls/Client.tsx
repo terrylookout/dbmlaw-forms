@@ -271,10 +271,10 @@ const Client = (props: ClientProps): ReactElement => {
                         }}
                     >
                         {
-                            provinces.map((p, idx) => {
+                            provinces.map((p) => {
                                 return (
                                     <option
-                                        key={idx}
+                                        key={p}
                                         value={p}>
                                         {p}
                                     </option>
@@ -314,10 +314,10 @@ const Client = (props: ClientProps): ReactElement => {
                             }}
                         >
                             {
-                                countries.map((c, idx) => {
+                                countries.map((c) => {
                                     return (
                                         <option
-                                            key={idx}
+                                            key={c}
                                             value={c}>
                                             {c}
                                         </option>
@@ -543,10 +543,10 @@ const Client = (props: ClientProps): ReactElement => {
                                         }}
                                     >
                                         {
-                                            employerProvinces.map((p, idx) => {
+                                            employerProvinces.map((p) => {
                                                 return (
                                                     <option
-                                                        key={idx}
+                                                        key={p}
                                                         value={p}>
                                                         {p}
                                                     </option>
@@ -591,10 +591,10 @@ const Client = (props: ClientProps): ReactElement => {
                                             }}
                                         >
                                             {
-                                                employerCountries.map((c, idx) => {
+                                                employerCountries.map((c) => {
                                                     return (
                                                         <option
-                                                            key={idx}
+                                                            key={c}
                                                             value={c}>
                                                             {c}
                                                         </option>

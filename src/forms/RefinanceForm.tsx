@@ -482,7 +482,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                             return (
                                                                 <Owner text={refinanceInfo.forCompany ? 'Signatory' : 'Owner'}
                                                                     num={i}
-                                                                    key={i}
+                                                                    key={c.id}
                                                                     clientInfo={refinanceInfo.clientsInfo[i]}
                                                                     client1Info={refinanceInfo.clientsInfo.length > 1 ? refinanceInfo.clientsInfo[0] : null}
                                                                     company={refinanceInfo.forCompany}
@@ -551,10 +551,10 @@ const RefinanceForm = (props: FormProps): ReactElement => {
 
                                                     <div className="form-check">
                                                         <input className="form-check-input" type="radio" name={`removeowners`} id={`removeowners-no`}
-                                                            checked={refinanceInfo.ownersToBeAdded === 'NO'}
+                                                            checked={refinanceInfo.ownersToBeRemoved === 'NO'}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 if (e && e.target && e.target.value && e.target.value === 'on') {
-                                                                    setRefinanceInfo({ ...refinanceInfo, ownersToBeAdded: 'NO' });
+                                                                    setRefinanceInfo({ ...refinanceInfo, ownersToBeRemoved: 'NO' });
                                                                 }
                                                             }} />
                                                         <label className="form-check-label" htmlFor={`removeowners-no`}>
@@ -577,16 +577,16 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                     </div>
 
                                                     {
-                                                        refinanceInfo.clientsInfo.map((owner, idx) => {
+                                                        refinanceInfo.clientsInfo.map((owner) => {
                                                             return (
-                                                                <div className='row mb-1' key={idx}>
+                                                                <div className='row mb-1' key={owner.id}>
 
                                                                     <div className='col col-1' style={{
                                                                         whiteSpace: 'nowrap',
                                                                     }}>
                                                                         <span>
                                                                             <input type='checkbox' className='btn btn-secondary'
-                                                                                id={`removecheck${idx}`}
+                                                                                id={`removecheck${owner.id}`}
                                                                                 value='Remove from title'
                                                                                 checked={refinanceInfo.removedFromTitle.indexOf(owner.fullLegalName) > -1}
                                                                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -671,7 +671,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                             return (
                                                                 <TransferAdded text={refinanceInfo.forCompany ? 'Signatory' : 'Added Owner'}
                                                                     num={i}
-                                                                    key={i}
+                                                                    key={c.id}
                                                                     refinanceInfo={refinanceInfo}
                                                                     updated={(c: ClientInfo, idx: number) => {
                                                                         const tempClients: ClientInfo[] = [];
@@ -1017,16 +1017,16 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                                 columnGap: '20px',
                                                                 rowGap: '10px',
                                                             }}>
-                                                                {refinanceInfo.clientsInfo.map((c, idx) => {
+                                                                {refinanceInfo.clientsInfo.map((c) => {
                                                                     return (
-                                                                        <Fragment key={idx}>
+                                                                        <Fragment key={c.id}>
                                                                             <div >
                                                                                 <span>
                                                                                     {c.fullLegalName}
                                                                                 </span>
                                                                             </div>
 
-                                                                            <div key={idx}>
+                                                                            <div key={c.id}>
                                                                                 <input type='number' min={0} max={100}
                                                                                     className='tenantscommonpercentage'
                                                                                     value={c.tenantInCommonPercent}
@@ -1049,16 +1049,16 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                                     );
                                                                 })}
 
-                                                                {refinanceInfo.clientsAddedInfo.map((c, idx) => {
+                                                                {refinanceInfo.clientsAddedInfo.map((c) => {
                                                                     return (
-                                                                        <Fragment key={idx}>
+                                                                        <Fragment key={c.id}>
                                                                             <div >
                                                                                 <span>
                                                                                     {c.fullLegalName}
                                                                                 </span>
                                                                             </div>
 
-                                                                            <div key={idx}>
+                                                                            <div key={c.id}>
                                                                                 <input type='number' min={0} max={100}
                                                                                     className='tenantscommonpercentage'
                                                                                     value={c.tenantInCommonPercent}
@@ -1154,7 +1154,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                                             return (
                                                                 <Guarantor text={'Guarantor/Co-signer'}
                                                                     num={i}
-                                                                    key={i}
+                                                                    key={c.id}
                                                                     numberOfPurchasers={refinanceInfo.clientsInfo.length}
                                                                     guarantorInfo={refinanceInfo.guarantorsInfo[i]}
                                                                     updated={(c: GuarantorInfo, idx: number) => {

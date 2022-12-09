@@ -284,10 +284,10 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                                 }}
                             >
                                 {
-                                    provinces.map((p, idx) => {
+                                    provinces.map((p) => {
                                         return (
                                             <option
-                                                key={idx}
+                                                key={p}
                                                 value={p}>
                                                 {p}
                                             </option>
@@ -335,10 +335,10 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                                     }}
                                 >
                                     {
-                                        countries.map((c, idx) => {
+                                        countries.map((c) => {
                                             return (
                                                 <option
-                                                    key={idx}
+                                                    key={c}
                                                     value={c}>
                                                     {c}
                                                 </option>
@@ -589,10 +589,10 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                                 }}
                             >
                                 {
-                                    employerProvinces.map((p, idx) => {
+                                    employerProvinces.map((p) => {
                                         return (
                                             <option
-                                                key={idx}
+                                                key={p}
                                                 value={p}>
                                                 {p}
                                             </option>
@@ -638,10 +638,10 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                                     }}
                                 >
                                     {
-                                        employerCountries.map((c, idx) => {
+                                        employerCountries.map((c) => {
                                             return (
                                                 <option
-                                                    key={idx}
+                                                    key={c}
                                                     value={c}>
                                                     {c}
                                                 </option>

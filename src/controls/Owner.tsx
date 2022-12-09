@@ -228,10 +228,10 @@ const Owner = (props: BorrowerProps): ReactElement => {
                                 }}
                             >
                                 {
-                                    provinces.map((p, idx) => {
+                                    provinces.map((p) => {
                                         return (
                                             <option
-                                                key={idx}
+                                                key={p}
                                                 value={p}>
                                                 {p}
                                             </option>
@@ -275,10 +275,10 @@ const Owner = (props: BorrowerProps): ReactElement => {
                                     }}
                                 >
                                     {
-                                        countries.map((c, idx) => {
+                                        countries.map((c) => {
                                             return (
                                                 <option
-                                                    key={idx}
+                                                    key={c}
                                                     value={c}>
                                                     {c}
                                                 </option>

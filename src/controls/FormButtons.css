@@ -11,8 +11,7 @@
     background-color: rgba(0,0,0,0.7);
     border-radius: 15px;
     display: grid;
-    width: 100%;
-    grid-template-columns: repeat(auto-fit, minmax(220px, auto));
+    grid-template-columns: repeat(auto-fit, 225px);
     row-gap: 25px;
 }
 
@@ -20,8 +19,28 @@
     font-weight: 600;
 }
 
+.dbm-form-buttons-parent {
+    width: 80%;
+    margin: auto;
+}
+
+@media only screen and (max-width: 1510px) {
+    .dbm-form-buttons-parent {
+        width: 90%;
+    }
+}
+
 .dbm-form-button {
-    margin-top: 0;
+    margin-top: 0;    
+}
+
+.dbm-form-button>input {
+    transition: all 0.1s;
+}
+
+.dbm-form-button>input:hover {
+    transform: scale(1.04) translateY(-1px);
+    box-shadow: 0 1px 1px #000;
 }
 
 .dbm-gohome-button {

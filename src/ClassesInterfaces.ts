@@ -1,5 +1,8 @@
+import { v4 as uuid } from "uuid";
 
 export class ClientInfo {
+
+    public id: string;
 
     public fullLegalName: string;
     public phoneNumber: string;
@@ -44,6 +47,9 @@ export class ClientInfo {
     public tenantInCommonPercent: number = 0;
 
     constructor() {
+
+        this.id = uuid();
+
         this.fullLegalName = '';
         this.phoneNumber = '';
 
@@ -90,12 +96,14 @@ export class ClientInfo {
 }
 
 export class GuarantorInfo {
+    public id: string;
     public fullLegalName: string;
     public phoneNumber: string;
     public emailAddress: string;
     public relationship;
 
     constructor() {
+        this.id = uuid();
         this.fullLegalName = '';
         this.phoneNumber = '';
         this.emailAddress = '';

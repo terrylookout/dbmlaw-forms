@@ -288,7 +288,7 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                                             return (
                                                                 <Client text={purchaseInfo.forCompany ? 'Signatory' : 'Purchaser'}
                                                                     num={i}
-                                                                    key={i}
+                                                                    key={c.id}
                                                                     clientInfo={purchaseInfo.clientsInfo[i]}
                                                                     client1Info={purchaseInfo.clientsInfo.length > 1 ? purchaseInfo.clientsInfo[0] : null}
                                                                     company={purchaseInfo.forCompany}
@@ -658,16 +658,16 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                                                 columnGap: '20px',
                                                                 rowGap: '10px',
                                                             }}>
-                                                                {purchaseInfo.clientsInfo.map((c, idx) => {
+                                                                {purchaseInfo.clientsInfo.map((c) => {
                                                                     return (
-                                                                        <Fragment key={idx}>
+                                                                        <Fragment key={c.id}>
                                                                             <div >
                                                                                 <span>
                                                                                     {c.fullLegalName}
                                                                                 </span>
                                                                             </div>
 
-                                                                            <div key={idx}>
+                                                                            <div key={c.id}>
                                                                                 <input type='number' min={0} max={100}
                                                                                     className='tenantscommonpercentage'
                                                                                     value={c.tenantInCommonPercent}
