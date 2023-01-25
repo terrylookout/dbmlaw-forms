@@ -1,7 +1,7 @@
 import React, { ChangeEvent, ReactElement, useEffect, useRef, useState } from 'react';
 import CircleBullet from './CircleBullet';
 import { ClientInfo } from '../ClassesInterfaces';
-import DateInput from './DateInput';
+//import DateInput from './DateInput';
 import { getCountries, getProvincesTerritories, getStates } from '../Helpers';
 
 interface SellerProps {
@@ -110,28 +110,28 @@ const Seller = (props: SellerProps): ReactElement => {
             </div>
 
             {
-                !props.company &&
-                <div className="row">
-                    <div className="col mb-3">
-                        <div className='form-floating mb-0'>
-                            <DateInput
-                                className='form-control'
-                                id={`dob${props.num}`}
-                                value={clientInfo.dateOfBirth}
-                                max={new Date()}
-                                label='Date of birth'
-                                onChange={(e) => {
-                                    if (e) {
-                                        setClientInfo({ ...clientInfo, dateOfBirth: e })
-                                    }
+                // !props.company &&
+                // <div className="row">
+                //     <div className="col mb-3">
+                //         <div className='form-floating mb-0'>
+                //             <DateInput
+                //                 className='form-control'
+                //                 id={`dob${props.num}`}
+                //                 value={clientInfo.dateOfBirth}
+                //                 max={new Date()}
+                //                 label='Date of birth'
+                //                 onChange={(e) => {
+                //                     if (e) {
+                //                         setClientInfo({ ...clientInfo, dateOfBirth: e })
+                //                     }
 
-                                }} />
+                //                 }} />
 
-                        </div>
-                    </div>
-                    <div className="col mb-3">
-                    </div>
-                </div>
+                //         </div>
+                //     </div>
+                //     <div className="col mb-3">
+                //     </div>
+                // </div>
 
             }
             <div className="row align-items-center mt-4">

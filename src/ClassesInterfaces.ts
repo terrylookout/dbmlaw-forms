@@ -1,5 +1,17 @@
 import { v4 as uuid } from "uuid";
 
+export interface PreviousAddress {
+    id: string;
+    street1: string;
+    street2: string;
+    city: string;
+    provinceTerritory: string;
+    postalCode: string;
+    country: string;
+    startDate: Date;
+}
+
+
 export class ClientInfo {
 
     public id: string;
@@ -38,6 +50,17 @@ export class ClientInfo {
     public willBeLivingInPropertyWithinThreeMonths: 'YES' | 'NO' | '';
     public hasOwnedPrincipalResidenceSomewhere: 'YES' | 'NO' | '';
     public residentOfCanada: 'YES' | 'NO' | '';
+
+    public previousAddresses: PreviousAddress[] = [{
+        id: uuid(),
+        street1: '',
+        street2: '',
+        city: '',
+        provinceTerritory: '',
+        postalCode: '',
+        country: 'Canada',
+        startDate: new Date(),
+    }];
 
     public relationship: string;
     public timeLivingAtProperty: string;

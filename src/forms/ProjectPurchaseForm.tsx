@@ -83,17 +83,6 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
         // eslint-disable-next-line
     }, [numberOfClients]);
 
-
-    // useEffect(() => {
-    //     if (purchaseInfo.forCompany) {
-    //         setNumberOfClients(1);
-    //     }
-    //     else {
-    //         setNumberOfClients(0);
-    //     }
-
-    // }, [purchaseInfo.forCompany]);
-
     useEffect(() => {
         //
         setSubmitOk(false);
@@ -223,7 +212,6 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
 
                                                         </div>
                                                     </div>
-
 
                                                     <div className='row'>
 
@@ -1730,6 +1718,19 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
             output.push(getEntry('First Time Home Buyer', client.isFirstTimeHomeBuyer));
             output.push(getEntry('Will live in property within 3 months', client.willBeLivingInPropertyWithinThreeMonths));
             output.push(getEntry('Has owned principal residence elsewhere', client.hasOwnedPrincipalResidenceSomewhere, true));
+
+            if (client.isFirstTimeHomeBuyer === 'YES') {
+                output.push(getHeader('Previous Address(es)'));
+                for (const prevAddress of client.previousAddresses) {
+                    output.push(getEntry('Start Date', prevAddress.startDate.toISOString().split('T')[0]));
+                    output.push(getEntry('Street 1', prevAddress.street1));
+                    output.push(getEntry('Street 2', prevAddress.street2));
+                    output.push(getEntry('City', prevAddress.city));
+                    output.push(getEntry('Province or Territory', prevAddress.provinceTerritory));
+                    output.push(getEntry('Postal Code', prevAddress.postalCode));
+                    output.push(getEntry('Country', prevAddress.country, true));
+                }
+            }
         }
     }
 

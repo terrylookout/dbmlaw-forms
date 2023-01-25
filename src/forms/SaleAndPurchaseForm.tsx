@@ -2256,9 +2256,9 @@ const getOutput = (purchaseInfo: PurchaseInfo, saleInfo: SaleInfo): string => {
             output.push(getEntry('Full Legal Name', client.fullLegalName));
             output.push(getEntry('Phone Number', client.phoneNumber));
             output.push(getEntry('Email', client.emailAddress));
-            output.push(getEntry('Date of Birth', client.dateOfBirth.toDateString() === (new Date()).toDateString()
-                ? ''
-                : client.dateOfBirth.toISOString().split('T')[0]));
+            // output.push(getEntry('Date of Birth', client.dateOfBirth.toDateString() === (new Date()).toDateString()
+            //     ? ''
+            //     : client.dateOfBirth.toISOString().split('T')[0]));
 
             output.push(getHeader('Mailing or Forwarding Address'))
 

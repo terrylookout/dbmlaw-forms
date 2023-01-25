@@ -3,6 +3,7 @@ import CircleBullet from './CircleBullet';
 import { ClientInfo } from '../ClassesInterfaces';
 import DateInput from './DateInput';
 import { getCountries, getProvincesTerritories, getStates } from '../Helpers';
+import { v4 as uuid } from "uuid";
 
 interface ClientProps {
     text: string;
@@ -802,6 +803,269 @@ const Client = (props: ClientProps): ReactElement => {
 
                             </div>
 
+                        </>
+                    }
+
+                    {
+                        clientInfo.isFirstTimeHomeBuyer === 'YES' &&
+                        <>
+                            <div className="row">
+                                <div className="col mb-1 mt-4">
+                                    <h6>
+                                        <CircleBullet />
+                                        Previous address(es) for the past two years
+                                    </h6>
+                                </div>
+                            </div>
+
+                            {
+                                clientInfo.previousAddresses.map((previousAddress, index) => {
+                                    return (
+                                        <div key={previousAddress.id}>
+                                            <div className={`row${index > 0 ? ' mt-5' : ''}`}>
+
+                                                <div className="col col-6">
+                                                    <div className='form-floating mb-3 col-5'>
+                                                        <DateInput
+                                                            className='form-control'
+                                                            id={`start${previousAddress.id}`}
+                                                            value={previousAddress.startDate}
+                                                            max={new Date()}
+                                                            label='Start date'
+                                                            onChange={(e) => {
+                                                                if (e) {
+                                                                    const temp = [...clientInfo.previousAddresses];
+                                                                    const entry = temp.find((f) => f.id === previousAddress.id);
+                                                                    if (entry) {
+                                                                        entry.startDate = e;
+                                                                        setClientInfo({ ...clientInfo, previousAddresses: temp });
+                                                                    }
+                                                                }
+
+                                                            }} />
+
+                                                    </div>
+                                                </div>
+
+                                                <div className="col col-6 mt-auto mb-auto d-flex justify-content-end">
+                                                    <div className="form-floating mb-3">
+                                                        {
+                                                            index > 0 &&
+                                                            <button className="btn btn-secondary"
+                                                                onClick={() => {
+                                                                    setClientInfo({
+                                                                        ...clientInfo, previousAddresses:
+                                                                            clientInfo.previousAddresses.filter((f) => f.id !== previousAddress.id),
+                                                                    })
+                                                                }}
+                                                            >
+                                                                Remove this address
+                                                            </button>
+                                                        }
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <div className="row">
+                                                <div className="col mb-3">
+                                                    <div className='form-floating mb-0'>
+                                                        <input type='text' className='form-control is-required' id={`prevstreet1${previousAddress.id}`} placeholder='Street address line 1'
+                                                            value={previousAddress.street1}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                if (e) {
+                                                                    const temp = [...clientInfo.previousAddresses];
+                                                                    const entry = temp.find((f) => f.id === previousAddress.id);
+                                                                    if (entry) {
+                                                                        entry.street1 = e.target.value;
+                                                                        setClientInfo({ ...clientInfo, previousAddresses: temp });
+                                                                    }
+                                                                }
+                                                            }}
+                                                        />
+                                                        <div className="invalid-feedback">
+                                                            Please enter this field
+                                                        </div>
+                                                        <label htmlFor='floatingInput'>
+                                                            Street address line 1
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="row">
+                                                <div className="col mb-3">
+                                                    <div className='form-floating mb-0'>
+                                                        <input type='text' className='form-control' id={`prevstreet2${previousAddress.id}`} placeholder='Street address line 2'
+                                                            value={previousAddress.street2}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                if (e) {
+                                                                    const temp = [...clientInfo.previousAddresses];
+                                                                    const entry = temp.find((f) => f.id === previousAddress.id);
+                                                                    if (entry) {
+                                                                        entry.street2 = e.target.value;
+                                                                        setClientInfo({ ...clientInfo, previousAddresses: temp });
+                                                                    }
+                                                                }
+                                                            }}
+                                                        />
+                                                        <label htmlFor='floatingInput'>
+                                                            Street address line 2
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <div className="row">
+                                                <div className="col mb-3">
+                                                    <div className='form-floating mb-0'>
+                                                        <input type='text' className='form-control is-required' id={`prevcity${previousAddress.id}`} placeholder='City'
+                                                            value={previousAddress.city}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                if (e) {
+                                                                    const temp = [...clientInfo.previousAddresses];
+                                                                    const entry = temp.find((f) => f.id === previousAddress.id);
+                                                                    if (entry) {
+                                                                        entry.city = e.target.value;
+                                                                        setClientInfo({ ...clientInfo, previousAddresses: temp });
+                                                                    }
+                                                                }
+                                                            }}
+                                                        />
+                                                        <div className="invalid-feedback">
+                                                            Please enter this field
+                                                        </div>
+                                                        <label htmlFor='floatingInput'>
+                                                            City
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div className="col mb-3">
+                                                    <select className="form-select p-3 is-required" aria-label="Province or territory"
+                                                        ref={provinceSelect}
+                                                        value={previousAddress.provinceTerritory}
+                                                        onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                                                            if (e) {
+                                                                const temp = [...clientInfo.previousAddresses];
+                                                                const entry = temp.find((f) => f.id === previousAddress.id);
+                                                                if (entry) {
+                                                                    entry.provinceTerritory = e.target.value;
+                                                                    setClientInfo({ ...clientInfo, previousAddresses: temp });
+                                                                }
+                                                            }
+                                                        }}
+                                                    >
+                                                        {
+                                                            provinces.map((p) => {
+                                                                return (
+                                                                    <option
+                                                                        key={p}
+                                                                        value={p}>
+                                                                        {p}
+                                                                    </option>
+                                                                );
+                                                            })
+                                                        }
+                                                    </select>
+                                                    <div className="invalid-feedback">
+                                                        Please enter this field
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="row">
+                                                <div className="col mb-3">
+                                                    <div className='form-floating mb-0'>
+                                                        <input type='text' className='form-control is-required' id={`prevpostalcode${previousAddress.id}`} placeholder='Postal code'
+                                                            value={previousAddress.postalCode}
+                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                                if (e) {
+                                                                    const temp = [...clientInfo.previousAddresses];
+                                                                    const entry = temp.find((f) => f.id === previousAddress.id);
+                                                                    if (entry) {
+                                                                        entry.postalCode = e.target.value;
+                                                                        setClientInfo({ ...clientInfo, previousAddresses: temp });
+                                                                    }
+                                                                }
+                                                            }}
+                                                        />
+                                                        <div className="invalid-feedback">
+                                                            Please enter this field
+                                                        </div>
+                                                        <label htmlFor='floatingInput'>
+                                                            Postal code
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div className="col mb-3">
+                                                    <div className='form-floating mb-0'>
+                                                        <select className='form-control' id={`prevcountry${previousAddress.id}`} placeholder='Country'
+                                                            value={previousAddress.country}
+                                                            onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                                                                if (e) {
+                                                                    const temp = [...clientInfo.previousAddresses];
+                                                                    const entry = temp.find((f) => f.id === previousAddress.id);
+                                                                    if (entry) {
+                                                                        entry.country = e.target.value;
+                                                                        setClientInfo({ ...clientInfo, previousAddresses: temp });
+                                                                    }
+                                                                }
+                                                            }}
+                                                        >
+                                                            {
+                                                                countries.map((c) => {
+                                                                    return (
+                                                                        <option
+                                                                            key={c}
+                                                                            value={c}>
+                                                                            {c}
+                                                                        </option>
+                                                                    );
+                                                                })
+                                                            }
+                                                        </select>
+                                                        <label htmlFor='mailingcountry'>
+                                                            Country
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    )
+                                })
+                            }
+                            {
+                                clientInfo.previousAddresses.length < 8 &&
+
+                                <div className="row">
+                                    <div className="col">
+                                        <button className="btn btn-info"
+                                            onClick={() => {
+                                                const temp = clientInfo.previousAddresses;
+                                                temp.push({
+                                                    city: '',
+                                                    country: 'Canada',
+                                                    id: uuid(),
+                                                    postalCode: '',
+                                                    provinceTerritory: '',
+                                                    startDate: new Date(),
+                                                    street1: '',
+                                                    street2: '',
+                                                });
+
+                                                setClientInfo({ ...clientInfo, previousAddresses: temp });
+                                            }}
+                                        >
+                                            Add another address
+                                        </button>
+                                    </div>
+
+                                </div>
+                            }
                         </>
                     }
 
