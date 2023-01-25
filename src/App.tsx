@@ -2,9 +2,9 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import './App.css';
 
 import FormButtons from './controls/FormButtons';
-import PurchaseForm from './forms/PurchaseForm';
+import PurchaseForm from './forms/SalesForm/PurchaseForm/PurchaseForm';
 import SaleAndPurchaseForm from './forms/SaleAndPurchaseForm';
-import SaleForm from './forms/SaleForm';
+import SaleForm from './forms/SalesForm/SaleForm';
 import 'react-day-picker/dist/style.css';
 import RefinanceForm from './forms/RefinanceForm';
 import ProjectPurchaseForm from './forms/ProjectPurchaseForm';

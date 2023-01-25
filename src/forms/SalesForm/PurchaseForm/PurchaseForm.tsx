@@ -1,24 +1,29 @@
 import React, { ChangeEvent, Fragment, ReactElement, useEffect, useState } from 'react';
-import Client from '../controls/Client';
-import { ClientInfo, GuarantorInfo, PurchaseInfo } from '../ClassesInterfaces';
-import Guarantor from '../Guarantor';
+import Client from '../../../controls/Client';
+import { ClientInfo, GuarantorInfo, PurchaseInfo } from '../../../ClassesInterfaces';
+import Guarantor from '../../../Guarantor';
 
-import CircleBullet from '../controls/CircleBullet';
-import { checkInputs, FormProps, getEntry, getHeader, sendEmail } from '../Helpers';
-import { SubmitConfirm, SubmitDone, SubmitError, Submitting } from '../controls/SubmitForms';
-import DateInput from '../controls/DateInput';
-import House from '../controls/House';
-import ModalBottomButtons from '../controls/ModalBottomButtons';
-
+import CircleBullet from '../../../controls/CircleBullet';
+import { checkInputs, FormProps, getEntry, getHeader, sendEmail } from '../../../Helpers';
+import { SubmitConfirm, SubmitDone, SubmitError, Submitting } from '../../../controls/SubmitForms';
+import DateInput from '../../../controls/DateInput';
+import House from '../../../controls/House';
+import ModalBottomButtons from '../../../controls/ModalBottomButtons';
+import GetPurchasers from './1-GetPurchasers';
 
 declare var bootstrap: any;
+
+export interface PurchaseFormChildProps {
+    purchaseInfo: PurchaseInfo;
+    setPurchaseInfo: (info: PurchaseInfo) => void;
+}
 
 
 const PurchaseForm = (props: FormProps): ReactElement => {
 
     const [purchaseInfo, setPurchaseInfo] = useState(() => new PurchaseInfo());
     const [missingInfo, setMissingInfo] = useState(false);
-    const [numberOfClients, setNumberOfClients] = useState(0);
+    //const [numberOfClients, setNumberOfClients] = useState(0);
     const [numberOfGuarantors, setNumberOfGuarantors] = useState(0);
     const [submitOk, setSubmitOk] = useState(false);
 
@@ -63,25 +68,40 @@ const PurchaseForm = (props: FormProps): ReactElement => {
         // eslint-disable-next-line
     }, []);
 
-    useEffect(() => {
-        const tempClients = [...purchaseInfo.clientsInfo];
-        if (numberOfClients > tempClients.length) {
-            do {
-                tempClients.push(
-                    new ClientInfo()
-                );
-            } while (numberOfClients > tempClients.length);
-        }
-        else if (numberOfClients < tempClients.length) {
-            do {
-                tempClients.pop();
-            } while (numberOfClients < tempClients.length);
-        }
+    // useEffect(() => {
+    //     const tempClients = [...purchaseInfo.clientsInfo];
+    //     if (numberOfClients > tempClients.length) {
+    //         do {
+    //             tempClients.push(
+    //                 new ClientInfo()
+    //             );
+    //         } while (numberOfClients > tempClients.length);
+    //     }
+    //     else if (numberOfClients < tempClients.length) {
+    //         do {
+    //             tempClients.pop();
+    //         } while (numberOfClients < tempClients.length);
+    //     }
 
-        setPurchaseInfo({ ...purchaseInfo, clientsInfo: tempClients });
+    //     setPurchaseInfo({ ...purchaseInfo, clientsInfo: tempClients });
+
+    //     // eslint-disable-next-line
+    // }, [numberOfClients]);
+
+    useEffect(() => {
+        if (purchaseInfo.forCompany) {
+            const temp: ClientInfo[] = [];
+            temp.push(new ClientInfo());
+            setPurchaseInfo({ ...purchaseInfo, clientsInfo: temp });
+            //setNumberOfSellers(1);
+        }
+        else {
+            setPurchaseInfo({ ...purchaseInfo, clientsInfo: [] });
+            //setNumberOfSellers(0);
+        }
 
         // eslint-disable-next-line
-    }, [numberOfClients]);
+    }, [purchaseInfo.forCompany]);
 
     useEffect(() => {
         const tempGuarantors = [...purchaseInfo.guarantorsInfo];
@@ -175,140 +195,10 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                 <div className='container'>
                                     {
                                         currentPage === 'GET_PURCHASERS' &&
-                                        <>
-                                            <div className='row'>
-                                                <div className='col mb-3'>
-                                                    <h6>
-                                                        Purchaser Information
-                                                    </h6>
-                                                </div>
-                                            </div>
-
-                                            <div className='row align-items-center'>
-                                                <div className='col col-5 mb-3'>
-                                                    <h6>
-                                                        How many purchasers are there?
-                                                    </h6>
-                                                </div>
-
-                                                <div className='col col-7 mb-3'>
-                                                    <select className='form-select p-3' aria-label='Purchasers'
-                                                        value={numberOfClients}
-                                                        onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                                                            if (e && e.target && e.target.value) {
-                                                                setNumberOfClients(parseInt(e.target.value));
-                                                            }
-                                                        }}>
-                                                        <option value='0'>Please choose</option>
-                                                        <option value='1'>1</option>
-                                                        <option value='2'>2</option>
-                                                        <option value='3'>3</option>
-                                                        <option value='4'>4</option>
-                                                        <option value='5'>5</option>
-                                                        <option value='6'>6</option>
-                                                    </select>
-                                                    <div className='d-flex flex-nowrap pt-2'>
-                                                        <input type='checkbox' id='iscompany' checked={purchaseInfo.forCompany}
-                                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                setPurchaseInfo({ ...purchaseInfo, forCompany: e.target.checked });
-
-                                                                if (e.target.checked) {
-                                                                    setNumberOfClients(1);
-                                                                }
-                                                                else {
-                                                                    setNumberOfClients(0);
-                                                                }
-                                                            }} />
-                                                        <label htmlFor='iscompany' className='ps-2'>
-                                                            This is for a company
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {
-                                                purchaseInfo.forCompany &&
-                                                <>
-                                                    <div className='row'>
-                                                        <div className='col mb-1 mt-4'>
-                                                            <p className='mb-4'>
-                                                                If this purchase involves a corporation, a trustee of a trust or a partner of a
-                                                                partnership, please advise our office immediately. Additional fees and disbursements will apply.
-                                                            </p>
-                                                            <h6>
-                                                                Please fill in company name, incorporation number, and signatory. Note that you will be contacted
-                                                                for additional information such as minutes books and company share registry.
-                                                            </h6>
-                                                        </div>
-                                                    </div>
-
-
-                                                    <div className='row'>
-
-                                                        <div className='col mb-3'>
-                                                            <div className='form-floating mb-0'>
-                                                                <input type='text' className='form-control' id='companyname' placeholder='Company name'
-                                                                    value={purchaseInfo.companyName}
-                                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                        setPurchaseInfo({ ...purchaseInfo, companyName: e.target.value });
-                                                                    }}
-                                                                />
-                                                                <label htmlFor='companyname'>
-                                                                    Company name (required)
-                                                                </label>
-                                                            </div>
-                                                        </div>
-
-                                                        <div className='col mb-3'>
-                                                            <div className='form-floating mb-0'>
-                                                                <input type='text' className='form-control' id='incorporationnumber' placeholder='Incorporation #'
-                                                                    value={purchaseInfo.incorporationNumber}
-                                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                                        setPurchaseInfo({ ...purchaseInfo, incorporationNumber: e.target.value });
-                                                                    }}
-                                                                />
-                                                                <label htmlFor='floatingInput'>
-                                                                    Incorporation # (required)
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                </>
-                                            }
-
-                                            {
-                                                numberOfClients > 0 &&
-                                                <>
-                                                    {
-                                                        purchaseInfo.clientsInfo.map((c, i) => {
-                                                            return (
-                                                                <Client text={purchaseInfo.forCompany ? 'Signatory' : 'Purchaser'}
-                                                                    num={i}
-                                                                    key={c.id}
-                                                                    clientInfo={purchaseInfo.clientsInfo[i]}
-                                                                    client1Info={purchaseInfo.clientsInfo.length > 1 ? purchaseInfo.clientsInfo[0] : null}
-                                                                    company={purchaseInfo.forCompany}
-                                                                    updated={(c: ClientInfo, idx: number) => {
-                                                                        const tempClients: ClientInfo[] = [];
-                                                                        for (let t = 0; t < purchaseInfo.clientsInfo.length; t++) {
-                                                                            if (t === idx) {
-                                                                                tempClients.push(c);
-                                                                            }
-                                                                            else {
-                                                                                tempClients.push(purchaseInfo.clientsInfo[t]);
-                                                                            }
-                                                                        }
-                                                                        setPurchaseInfo({ ...purchaseInfo, clientsInfo: tempClients });
-                                                                    }}
-                                                                />
-                                                            );
-                                                        })
-                                                    }
-
-                                                </>
-                                            }
-                                        </>
+                                        <GetPurchasers
+                                            purchaseInfo={purchaseInfo}
+                                            setPurchaseInfo={(info) => setPurchaseInfo(info)}
+                                        />
                                     }
 
                                     {
@@ -1412,7 +1302,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                     </div>
                     <div className='modal-footer'>
                         {
-                            (currentPage === 'GET_PURCHASERS' && (purchaseInfo.forCompany || numberOfClients !== 0)) &&
+                            (currentPage === 'GET_PURCHASERS' && (purchaseInfo.forCompany || purchaseInfo.clientsInfo.length !== 0)) &&
 
                             <ModalBottomButtons
                                 showError={missingInfo}
