@@ -1,5 +1,4 @@
 import React, { ChangeEvent, Fragment, ReactElement, useEffect, useState } from 'react';
-import Client from '../../../controls/Client';
 import { ClientInfo, GuarantorInfo, PurchaseInfo } from '../../../ClassesInterfaces';
 import Guarantor from '../../../Guarantor';
 
