@@ -1,13 +1,13 @@
 import React, { ChangeEvent, Fragment, ReactElement, useEffect, useState } from 'react';
-import { ClientInfo, GuarantorInfo, PurchaseInfo } from '../../../ClassesInterfaces';
-import Guarantor from '../../../Guarantor';
+import { ClientInfo, GuarantorInfo, PurchaseInfo } from '../../ClassesInterfaces';
+import Guarantor from '../../Guarantor';
 
-import CircleBullet from '../../../controls/CircleBullet';
-import { checkInputs, FormProps, getEntry, getHeader, sendEmail } from '../../../Helpers';
-import { SubmitConfirm, SubmitDone, SubmitError, Submitting } from '../../../controls/SubmitForms';
-import DateInput from '../../../controls/DateInput';
-import House from '../../../controls/House';
-import ModalBottomButtons from '../../../controls/ModalBottomButtons';
+import CircleBullet from '../../controls/CircleBullet';
+import { checkInputs, FormProps, getEntry, getHeader, sendEmail } from '../../Helpers';
+import { SubmitConfirm, SubmitDone, SubmitError, Submitting } from '../../controls/SubmitForms';
+import DateInput from '../../controls/DateInput';
+import House from '../../controls/House';
+import ModalBottomButtons from '../../controls/ModalBottomButtons';
 import GetPurchasers from './1-GetPurchasers';
 
 declare var bootstrap: any;
@@ -366,7 +366,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                             <div className='row'>
                                                 <div className='col mb-3'>
                                                     <div className='form-floating mb-0'>
-                                                        <input type='text' className='form-control is-required' id='purchasepostalcode' placeholder='Postal code'
+                                                        <input type='text' className='form-control' id='purchasepostalcode' placeholder='Postal code'
                                                             value={purchaseInfo.postalCode}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 setPurchaseInfo({ ...purchaseInfo, postalCode: e.target.value });
@@ -1398,7 +1398,7 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
             output.push(getEntry('Full Legal Name', client.fullLegalName));
             output.push(getEntry('Phone Number', client.phoneNumber));
             output.push(getEntry('Email', client.emailAddress));
-            output.push(getEntry('Date of Birth', client.dateOfBirth.toDateString() === (new Date()).toDateString()
+            output.push(getEntry('Date of Birth', !client.dateOfBirth
                 ? ''
                 : client.dateOfBirth.toISOString().split('T')[0]));
             output.push(getEntry('Social Insurance Number', client.sinViaPhone ? 'TO BE PROVIDED VIA PHONE' : client.socialInsNumber, true));

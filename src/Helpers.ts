@@ -52,7 +52,8 @@ export const sendEmail = async (formTitle: string, messageBody: string): Promise
     console.log(formTitle, sendResult);
     return Promise.resolve(sendResult.status);
 
-    //return Promise.resolve(200);
+    // console.log(newMessageBody);
+    // return Promise.resolve(200);
 }
 
 export const getCountries = (lang = 'en') => {
@@ -111,6 +112,7 @@ export const checkInputs = (): boolean => {
     const inputs = document.querySelectorAll('.is-required');
     if (inputs) {
         inputs.forEach((input) => {
+
             if (!(input as HTMLInputElement).value) {
                 (input as HTMLInputElement).classList.add('is-invalid');
                 okToGo = false;

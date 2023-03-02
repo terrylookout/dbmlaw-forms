@@ -252,14 +252,14 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                                 <>
 
                                                     <p>
-                                                        ****THE PERSON(S) LISTED MUST BE THE
-                                                        SAME PERSON(S) ON YOUR CONTRACT OF PURCHASE AND
-                                                        SALE
+                                                        <b>****THE PERSON(S) LISTED MUST BE THE
+                                                            SAME PERSON(S) ON YOUR CONTRACT OF PURCHASE AND
+                                                            SALE</b>
                                                     </p>
 
                                                     <p>
-                                                        ****If the person(s) you list are different from the person(s) on
-                                                        your contract, please contact the sales office immediately to execute
+                                                        <b>****If the person(s) you list are different from the person(s) on
+                                                            your contract, please contact the sales office immediately</b> to execute
                                                         the appropriate assignment documents and forward our offices
                                                         copies upon execution; If the lawyers have to be involved in the
                                                         assignment, please be advised that extra fees will apply
@@ -532,7 +532,7 @@ const ProjectPurchaseForm = (props: FormProps): ReactElement => {
                                             <div className='row'>
                                                 <div className='col mb-3'>
                                                     <div className='form-floating mb-0'>
-                                                        <input type='text' className='form-control is-required' id='purchasepostalcode' placeholder='Postal code'
+                                                        <input type='text' className='form-control' id='purchasepostalcode' placeholder='Postal code'
                                                             value={purchaseInfo.postalCode}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 setPurchaseInfo({ ...purchaseInfo, postalCode: e.target.value });
@@ -1672,7 +1672,7 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
             output.push(getEntry('Full Legal Name', client.fullLegalName));
             output.push(getEntry('Phone Number', client.phoneNumber));
             output.push(getEntry('Email', client.emailAddress));
-            output.push(getEntry('Date of Birth', client.dateOfBirth.toDateString() === (new Date()).toDateString()
+            output.push(getEntry('Date of Birth', !client.dateOfBirth
                 ? ''
                 : client.dateOfBirth.toISOString().split('T')[0]));
             output.push(getEntry('Social Insurance Number', client.sinViaPhone ? 'TO BE PROVIDED VIA PHONE' : client.socialInsNumber, true));

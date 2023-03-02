@@ -304,7 +304,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                             <div className='row'>
                                                 <div className="col mb-3">
                                                     <div className='form-floating mb-0'>
-                                                        <input type='text' className='form-control' id='sellingpostalcode' placeholder='Postal code'
+                                                        <input type='text' className='form-control is-required' id='sellingpostalcode' placeholder='Postal code'
                                                             value={refinanceInfo.postalCode}
                                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                                 setRefinanceInfo({ ...refinanceInfo, postalCode: e.target.value });
@@ -1425,7 +1425,7 @@ const getOutput = (refinanceInfo: RefinanceInfo): string => {
             output.push(getEntry('Full Legal Name', client.fullLegalName));
             output.push(getEntry('Phone Number', client.phoneNumber));
             output.push(getEntry('Email', client.emailAddress));
-            output.push(getEntry('Date of Birth', client.dateOfBirth.toDateString() === (new Date()).toDateString()
+            output.push(getEntry('Date of Birth', !client.dateOfBirth
                 ? ''
                 : client.dateOfBirth.toISOString().split('T')[0]));
             output.push(getEntry('Social Insurance Number', client.sinViaPhone ? 'TO BE PROVIDED VIA PHONE' : client.socialInsNumber, true));

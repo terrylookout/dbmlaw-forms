@@ -20,7 +20,7 @@ export class ClientInfo {
     public phoneNumber: string;
 
     public emailAddress: string;
-    public dateOfBirth: Date;
+    public dateOfBirth: Date | null;
     public socialInsNumber: string;
     public sinViaPhone: boolean;
 
@@ -77,7 +77,7 @@ export class ClientInfo {
         this.phoneNumber = '';
 
         this.emailAddress = '';
-        this.dateOfBirth = new Date();
+        this.dateOfBirth = null;
         this.socialInsNumber = '';
         this.sinViaPhone = false;
         this.addressSameAsProperty = '';

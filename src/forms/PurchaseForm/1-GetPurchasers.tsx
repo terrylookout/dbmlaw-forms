@@ -1,6 +1,6 @@
 import { ChangeEvent, ReactElement } from "react";
-import { ClientInfo } from "../../../ClassesInterfaces";
-import Client from "../../../controls/Client";
+import { ClientInfo } from "../../ClassesInterfaces";
+import Client from "../../controls/Client";
 import { PurchaseFormChildProps } from "./PurchaseForm";
 
 
