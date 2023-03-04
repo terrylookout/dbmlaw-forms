@@ -305,8 +305,8 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
 
                     <div className="row">
                         <div className="col mb-3">
-                            <div className='form-floating mb-0 is-required'>
-                                <input type='text' className='form-control' id='mailingpostalcode' placeholder='Postal code'
+                            <div className='form-floating mb-0'>
+                                <input type='text' className='form-control is-required' id='mailingpostalcode' placeholder='Postal code'
                                     value={clientInfo.mailingPostalCode}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         setClientInfo({ ...clientInfo, mailingPostalCode: e.target.value });
@@ -325,7 +325,7 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
 
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <select className='form-control is-required' id='mailingcountry' placeholder='Country'
+                                <select className='form-control' id='mailingcountry' placeholder='Country'
                                     value={clientInfo.mailingCountry}
                                     onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                                         setClientInfo({ ...clientInfo, mailingCountry: e.target.value });
@@ -628,7 +628,7 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
 
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <select className='form-control is-required' id='employercountry' placeholder='Country'
+                                <select className='form-control' id='employercountry' placeholder='Country'
                                     value={clientInfo.employerCountry}
                                     onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                                         setClientInfo({ ...clientInfo, employerCountry: e.target.value });
