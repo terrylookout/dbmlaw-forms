@@ -1,37 +1,36 @@
 import { ChangeEvent, ReactElement } from "react";
 import { ClientInfo } from "../../ClassesInterfaces";
-import Client from "../../controls/Client";
-import { PurchaseFormChildProps } from "./PurchaseForm";
+import Seller from "../../controls/Seller";
+import { SalesChildProps } from ".";
 
-
-const GetPurchasers = (props: PurchaseFormChildProps): ReactElement => {
+const SalesGetSellers = (props: SalesChildProps): ReactElement => {
 
     return (
+
         <>
-            <div className='row'>
-                <div className='col mb-3'>
+            <div className="row">
+                <div className="col mb-3">
                     <h6>
-                        Purchaser Information
+                        Seller Information
                     </h6>
                 </div>
             </div>
 
-            <div className='row align-items-center'>
-                <div className='col col-5 mb-3'>
+            <div className="row align-items-center">
+                <div className="col mb-3">
                     <h6>
-                        How many purchasers are there?
+                        How many people on title for the property being sold?
                     </h6>
                 </div>
 
-                <div className='col col-7 mb-3'>
-                    <select className='form-select p-3' aria-label='Purchasers'
-                        value={props.purchaseInfo.clientsInfo.length}
-                        disabled={props.purchaseInfo.forCompany}
+                <div className="col col-7 mb-3">
+                    <select className="form-select p-3" aria-label="Sellers"
+                        disabled={props.saleInfo.forCompany}
+                        value={props.saleInfo.clientsInfo.length}
                         onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                             if (e && e.target && e.target.value) {
-
                                 const num = parseInt(e.target.value);
-                                const temp = [...props.purchaseInfo.clientsInfo];
+                                const temp = [...props.saleInfo.clientsInfo];
 
                                 if (num > temp.length - 1) {
                                     while (num > temp.length) {
@@ -42,23 +41,23 @@ const GetPurchasers = (props: PurchaseFormChildProps): ReactElement => {
                                         temp.pop();
                                     }
                                 }
-                                props.setPurchaseInfo({ ...props.purchaseInfo, clientsInfo: temp });
+                                props.setSaleInfo({ ...props.saleInfo, clientsInfo: temp });
                             }
                         }}>
-                        <option value='0'>Please choose</option>
-                        <option value='1'>1</option>
-                        <option value='2'>2</option>
-                        <option value='3'>3</option>
-                        <option value='4'>4</option>
-                        <option value='5'>5</option>
-                        <option value='6'>6</option>
+                        <option value='0'>Please choose...</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
                     </select>
                     <div className='d-flex flex-nowrap pt-2'>
-                        <input type='checkbox' id='iscompany' checked={props.purchaseInfo.forCompany}
+                        <input type='checkbox' id='iscompanyseller' checked={props.saleInfo.forCompany}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                props.setPurchaseInfo({ ...props.purchaseInfo, forCompany: e.target.checked });
+                                props.setSaleInfo({ ...props.saleInfo, forCompany: e.target.checked });
                             }} />
-                        <label htmlFor='iscompany' className='ps-2'>
+                        <label htmlFor='iscompanyseller' className='ps-2'>
                             This is for a company
                         </label>
                     </div>
@@ -66,10 +65,10 @@ const GetPurchasers = (props: PurchaseFormChildProps): ReactElement => {
             </div>
 
             {
-                props.purchaseInfo.forCompany &&
+                props.saleInfo.forCompany &&
                 <>
-                    <div className='row'>
-                        <div className='col mb-1 mt-4'>
+                    <div className="row">
+                        <div className="col mb-1 mt-4">
                             <p className='mb-4'>
                                 If this purchase involves a corporation, a trustee of a trust or a partner of a
                                 partnership, please advise our office immediately. Additional fees and disbursements will apply.
@@ -82,31 +81,31 @@ const GetPurchasers = (props: PurchaseFormChildProps): ReactElement => {
                     </div>
 
 
-                    <div className='row'>
+                    <div className="row">
 
-                        <div className='col mb-3'>
+                        <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id='companyname' placeholder='Company name'
-                                    value={props.purchaseInfo.companyName}
+                                <input type='text' className='form-control' id='companynameseller' placeholder='Company name'
+                                    value={props.saleInfo.companyName}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        props.setPurchaseInfo({ ...props.purchaseInfo, companyName: e.target.value });
+                                        props.setSaleInfo({ ...props.saleInfo, companyName: e.target.value });
                                     }}
                                 />
-                                <label htmlFor='companyname'>
+                                <label htmlFor='companynameseller'>
                                     Company name (required)
                                 </label>
                             </div>
                         </div>
 
-                        <div className='col mb-3'>
+                        <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id='incorporationnumber' placeholder='Incorporation #'
-                                    value={props.purchaseInfo.incorporationNumber}
+                                <input type='text' className='form-control' id='incorporationnumberseller' placeholder='Incorporation #'
+                                    value={props.saleInfo.incorporationNumber}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        props.setPurchaseInfo({ ...props.purchaseInfo, incorporationNumber: e.target.value });
+                                        props.setSaleInfo({ ...props.saleInfo, incorporationNumber: e.target.value });
                                     }}
                                 />
-                                <label htmlFor='floatingInput'>
+                                <label htmlFor='incorporationnumberseller'>
                                     Incorporation # (required)
                                 </label>
                             </div>
@@ -117,28 +116,28 @@ const GetPurchasers = (props: PurchaseFormChildProps): ReactElement => {
             }
 
             {
-                props.purchaseInfo.clientsInfo.length > 0 &&
+                props.saleInfo.clientsInfo.length > 0 &&
                 <>
                     {
-                        props.purchaseInfo.clientsInfo.map((c, i) => {
+                        props.saleInfo.clientsInfo.map((c, i) => {
                             return (
-                                <Client text={props.purchaseInfo.forCompany ? 'Signatory' : 'Purchaser'}
+                                <Seller text={props.saleInfo.forCompany ? 'Signatory' : 'Seller'}
                                     num={i}
                                     key={c.id}
-                                    clientInfo={props.purchaseInfo.clientsInfo[i]}
-                                    client1Info={props.purchaseInfo.clientsInfo.length > 1 ? props.purchaseInfo.clientsInfo[0] : null}
-                                    company={props.purchaseInfo.forCompany}
+                                    clientInfo={props.saleInfo.clientsInfo[i]}
+                                    client1Info={props.saleInfo.clientsInfo.length > 1 ? props.saleInfo.clientsInfo[0] : null}
+                                    company={props.saleInfo.forCompany}
                                     updated={(c: ClientInfo, idx: number) => {
                                         const tempClients: ClientInfo[] = [];
-                                        for (let t = 0; t < props.purchaseInfo.clientsInfo.length; t++) {
+                                        for (let t = 0; t < props.saleInfo.clientsInfo.length; t++) {
                                             if (t === idx) {
                                                 tempClients.push(c);
                                             }
                                             else {
-                                                tempClients.push(props.purchaseInfo.clientsInfo[t]);
+                                                tempClients.push(props.saleInfo.clientsInfo[t]);
                                             }
                                         }
-                                        props.setPurchaseInfo({ ...props.purchaseInfo, clientsInfo: tempClients });
+                                        props.setSaleInfo({ ...props.saleInfo, clientsInfo: tempClients });
                                     }}
                                 />
                             );
@@ -148,7 +147,7 @@ const GetPurchasers = (props: PurchaseFormChildProps): ReactElement => {
                 </>
             }
         </>
-    );
-};
+    )
+}
 
-export default GetPurchasers;
+export default SalesGetSellers;

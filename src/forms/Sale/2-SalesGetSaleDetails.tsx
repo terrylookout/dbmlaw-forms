@@ -1,7 +1,7 @@
 import { ChangeEvent, ReactElement } from "react";
 import CircleBullet from "../../controls/CircleBullet";
 import DateInput from "../../controls/DateInput";
-import { SalesChildProps } from "./SaleForm";
+import { SalesChildProps } from ".";
 
 const SalesGetSaleDetails = (props: SalesChildProps): ReactElement => {
 

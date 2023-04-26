@@ -2,11 +2,11 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import './App.css';
 
 import FormButtons from './controls/FormButtons';
-import PurchaseForm from './forms/PurchaseForm/PurchaseForm';
+import PurchaseForm from './forms/Purchase';
 import SaleAndPurchaseForm from './forms/SaleAndPurchaseForm';
-import SaleForm from './forms/SalesForm/SaleForm';
+import SaleForm from './forms/Sale';
 import 'react-day-picker/dist/style.css';
-import RefinanceForm from './forms/RefinanceForm';
+import RefinanceForm from './forms/Refinance/RefinanceForm';
 import ProjectPurchaseForm from './forms/ProjectPurchaseForm';
 import IntroForm from './forms/IntroForm';
 import TopMenu from './controls/TopMenu';

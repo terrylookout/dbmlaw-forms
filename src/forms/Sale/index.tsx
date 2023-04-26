@@ -65,26 +65,6 @@ const SaleForm = (props: FormProps): ReactElement => {
         // eslint-disable-next-line
     }, []);
 
-    // useEffect(() => {
-    //     const tempSellers = [...saleInfo.clientsInfo];
-    //     if (numberOfSellers > tempSellers.length) {
-    //         do {
-    //             tempSellers.push(
-    //                 new ClientInfo()
-    //             );
-    //         } while (numberOfSellers > tempSellers.length);
-    //     }
-    //     else if (numberOfSellers < tempSellers.length) {
-    //         do {
-    //             tempSellers.pop();
-    //         } while (numberOfSellers < tempSellers.length);
-    //     }
-
-    //     setSaleInfo({ ...saleInfo, clientsInfo: tempSellers });
-
-    //     // eslint-disable-next-line
-    // }, [numberOfSellers]);
-
     useEffect(() => {
         if (saleInfo.forCompany) {
             const temp: ClientInfo[] = [];
@@ -114,163 +94,165 @@ const SaleForm = (props: FormProps): ReactElement => {
 
     return (
 
-        <div className="modal fade" id="formModal" tabIndex={-1} aria-labelledby="formModalLabel" aria-hidden="true"
-            data-bs-backdrop="static" data-bs-keyboard="false">
-            <div className={`modal-dialog modal-lg ${(currentPage === 'GET_SELLERS' && saleInfo.clientsInfo.length !== 0)
-                || currentPage === 'GET_SALE_DETAILS'
-                ? 'modal-dialog-centered' : 'modal-near-top'} modal-dialog-scrollable`}>
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h1 className="modal-title fs-5" id="exampleModalLabel">
-                            <House />
+        <>
+            <div className="modal fade" id="formModal" tabIndex={-1} aria-labelledby="formModalLabel" aria-hidden="true"
+                data-bs-backdrop="static" data-bs-keyboard="false">
+                <div className={`modal-dialog modal-lg ${(currentPage === 'GET_SELLERS' && saleInfo.clientsInfo.length !== 0)
+                    || currentPage === 'GET_SALE_DETAILS'
+                    ? 'modal-dialog-centered' : 'modal-near-top'} modal-dialog-scrollable`}>
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h1 className="modal-title fs-5" id="exampleModalLabel">
+                                <House />
+                                {
+                                    currentPage === 'GET_SELLERS' &&
+                                    <span>SALE - Seller Information</span>
+                                }
+                                {
+                                    currentPage === 'GET_SALE_DETAILS' &&
+                                    <span>SALE - Sale Details</span>
+                                }
+
+                                {
+                                    currentPage === 'CONFIRM_SUBMIT' &&
+                                    <span>SALE - Ready to Submit</span>
+                                }
+
+                                {
+                                    currentPage === 'SUBMITTING' &&
+                                    <span>SALE - Please Wait</span>
+                                }
+
+                                {
+                                    currentPage === 'SUBMIT_RESULT' &&
+                                    <span>SALE - Success!</span>
+                                }
+
+                                {
+                                    currentPage === 'SUBMIT_ERROR' &&
+                                    <span>SALE - Error!</span>
+                                }
+
+                            </h1>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
                             {
-                                currentPage === 'GET_SELLERS' &&
-                                <span>SALE - Seller Information</span>
+                                <div className='container'>
+                                    <div className="container">
+
+                                        {
+                                            currentPage === 'GET_SELLERS' &&
+                                            <SalesGetSellers
+                                                saleInfo={saleInfo}
+                                                setSaleInfo={(info) => setSaleInfo(info)}
+                                            />
+                                        }
+
+                                        {
+                                            currentPage === 'GET_SALE_DETAILS' &&
+                                            <SalesGetSaleDetails
+                                                saleInfo={saleInfo}
+                                                setSaleInfo={(info) => setSaleInfo(info)}
+                                            />
+                                        }
+
+                                        {
+                                            currentPage === 'SUBMITTING' &&
+                                            <Submitting />
+                                        }
+
+                                        {
+                                            currentPage === 'SUBMIT_RESULT' &&
+                                            <SubmitDone />
+                                        }
+
+                                        {
+                                            currentPage === 'SUBMIT_ERROR' &&
+                                            <SubmitError onClick={() => submitSaleForm()} />
+                                        }
+
+                                        {
+                                            currentPage === 'CONFIRM_SUBMIT' &&
+                                            <SubmitConfirm
+                                                text='Submit your sale information to Drysdale Bacon McStravick?'
+                                                submitOk={(e) => setSubmitOk(e)}
+                                            />
+                                        }
+                                    </div>
+                                </div>
                             }
+                        </div>
+                        <div className="modal-footer">
+
+                            {
+                                (currentPage === 'GET_SELLERS' && (saleInfo.forCompany || saleInfo.clientsInfo.length !== 0)) &&
+
+                                <ModalBottomButtons
+                                    showError={missingInfo}
+                                    rightButtonText='Next'
+                                    rightButtonClicked={() => {
+                                        if (checkInputs()) {
+                                            setMissingInfo(false);
+                                            setCurrentPage('GET_SALE_DETAILS');
+                                        }
+                                        else {
+                                            setMissingInfo(true);
+                                        }
+                                    }} />
+
+                            }
+
                             {
                                 currentPage === 'GET_SALE_DETAILS' &&
-                                <span>SALE - Sale Details</span>
+
+                                <ModalBottomButtons
+                                    showError={missingInfo}
+                                    leftButtonText='Back to Sellers'
+                                    leftButtonClicked={() => setCurrentPage('GET_SELLERS')}
+                                    rightButtonText='Next'
+                                    rightButtonClicked={() => {
+                                        if (checkInputs()) {
+                                            setMissingInfo(false);
+                                            setCurrentPage('CONFIRM_SUBMIT');
+                                        }
+                                        else {
+                                            setMissingInfo(true);
+                                        }
+
+                                    }} />
+
                             }
 
                             {
                                 currentPage === 'CONFIRM_SUBMIT' &&
-                                <span>SALE - Ready to Submit</span>
-                            }
-
-                            {
-                                currentPage === 'SUBMITTING' &&
-                                <span>SALE - Please Wait</span>
+                                <ModalBottomButtons
+                                    leftButtonText='Go back'
+                                    leftButtonClicked={() => setCurrentPage('GET_SALE_DETAILS')}
+                                    rightButtonText='Submit to DBM'
+                                    rightButtonDisabled={!submitOk}
+                                    rightButtonClicked={() => {
+                                        setCurrentPage('SUBMITTING');
+                                        setTimeout(() => {
+                                            submitSaleForm();
+                                        }, 250);
+                                    }} />
                             }
 
                             {
                                 currentPage === 'SUBMIT_RESULT' &&
-                                <span>SALE - Success!</span>
+
+                                <ModalBottomButtons
+                                    rightButtonText='Finish'
+                                    rightButtonClicked={() => {
+                                        props.dismissed();
+                                    }} />
                             }
-
-                            {
-                                currentPage === 'SUBMIT_ERROR' &&
-                                <span>SALE - Error!</span>
-                            }
-
-                        </h1>
-                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div className="modal-body">
-                        {
-                            <div className='container'>
-                                <div className="container">
-
-                                    {
-                                        currentPage === 'GET_SELLERS' &&
-                                        <SalesGetSellers
-                                            saleInfo={saleInfo}
-                                            setSaleInfo={(info) => setSaleInfo(info)}
-                                        />
-                                    }
-
-                                    {
-                                        currentPage === 'GET_SALE_DETAILS' &&
-                                        <SalesGetSaleDetails
-                                            saleInfo={saleInfo}
-                                            setSaleInfo={(info) => setSaleInfo(info)}
-                                        />
-                                    }
-
-                                    {
-                                        currentPage === 'SUBMITTING' &&
-                                        <Submitting />
-                                    }
-
-                                    {
-                                        currentPage === 'SUBMIT_RESULT' &&
-                                        <SubmitDone />
-                                    }
-
-                                    {
-                                        currentPage === 'SUBMIT_ERROR' &&
-                                        <SubmitError onClick={() => submitSaleForm()} />
-                                    }
-
-                                    {
-                                        currentPage === 'CONFIRM_SUBMIT' &&
-                                        <SubmitConfirm
-                                            text='Submit your sale information to Drysdale Bacon McStravick?'
-                                            submitOk={(e) => setSubmitOk(e)}
-                                        />
-                                    }
-                                </div>
-                            </div>
-                        }
-                    </div>
-                    <div className="modal-footer">
-
-                        {
-                            (currentPage === 'GET_SELLERS' && (saleInfo.forCompany || saleInfo.clientsInfo.length !== 0)) &&
-
-                            <ModalBottomButtons
-                                showError={missingInfo}
-                                rightButtonText='Next'
-                                rightButtonClicked={() => {
-                                    if (checkInputs()) {
-                                        setMissingInfo(false);
-                                        setCurrentPage('GET_SALE_DETAILS');
-                                    }
-                                    else {
-                                        setMissingInfo(true);
-                                    }
-                                }} />
-
-                        }
-
-                        {
-                            currentPage === 'GET_SALE_DETAILS' &&
-
-                            <ModalBottomButtons
-                                showError={missingInfo}
-                                leftButtonText='Back to Sellers'
-                                leftButtonClicked={() => setCurrentPage('GET_SELLERS')}
-                                rightButtonText='Next'
-                                rightButtonClicked={() => {
-                                    if (checkInputs()) {
-                                        setMissingInfo(false);
-                                        setCurrentPage('CONFIRM_SUBMIT');
-                                    }
-                                    else {
-                                        setMissingInfo(true);
-                                    }
-
-                                }} />
-
-                        }
-
-                        {
-                            currentPage === 'CONFIRM_SUBMIT' &&
-                            <ModalBottomButtons
-                                leftButtonText='Go back'
-                                leftButtonClicked={() => setCurrentPage('GET_SALE_DETAILS')}
-                                rightButtonText='Submit to DBM'
-                                rightButtonDisabled={!submitOk}
-                                rightButtonClicked={() => {
-                                    setCurrentPage('SUBMITTING');
-                                    setTimeout(() => {
-                                        submitSaleForm();
-                                    }, 250);
-                                }} />
-                        }
-
-                        {
-                            currentPage === 'SUBMIT_RESULT' &&
-
-                            <ModalBottomButtons
-                                rightButtonText='Finish'
-                                rightButtonClicked={() => {
-                                    props.dismissed();
-                                }} />
-                        }
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 
 };
