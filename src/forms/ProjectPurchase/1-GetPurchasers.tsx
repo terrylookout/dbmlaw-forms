@@ -1,14 +1,15 @@
-import { ChangeEvent, ReactElement } from "react";
-import { ClientInfo } from "../../ClassesInterfaces";
+import { ChangeEvent } from "react";
+import { ProjectPurchaseProps } from ".";
 import Client from "../../controls/Client";
-import { PurchaseFormChildProps } from ".";
+import { ClientInfo } from "../../ClassesInterfaces";
 
 
 const GetPurchasers = ({
+    numberOfClients,
     purchaseInfo,
+    setNumberOfClients,
     setPurchaseInfo,
-}: PurchaseFormChildProps): ReactElement => {
-
+}: ProjectPurchaseProps) => {
     return (
         <>
             <div className='row'>
@@ -28,24 +29,10 @@ const GetPurchasers = ({
 
                 <div className='col col-7 mb-3'>
                     <select className='form-select p-3' aria-label='Purchasers'
-                        value={purchaseInfo.clientsInfo.length}
-                        disabled={purchaseInfo.forCompany}
+                        value={numberOfClients}
                         onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                             if (e && e.target && e.target.value) {
-
-                                const num = parseInt(e.target.value);
-                                const temp = [...purchaseInfo.clientsInfo];
-
-                                if (num > temp.length - 1) {
-                                    while (num > temp.length) {
-                                        temp.push(new ClientInfo());
-                                    }
-                                } else {
-                                    while (num < temp.length) {
-                                        temp.pop();
-                                    }
-                                }
-                                setPurchaseInfo({ ...purchaseInfo, clientsInfo: temp });
+                                setNumberOfClients(parseInt(e.target.value));
                             }
                         }}>
                         <option value='0'>Please choose</option>
@@ -60,6 +47,13 @@ const GetPurchasers = ({
                         <input type='checkbox' id='iscompany' checked={purchaseInfo.forCompany}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setPurchaseInfo({ ...purchaseInfo, forCompany: e.target.checked });
+
+                                if (e.target.checked) {
+                                    setNumberOfClients(1);
+                                }
+                                else {
+                                    setNumberOfClients(0);
+                                }
                             }} />
                         <label htmlFor='iscompany' className='ps-2'>
                             This is for a company
@@ -72,7 +66,7 @@ const GetPurchasers = ({
                 purchaseInfo.forCompany &&
                 <>
                     <div className='row'>
-                        <div className='col mb-1 mt-4'>
+                        <div className='col mb-1 mt-3'>
                             <p className='mb-4'>
                                 If this purchase involves a corporation, a trustee of a trust or a partner of a
                                 partnership, please advise our office immediately. Additional fees and disbursements will apply.
@@ -81,9 +75,9 @@ const GetPurchasers = ({
                                 Please fill in company name, incorporation number, and signatory. Note that you will be contacted
                                 for additional information such as minutes books and company share registry.
                             </h6>
+
                         </div>
                     </div>
-
 
                     <div className='row'>
 
@@ -120,8 +114,29 @@ const GetPurchasers = ({
             }
 
             {
-                purchaseInfo.clientsInfo.length > 0 &&
+                numberOfClients > 0 &&
                 <>
+
+                    <p>
+                        <b>****THE PERSON(S) LISTED MUST BE THE
+                            SAME PERSON(S) ON YOUR CONTRACT OF PURCHASE AND
+                            SALE</b>
+                    </p>
+
+                    <p>
+                        <b>****If the person(s) you list are different from the person(s) on
+                            your contract, please contact the sales office immediately</b> to execute
+                        the appropriate assignment documents and forward our offices
+                        copies upon execution; If the lawyers have to be involved in the
+                        assignment, please be advised that extra fees will apply
+                    </p>
+
+                    <p>
+                        Having the
+                        right to add/remove person(s) to a contract is NOT sufficient—you
+                        will still need to get an assignment done
+                    </p>
+
                     {
                         purchaseInfo.clientsInfo.map((c, i) => {
                             return (

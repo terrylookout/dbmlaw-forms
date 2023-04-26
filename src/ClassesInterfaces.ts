@@ -36,6 +36,7 @@ export class ClientInfo {
 
     public employment: 'EMPLOYED' | 'RETIRED' | 'STUDENT' | 'OTHER' | 'TBF';
     public occupation: string;
+    public retiredPreviousOccupation: string;
     public employerName: string;
     public employerPhone: string;
     public employerStreet1: string;
@@ -96,6 +97,7 @@ export class ClientInfo {
         this.employment = 'TBF';
 
         this.occupation = '';
+        this.retiredPreviousOccupation = '';
         this.employerName = '';
         this.employerPhone = '';
         this.employerStreet1 = '';

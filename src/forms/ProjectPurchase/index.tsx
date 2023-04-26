@@ -1,40 +1,43 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import { ClientInfo, GuarantorInfo, PurchaseInfo } from '../../ClassesInterfaces';
+import { ClientInfo, PurchaseInfo } from '../../ClassesInterfaces';
 import { checkInputs, FormProps, getEntry, getHeader, sendEmail } from '../../Helpers';
 import { SubmitConfirm, SubmitDone, SubmitError, Submitting } from '../../controls/SubmitForms';
 import House from '../../controls/House';
 import ModalBottomButtons from '../../controls/ModalBottomButtons';
 import GetPurchasers from './1-GetPurchasers';
-import GetPropertyInfo from './2-GetPropertyInfo';
+import PropertyInfo from './2-PropertyInfo';
 
 declare var bootstrap: any;
 
-export interface PurchaseFormChildProps {
+export interface ProjectPurchaseProps {
+    numberOfClients: number;
+    setNumberOfClients: (info: number) => void;
     purchaseInfo: PurchaseInfo;
     setPurchaseInfo: (info: PurchaseInfo) => void;
 }
 
-
-const PurchaseForm = (props: FormProps): ReactElement => {
+const ProjectPurchaseForm = (props: FormProps): ReactElement => {
 
     const [purchaseInfo, setPurchaseInfo] = useState(() => new PurchaseInfo());
     const [missingInfo, setMissingInfo] = useState(false);
-    //const [numberOfClients, setNumberOfClients] = useState(0);
-    const [numberOfGuarantors, setNumberOfGuarantors] = useState(0);
+    const [numberOfClients, setNumberOfClients] = useState(0);
     const [submitOk, setSubmitOk] = useState(false);
 
     const [currentPage, setCurrentPage] = useState<
-        'GET_PURCHASERS' | 'PROPERTY_INFO' | 'CONFIRM_SUBMIT' | 'SUBMITTING' | 'SUBMIT_RESULT' | 'SUBMIT_ERROR'
+        'GET_PURCHASERS' | 'PROPERTY_INFO' | 'CONFIRM_SUBMIT' | 'SUBMITTING' | 'SUBMIT_RESULT' |
+        'SUBMIT_ERROR'
     >('GET_PURCHASERS');
 
     const [sendResult, setSendResult] = useState(-1);
 
     const submitPurchaseForm = async () => {
 
+        //        console.log(getOutput(purchaseInfo));
+
         setCurrentPage('SUBMITTING');
         setSendResult(-1);
         setTimeout(async () => {
-            const result = await sendEmail('Purchase submission', getOutput(purchaseInfo));
+            const result = await sendEmail('Project Purchase submission', getOutput(purchaseInfo));
             setSendResult(result);
         }, 250);
     };
@@ -61,75 +64,32 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                 });
             }
         }
+
         // eslint-disable-next-line
     }, []);
 
-    // useEffect(() => {
-    //     const tempClients = [...purchaseInfo.clientsInfo];
-    //     if (numberOfClients > tempClients.length) {
-    //         do {
-    //             tempClients.push(
-    //                 new ClientInfo()
-    //             );
-    //         } while (numberOfClients > tempClients.length);
-    //     }
-    //     else if (numberOfClients < tempClients.length) {
-    //         do {
-    //             tempClients.pop();
-    //         } while (numberOfClients < tempClients.length);
-    //     }
-
-    //     setPurchaseInfo({ ...purchaseInfo, clientsInfo: tempClients });
-
-    //     // eslint-disable-next-line
-    // }, [numberOfClients]);
-
     useEffect(() => {
-        if (purchaseInfo.forCompany) {
-            const temp: ClientInfo[] = [];
-            temp.push(new ClientInfo());
-            setPurchaseInfo({ ...purchaseInfo, clientsInfo: temp });
-            //setNumberOfSellers(1);
-        }
-        else {
-            setPurchaseInfo({ ...purchaseInfo, clientsInfo: [] });
-            //setNumberOfSellers(0);
-        }
-
-        // eslint-disable-next-line
-    }, [purchaseInfo.forCompany]);
-
-    useEffect(() => {
-        const tempGuarantors = [...purchaseInfo.guarantorsInfo];
-        if (numberOfGuarantors > tempGuarantors.length) {
+        const tempClients = [...purchaseInfo.clientsInfo];
+        if (numberOfClients > tempClients.length) {
             do {
-                tempGuarantors.push(
-                    new GuarantorInfo()
+                tempClients.push(
+                    new ClientInfo()
                 );
-            } while (numberOfGuarantors > tempGuarantors.length);
+            } while (numberOfClients > tempClients.length);
         }
-        else if (numberOfGuarantors < tempGuarantors.length) {
+        else if (numberOfClients < tempClients.length) {
             do {
-                tempGuarantors.pop();
-            } while (numberOfGuarantors < tempGuarantors.length);
+                tempClients.pop();
+            } while (numberOfClients < tempClients.length);
         }
 
-        setPurchaseInfo({ ...purchaseInfo, guarantorsInfo: tempGuarantors });
+        setPurchaseInfo({ ...purchaseInfo, clientsInfo: tempClients });
 
         // eslint-disable-next-line
-    }, [numberOfGuarantors]);
-
-    // useEffect(() => {
-    //     if (purchaseInfo.forCompany) {
-    //         setNumberOfClients(1);
-    //     }
-    //     else {
-    //         setNumberOfClients(0);
-    //     }
-
-    // }, [purchaseInfo.forCompany]);
+    }, [numberOfClients]);
 
     useEffect(() => {
+        //
         setSubmitOk(false);
         if (currentPage === 'PROPERTY_INFO') {
             const top = document.querySelector('.top-second-page');
@@ -150,37 +110,35 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                     <div className='modal-header'>
                         <h1 className='modal-title fs-5' id='exampleModalLabel'>
                             <House />
-
                             {
                                 currentPage === 'GET_PURCHASERS' &&
-                                <span>PURCHASE - Purchaser Information</span>
+                                <span>PROJECT PURCHASE - Purchaser Information</span>
                             }
 
                             {
                                 currentPage === 'PROPERTY_INFO' &&
-                                <span>PURCHASE - Property Details</span>
+                                <span>PROJECT PURCHASE - Property Details</span>
                             }
 
                             {
                                 currentPage === 'CONFIRM_SUBMIT' &&
-                                <span>PURCHASE - Ready to Submit</span>
+                                <span>PROJECT PURCHASE - Ready to Submit</span>
                             }
 
                             {
                                 currentPage === 'SUBMITTING' &&
-                                <span>PURCHASE - Please Wait</span>
+                                <span>PROJECT PURCHASE - Please Wait</span>
                             }
 
                             {
                                 currentPage === 'SUBMIT_RESULT' &&
-                                <span>PURCHASE - Success!</span>
+                                <span>PROJECT PURCHASE - Success!</span>
                             }
 
                             {
                                 currentPage === 'SUBMIT_ERROR' &&
-                                <span>PURCHASE - Error!</span>
+                                <span>PROJECT PURCHASE - Error!</span>
                             }
-
 
                         </h1>
                         <button type='button' className='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
@@ -189,21 +147,24 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                         {
                             <div className='container'>
                                 <div className='container'>
+
                                     {
                                         currentPage === 'GET_PURCHASERS' &&
                                         <GetPurchasers
+                                            numberOfClients={numberOfClients}
                                             purchaseInfo={purchaseInfo}
-                                            setPurchaseInfo={(info) => setPurchaseInfo(info)}
+                                            setNumberOfClients={setNumberOfClients}
+                                            setPurchaseInfo={setPurchaseInfo}
                                         />
                                     }
 
                                     {
                                         currentPage === 'PROPERTY_INFO' &&
-                                        <GetPropertyInfo
+                                        <PropertyInfo
+                                            numberOfClients={numberOfClients}
                                             purchaseInfo={purchaseInfo}
-                                            numberOfGuarantors={numberOfGuarantors}
-                                            setPurchaseInfo={(info) => setPurchaseInfo(info)}
-                                            setNumberOfGuarantors={(info) => setNumberOfGuarantors(info)}
+                                            setNumberOfClients={setNumberOfClients}
+                                            setPurchaseInfo={setPurchaseInfo}
                                         />
                                     }
 
@@ -226,7 +187,9 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                         currentPage === 'CONFIRM_SUBMIT' &&
                                         <SubmitConfirm
                                             text='Submit your purchase information to Drysdale Bacon McStravick?'
-                                            submitOk={(e) => setSubmitOk(e)}
+                                            submitOk={(e) => {
+                                                setSubmitOk(e);
+                                            }}
                                         />
                                     }
                                 </div>
@@ -234,8 +197,9 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                         }
                     </div>
                     <div className='modal-footer'>
+
                         {
-                            (currentPage === 'GET_PURCHASERS' && (purchaseInfo.forCompany || purchaseInfo.clientsInfo.length !== 0)) &&
+                            (currentPage === 'GET_PURCHASERS' && (purchaseInfo.forCompany || numberOfClients !== 0)) &&
 
                             <ModalBottomButtons
                                 showError={missingInfo}
@@ -254,12 +218,11 @@ const PurchaseForm = (props: FormProps): ReactElement => {
 
                         {
                             currentPage === 'PROPERTY_INFO' &&
-
                             <ModalBottomButtons
                                 showError={missingInfo}
                                 leftButtonText='Back to Purchasers'
                                 leftButtonClicked={() => setCurrentPage('GET_PURCHASERS')}
-                                rightButtonText='Submit'
+                                rightButtonText='Next'
                                 rightButtonClicked={() => {
                                     if (checkInputs()) {
                                         setCurrentPage('CONFIRM_SUBMIT');
@@ -281,13 +244,14 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                                 rightButtonDisabled={!submitOk}
                                 rightButtonClicked={() => {
                                     setCurrentPage('SUBMITTING');
-                                    submitPurchaseForm();
+                                    setTimeout(() => {
+                                        submitPurchaseForm();
+                                    }, 250);
                                 }} />
                         }
 
                         {
                             currentPage === 'SUBMIT_RESULT' &&
-
                             <ModalBottomButtons
                                 rightButtonText='Finish'
                                 rightButtonClicked={() => {
@@ -297,7 +261,7 @@ const PurchaseForm = (props: FormProps): ReactElement => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     )
 
 };
@@ -306,7 +270,7 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
 
     const output: string[] = [];
 
-    output.push('<html><b>PURCHASE</b><br />');
+    output.push('<html><b>PROJECT PURCHASE</b><br />');
     output.push('<table>');
 
     if (purchaseInfo.forCompany) {
@@ -346,9 +310,6 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
             output.push(getEntry('Postal Code', client.mailingPostalCode, true));
 
             output.push(getEntry('Occupation', client.occupation));
-            if (client.employment === 'RETIRED') {
-                output.push(getEntry('Previous Occupation', client.retiredPreviousOccupation));
-            }
             output.push(getEntry('Employer Name', client.employerName));
             output.push(getEntry('Employer Phone Number', client.employerPhone));
             output.push(getEntry('Employer Street 1', client.employerStreet1));
@@ -379,7 +340,6 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
 
             output.push(getEntry('BC Resident 1 yr+', client.hasBeenBCResidentForAYear));
             output.push(getEntry('First Time Home Buyer', client.isFirstTimeHomeBuyer));
-
             output.push(getEntry('Will live in property within 3 months', client.willBeLivingInPropertyWithinThreeMonths));
             output.push(getEntry('Has owned principal residence elsewhere', client.hasOwnedPrincipalResidenceSomewhere, true));
 
@@ -404,11 +364,17 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
 
     //output.push(getEntry('Completion Date', purchaseInfo.completionDate.toISOString().split('T')[0]));
     output.push(getEntry('Completion Date', purchaseInfo.completionDateTBD ? 'TBD' : purchaseInfo.completionDate ? purchaseInfo.completionDate.toISOString().split('T')[0] : ''));
-    output.push(getEntry('Purchase Price (CAD)', purchaseInfo.purchasePrice.toString()));
+    output.push(getEntry('Purchase Price (CAD)', purchaseInfo.purchasePrice));
+    output.push(getEntry('Deposit Paid To Developer (CAD)', purchaseInfo.depositPaid, true));
+
+    output.push(getEntry('Unit #', purchaseInfo.unitNumber));
+    output.push(getEntry('Strata Lot', purchaseInfo.strataLot));
     output.push(getEntry('Street 1', purchaseInfo.street1));
     output.push(getEntry('Street 2', purchaseInfo.street2));
     output.push(getEntry('City', purchaseInfo.city));
     output.push(getEntry('Postal Code', purchaseInfo.postalCode, true));
+
+    output.push(getEntry('Upgrades or Extras', purchaseInfo.upgradesOrExtras, true));
 
     let joinType = '';
     if (purchaseInfo.clientsInfo.length === 1) {
@@ -438,7 +404,10 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
         output.push(getEntry('', '', true));
     }
 
-    output.push(getEntry('Building New or Used', purchaseInfo.buildingNewUsed, true));
+    if (purchaseInfo.relativeLivingInstead === 'YES') {
+        output.push(getEntry('Other Relative Residing Instead', purchaseInfo.relativeLivingInsteadName));
+        output.push(getEntry('Other Relative', purchaseInfo.relativeLivingInsteadRelationship, true));
+    }
 
     output.push(getEntry('Realtor Name', purchaseInfo.realtorName));
     output.push(getEntry('Realtor Phone Number', purchaseInfo.realtorPhone, true));
@@ -446,16 +415,6 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
     output.push(getEntry('Lender Name', purchaseInfo.lenderName));
     output.push(getEntry('Broker or Banker Name', purchaseInfo.brokerBankerName));
     output.push(getEntry('Broker or Banker Phone Number', purchaseInfo.brokerBankerPhone, true));
-
-    output.push(getEntry('Strata Mgmt Company', purchaseInfo.strataName, true));
-
-    output.push(getEntry('Parking Stall(s)', purchaseInfo.parkingStallNumbers));
-    output.push(getEntry('Storage Locker(s)', purchaseInfo.storageLockerNumbers, true));
-
-    output.push(getEntry('House Insurance Agent Name', purchaseInfo.insuranceAgentName));
-    output.push(getEntry('House Insurance Agent Phone Number', purchaseInfo.insuranceAgentPhone, true));
-
-    output.push(getEntry('Portion of Property to be Rented Out', purchaseInfo.portionPropertyRentedOut, true));
 
     let fundsSource = '';
     switch (purchaseInfo.fundsSource) {
@@ -498,15 +457,16 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
         output.push(getEntry('Chequing/Savings Source', purchaseInfo.fundsChequingSavingsSource, true));
     }
 
-    for (let i = 0; i < purchaseInfo.guarantorsInfo.length; i++) {
+    output.push(getEntry('Buying Through Assignment', purchaseInfo.buyingThroughAssignment));
 
-        const guarantor = purchaseInfo.guarantorsInfo[i];
-
-        output.push(getEntry(`GUARANTOR ${(i + 1).toString()}`, ''));
-        output.push(getEntry('Full Legal Name', guarantor.fullLegalName));
-        output.push(getEntry('Phone Number', guarantor.phoneNumber));
-        output.push(getEntry('Email', guarantor.emailAddress));
-        output.push(getEntry('Relationship', guarantor.relationship, true));
+    if (purchaseInfo.buyingThroughAssignment === 'YES') {
+        output.push(getEntry('Assignor is Canadian Resident', purchaseInfo.assignorResidentCanada));
+        output.push(getEntry('Assignor Generating Profit', purchaseInfo.assignorGeneratingProfit));
+        output.push(getEntry('Moneys Disbursed By', purchaseInfo.moneysDisbursed,
+            purchaseInfo.moneysDisbursed !== 'LAWYERS' ? true : false));
+        if (purchaseInfo.moneysDisbursed === 'LAWYERS') {
+            output.push(getEntry('Lawyer for Assignor', purchaseInfo.lawyerForAssignor, true));
+        }
     }
 
     output.push(getEntry('Appointment Location Preference', purchaseInfo.apptLocationPreference, true));
@@ -520,4 +480,4 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
 }
 
 
-export default PurchaseForm;
+export default ProjectPurchaseForm;

@@ -3,11 +3,11 @@ import './App.css';
 
 import FormButtons from './controls/FormButtons';
 import PurchaseForm from './forms/Purchase';
-import SaleAndPurchaseForm from './forms/SaleAndPurchaseForm';
+import SaleAndPurchaseForm from './forms/SaleAndPurchase';
 import SaleForm from './forms/Sale';
 import 'react-day-picker/dist/style.css';
-import RefinanceForm from './forms/Refinance/RefinanceForm';
-import ProjectPurchaseForm from './forms/ProjectPurchaseForm';
+import RefinanceForm from './forms/Refinance';
+import ProjectPurchaseForm from './forms/ProjectPurchase';
 import IntroForm from './forms/IntroForm';
 import TopMenu from './controls/TopMenu';
 

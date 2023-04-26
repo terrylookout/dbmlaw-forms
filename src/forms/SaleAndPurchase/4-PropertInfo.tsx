@@ -1,33 +1,27 @@
 import { ChangeEvent, Fragment } from "react";
-import { PurchaseFormChildProps } from ".";
 import CircleBullet from "../../controls/CircleBullet";
 import DateInput from "../../controls/DateInput";
-import { GuarantorInfo } from "../../ClassesInterfaces";
+import { SaleAndPurchaseProps } from ".";
 import Guarantor from "../../Guarantor";
+import { GuarantorInfo } from "../../ClassesInterfaces";
 
-interface PurchaseGetPropertyInfoDetailsProps extends PurchaseFormChildProps {
-    numberOfGuarantors: number;
-    setNumberOfGuarantors: (info: number) => void;
 
-}
-
-const GetPropertyInfo = ({
+const PropertyInfo = ({
     purchaseInfo,
     setPurchaseInfo,
-    numberOfGuarantors,
     setNumberOfGuarantors,
-}: PurchaseGetPropertyInfoDetailsProps) => {
-
+    numberOfGuarantors,
+}: SaleAndPurchaseProps) => {
     return (
         <>
-            <div className='row'>
-                <div className='col mb-1 mt-2 top-second-page'>
+            <div className="row">
+                <div className="col mb-1 mt-2 top-second-page">
                     &nbsp;
                 </div>
             </div>
-            <div className='row'>
+            <div className="row">
 
-                <div className='col mb-1'>
+                <div className="col mb-1">
                     <h6>
                         <CircleBullet />
                         Purchase and Property Information
@@ -35,14 +29,13 @@ const GetPropertyInfo = ({
                 </div>
             </div>
 
-            <div className='row'>
-                <div className='col mb-3'>
+            <div className="row">
+                <div className="col mb-3">
                     <div className='form-floating mb-0'>
-
                         <DateInput
                             className='form-control'
                             id={`completiondate`}
-                            value={purchaseInfo.completionDateTBD ? null : purchaseInfo.completionDate}
+                            value={purchaseInfo.completionDateTBD ? new Date() : purchaseInfo.completionDate}
                             min={new Date((new Date()).setFullYear(new Date().getFullYear() - 5))}
                             label='Completion date'
                             onChange={(e) => {
@@ -51,28 +44,24 @@ const GetPropertyInfo = ({
                                 }
 
                             }} />
-
                     </div>
-                    <div className='mt-1'>
+                    <div className='d-flex flex-nowrap pt-2'>
                         <input type='checkbox' id='chkdatetbd' checked={purchaseInfo.completionDateTBD}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setPurchaseInfo({ ...purchaseInfo, completionDateTBD: e.target.checked });
                             }} />
+
                         <label htmlFor='chkdatetbd' className='ps-2'>
                             Date still to be determined
                         </label>
                     </div>
                 </div>
-                <div className='col mb-3'>
+                <div className="col mb-3">
                     <div className='form-floating mb-0'>
                         <input type='number' className='form-control is-required' id='purchaseprice' placeholder='Purchase price'
-                            value={purchaseInfo.purchasePrice}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e && e.target) {
-                                    setPurchaseInfo({
-                                        ...purchaseInfo,
-                                        purchasePrice: e.target.value ? parseFloat(e.target.value).toString() : '',
-                                    });
+                                if (e && e.target && e.target.value) {
+                                    setPurchaseInfo({ ...purchaseInfo, purchasePrice: parseFloat(e.target.value).toString() });
                                 }
                             }}
                         />
@@ -88,8 +77,8 @@ const GetPropertyInfo = ({
             </div>
 
 
-            <div className='row'>
-                <div className='col mb-1 mt-4'>
+            <div className="row">
+                <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
                         Address of purchased property
@@ -97,8 +86,8 @@ const GetPropertyInfo = ({
                 </div>
             </div>
 
-            <div className='row'>
-                <div className='col mb-3'>
+            <div className="row">
+                <div className="col mb-3">
                     <div className='form-floating mb-0'>
                         <input type='text' className='form-control is-required' id='purchasestreet1' placeholder='Street address line 1'
                             value={purchaseInfo.street1}
@@ -117,8 +106,8 @@ const GetPropertyInfo = ({
                 </div>
             </div>
 
-            <div className='row'>
-                <div className='col mb-3'>
+            <div className="row">
+                <div className="col mb-3">
                     <div className='form-floating mb-0'>
                         <input type='text' className='form-control' id='purchasestreet2' placeholder='Street address line 2'
                             value={purchaseInfo.street2}
@@ -134,8 +123,8 @@ const GetPropertyInfo = ({
             </div>
 
 
-            <div className='row'>
-                <div className='col mb-3'>
+            <div className="row">
+                <div className="col mb-3">
                     <div className='form-floating mb-0'>
                         <input type='text' className='form-control is-required' id='purchasecity' placeholder='City'
                             value={purchaseInfo.city}
@@ -152,36 +141,32 @@ const GetPropertyInfo = ({
                         </label>
                     </div>
                 </div>
-                <div className='col mb-3'>
-                    <select className='form-select p-3 is-required' aria-label='Province or territory'
+                <div className="col mb-3">
+                    <select className="form-select p-3" aria-label="Province or territory"
                         value={purchaseInfo.provinceTerritory}
                         onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                             setPurchaseInfo({ ...purchaseInfo, provinceTerritory: e.target.value });
                         }}
                     >
                         <option value='0'>Province or territory</option>
-                        <option value='Alberta'>Alberta</option>
-                        <option value='British Columbia'>British Columbia</option>
-                        <option value='Manitoba'>Manitoba</option>
-                        <option value='New Brunswick'>New Brunswick</option>
-                        <option value='Newfoundland and Labrador'>Newfoundland and Labrador</option>
-                        <option value='Northwest Territories'>Northwest Territories</option>
-                        <option value='Nova Scotia'>Nova Scotia</option>
-                        <option value='Nunavut'>Nunavut</option>
-                        <option value='Ontario'>Ontario</option>
-                        <option value='Prince Edward Island'>Prince Edward Island</option>
-                        <option value='Quebec'>Québec</option>
-                        <option value='Saskatchewan'>Saskatchewan</option>
-                        <option value='Yukon'>Yukon</option>
+                        <option value="Alberta">Alberta</option>
+                        <option value="British Columbia">British Columbia</option>
+                        <option value="Manitoba">Manitoba</option>
+                        <option value="New Brunswick">New Brunswick</option>
+                        <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+                        <option value="Northwest Territories">Northwest Territories</option>
+                        <option value="Nova Scotia">Nova Scotia</option>
+                        <option value="Nunavut">Nunavut</option>
+                        <option value="Ontario">Ontario</option>
+                        <option value="Prince Edward Island">Prince Edward Island</option>
+                        <option value="Quebec">Québec</option>
+                        <option value="Saskatchewan">Saskatchewan</option>
+                        <option value="Yukon">Yukon</option>
                     </select>
-                    <div className="invalid-feedback">
-                        Please enter this field
-                    </div>
-
                 </div>
             </div>
             <div className='row'>
-                <div className='col mb-3'>
+                <div className="col mb-3">
                     <div className='form-floating mb-0'>
                         <input type='text' className='form-control' id='purchasepostalcode' placeholder='Postal code'
                             value={purchaseInfo.postalCode}
@@ -344,8 +329,10 @@ const GetPropertyInfo = ({
                 </>
             }
 
-            <div className='row'>
-                <div className='col mb-1 mt-4 newused'>
+
+
+            <div className="row">
+                <div className="col mb-1 mt-4 newused">
                     <h6>
                         <CircleBullet />
                         Is this a NEW or USED building? (required)
@@ -353,38 +340,38 @@ const GetPropertyInfo = ({
                 </div>
             </div>
 
-            <div className='row'>
-                <div className='col mb-3'>
-                    <div className='form-check'>
-                        <input className='form-check-input' type='radio' name='neworused' id='neworused-yes'
+            <div className="row">
+                <div className="col mb-3">
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name="neworused" id="neworused-yes"
                             checked={purchaseInfo.buildingNewUsed === 'NEW'}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e && e.target && e.target.value && e.target.value === 'on') {
                                     setPurchaseInfo({ ...purchaseInfo, buildingNewUsed: 'NEW' });
                                 }
                             }} />
-                        <label className='form-check-label' htmlFor='neworused-yes'>
+                        <label className="form-check-label" htmlFor="neworused-yes">
                             New
                         </label>
                     </div>
 
-                    <div className='form-check'>
-                        <input className='form-check-input' type='radio' name='neworused' id='neworused-no'
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name="neworused" id="neworused-no"
                             checked={purchaseInfo.buildingNewUsed === 'USED'}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e && e.target && e.target.value && e.target.value === 'on') {
                                     setPurchaseInfo({ ...purchaseInfo, buildingNewUsed: 'USED' });
                                 }
                             }} />
-                        <label className='form-check-label' htmlFor='neworused-no'>
+                        <label className="form-check-label" htmlFor="neworused-no">
                             Used
                         </label>
                     </div>
                 </div>
             </div>
 
-            <div className='row'>
-                <div className='col mb-1 mt-4'>
+            <div className="row">
+                <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
                         Your realtor information (if applicable)
@@ -392,8 +379,8 @@ const GetPropertyInfo = ({
                 </div>
             </div>
 
-            <div className='row'>
-                <div className='col mb-3'>
+            <div className="row">
+                <div className="col mb-3">
                     <div className='form-floating mb-0'>
                         <input type='text' className='form-control' id='realtorname' placeholder='Realtor name'
                             value={purchaseInfo.realtorName}
@@ -406,11 +393,11 @@ const GetPropertyInfo = ({
                         </label>
                     </div>
                 </div>
-                <div className='col mb-3'>
+                <div className="col mb-3">
                     <div className='form-floating mb-0'>
                         <input type='tel' className='form-control' id='realtorphone' placeholder='Phone number'
                             value={purchaseInfo.realtorPhone}
-                            pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}'
+                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setPurchaseInfo({ ...purchaseInfo, realtorPhone: e.target.value });
                             }}
@@ -423,8 +410,8 @@ const GetPropertyInfo = ({
             </div>
 
 
-            <div className='row'>
-                <div className='col mb-1 mt-4'>
+            <div className="row">
+                <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
                         If you are getting a mortgage, Bank or Mortgage Lender information (if applicable)
@@ -432,8 +419,8 @@ const GetPropertyInfo = ({
                 </div>
             </div>
 
-            <div className='row'>
-                <div className='col mb-3'>
+            <div className="row">
+                <div className="col mb-3">
                     <div className='form-floating mb-0'>
                         <input type='text' className='form-control' id='lendername' placeholder='Lender name'
                             value={purchaseInfo.lenderName}
@@ -448,9 +435,9 @@ const GetPropertyInfo = ({
                 </div>
             </div>
 
-            <div className='row'>
+            <div className="row">
 
-                <div className='col mb-3'>
+                <div className="col mb-3">
                     <div className='form-floating mb-0'>
                         <input type='text' className='form-control' id='brokerbankername' placeholder='Broker/Banker name'
                             value={purchaseInfo.brokerBankerName}
@@ -464,10 +451,10 @@ const GetPropertyInfo = ({
                     </div>
                 </div>
 
-                <div className='col mb-3'>
+                <div className="col mb-3">
                     <div className='form-floating mb-0'>
                         <input type='tel' className='form-control' id='lenderphone' placeholder='Phone number'
-                            pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}' value={purchaseInfo.brokerBankerPhone}
+                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" value={purchaseInfo.brokerBankerPhone}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setPurchaseInfo({ ...purchaseInfo, brokerBankerPhone: e.target.value });
                             }}
@@ -480,8 +467,8 @@ const GetPropertyInfo = ({
             </div>
 
 
-            <div className='row'>
-                <div className='col mb-1 mt-4'>
+            <div className="row">
+                <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
                         If this is a strata, please enter the following information (if applicable)
@@ -489,8 +476,8 @@ const GetPropertyInfo = ({
                 </div>
             </div>
 
-            <div className='row'>
-                <div className='col mb-3'>
+            <div className="row">
+                <div className="col mb-3">
                     <div className='form-floating mb-0'>
                         <input type='text' className='form-control' id='strataname' placeholder='Strata name'
                             value={purchaseInfo.strataName}
@@ -505,8 +492,8 @@ const GetPropertyInfo = ({
                 </div>
             </div>
 
-            <div className='row'>
-                <div className='col mb-1 mt-4'>
+            <div className="row">
+                <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
                         If applicable, the parking stall number(s) and storage locker number(s):
@@ -515,9 +502,9 @@ const GetPropertyInfo = ({
             </div>
 
 
-            <div className='row'>
+            <div className="row">
 
-                <div className='col mb-3'>
+                <div className="col mb-3">
                     <div className='form-floating mb-0'>
                         <input type='text' className='form-control' id='parkingstalls' placeholder='Parking stalls'
                             value={purchaseInfo.parkingStallNumbers}
@@ -531,7 +518,7 @@ const GetPropertyInfo = ({
                     </div>
                 </div>
 
-                <div className='col mb-3'>
+                <div className="col mb-3">
                     <div className='form-floating mb-0'>
                         <input type='text' className='form-control' id='storagelockers' placeholder='Storage lockers'
                             value={purchaseInfo.storageLockerNumbers}
@@ -547,8 +534,8 @@ const GetPropertyInfo = ({
             </div>
 
 
-            <div className='row'>
-                <div className='col mb-1 mt-4'>
+            <div className="row">
+                <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
                         Your house insurance information (if applicable)
@@ -556,8 +543,8 @@ const GetPropertyInfo = ({
                 </div>
             </div>
 
-            <div className='row'>
-                <div className='col mb-3'>
+            <div className="row">
+                <div className="col mb-3">
                     <div className='form-floating mb-0'>
                         <input type='text' className='form-control' id='insurancename' placeholder='Agent name'
                             value={purchaseInfo.insuranceAgentName}
@@ -570,11 +557,11 @@ const GetPropertyInfo = ({
                         </label>
                     </div>
                 </div>
-                <div className='col mb-3'>
+                <div className="col mb-3">
                     <div className='form-floating mb-0'>
                         <input type='tel' className='form-control' id='insurancenumber' placeholder='Agent number'
                             value={purchaseInfo.insuranceAgentPhone}
-                            pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}'
+                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setPurchaseInfo({ ...purchaseInfo, insuranceAgentPhone: e.target.value });
                             }}
@@ -587,8 +574,8 @@ const GetPropertyInfo = ({
             </div>
 
 
-            <div className='row'>
-                <div className='col mb-1 mt-4'>
+            <div className="row">
+                <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
                         Will any portion of the property be rented out?
@@ -596,30 +583,30 @@ const GetPropertyInfo = ({
                 </div>
             </div>
 
-            <div className='row'>
-                <div className='col mb-3'>
-                    <div className='form-check'>
-                        <input className='form-check-input' type='radio' name='rented' id='rented-yes'
+            <div className="row">
+                <div className="col mb-3">
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name="rented" id="rented-yes"
                             checked={purchaseInfo.portionPropertyRentedOut === 'YES'}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e && e.target && e.target.value && e.target.value === 'on') {
                                     setPurchaseInfo({ ...purchaseInfo, portionPropertyRentedOut: 'YES' });
                                 }
                             }} />
-                        <label className='form-check-label' htmlFor='rented-yes'>
+                        <label className="form-check-label" htmlFor="rented-yes">
                             Yes
                         </label>
                     </div>
 
-                    <div className='form-check'>
-                        <input className='form-check-input' type='radio' name='rented' id='rented-no'
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name="rented" id="rented-no"
                             checked={purchaseInfo.portionPropertyRentedOut === 'NO'}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e && e.target && e.target.value && e.target.value === 'on') {
                                     setPurchaseInfo({ ...purchaseInfo, portionPropertyRentedOut: 'NO' });
                                 }
                             }} />
-                        <label className='form-check-label' htmlFor='rented-no'>
+                        <label className="form-check-label" htmlFor="rented-no">
                             No
                         </label>
                     </div>
@@ -627,8 +614,8 @@ const GetPropertyInfo = ({
             </div>
 
 
-            <div className='row'>
-                <div className='col mb-1 mt-4'>
+            <div className="row">
+                <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
                         If you will need to bring in funds to complete this transaction, please advise where
@@ -638,90 +625,90 @@ const GetPropertyInfo = ({
             </div>
 
 
-            <div className='row'>
-                <div className='col mb-1'>
-                    <div className='form-check'>
-                        <input className='form-check-input' type='radio' name={`fundsource`} id={`fundsource-notapplicable`}
+            <div className="row">
+                <div className="col mb-1">
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-notapplicable`}
                             checked={purchaseInfo.fundsSource === ''}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e.target.checked) {
                                     setPurchaseInfo({ ...purchaseInfo, fundsSource: '' });
                                 }
                             }} />
-                        <label className='form-check-label' htmlFor={`fundsource-notapplicable`}>
+                        <label className="form-check-label" htmlFor={`fundsource-notapplicable`}>
                             Not applicable
                         </label>
                     </div>
 
-                    <div className='form-check'>
-                        <input className='form-check-input' type='radio' name={`fundsource`} id={`fundsource-chequing`}
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-chequing`}
                             checked={purchaseInfo.fundsSource === 'CHEQUING_ACCOUNT'}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e.target.checked) {
                                     setPurchaseInfo({ ...purchaseInfo, fundsSource: 'CHEQUING_ACCOUNT' });
                                 }
                             }} />
-                        <label className='form-check-label' htmlFor={`fundsource-chequing`}>
+                        <label className="form-check-label" htmlFor={`fundsource-chequing`}>
                             Chequing Account
                         </label>
                     </div>
 
-                    <div className='form-check'>
-                        <input className='form-check-input' type='radio' name={`fundsource`} id={`fundsource-saving`}
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-saving`}
                             checked={purchaseInfo.fundsSource === 'SAVINGS_ACCOUNT'}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e.target.checked) {
                                     setPurchaseInfo({ ...purchaseInfo, fundsSource: 'SAVINGS_ACCOUNT' });
                                 }
                             }} />
-                        <label className='form-check-label' htmlFor={`fundsource-saving`}>
+                        <label className="form-check-label" htmlFor={`fundsource-saving`}>
                             Savings Account
                         </label>
                     </div>
                 </div>
 
-                <div className='col mb-1'>
-                    <div className='form-check'>
-                        <input className='form-check-input' type='radio' name={`fundsource`} id={`fundsource-heloc`}
+                <div className="col mb-1">
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-heloc`}
                             checked={purchaseInfo.fundsSource === 'HELOC'}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e.target.checked) {
                                     setPurchaseInfo({ ...purchaseInfo, fundsSource: 'HELOC' });
                                 }
                             }} />
-                        <label className='form-check-label' htmlFor={`fundsource-heloc`}>
+                        <label className="form-check-label" htmlFor={`fundsource-heloc`}>
                             Home Equity Line of Credit
                         </label>
                     </div>
 
 
-                    <div className='form-check'>
-                        <input className='form-check-input' type='radio' name={`fundsource`} id={`fundsource-another`}
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-another`}
                             checked={purchaseInfo.fundsSource === 'ANOTHER_INDIVIDUAL'}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e.target.checked) {
                                     setPurchaseInfo({ ...purchaseInfo, fundsSource: 'ANOTHER_INDIVIDUAL' });
                                 }
                             }} />
-                        <label className='form-check-label' htmlFor={`fundsource-another`}>
+                        <label className="form-check-label" htmlFor={`fundsource-another`}>
                             Another individual
                         </label>
                     </div>
-                    <div className='form-check'>
-                        <input className='form-check-input' type='radio' name={`fundsource`} id={`fundsource-other`}
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-other`}
                             checked={purchaseInfo.fundsSource === 'OTHER'}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e.target.checked) {
                                     setPurchaseInfo({ ...purchaseInfo, fundsSource: 'OTHER' });
                                 }
                             }} />
-                        <label className='form-check-label' htmlFor={`fundsource-other`}>
+                        <label className="form-check-label" htmlFor={`fundsource-other`}>
                             Other
                         </label>
                     </div>
                 </div>
 
-                <div className='col mb-1 mt-4'>
+                <div className="col mb-1 mt-4">
 
                 </div>
             </div>
@@ -729,8 +716,8 @@ const GetPropertyInfo = ({
             {
                 (purchaseInfo.fundsSource && (purchaseInfo.fundsSource === 'CHEQUING_ACCOUNT' || purchaseInfo.fundsSource === 'SAVINGS_ACCOUNT')) &&
                 <>
-                    <div className='row'>
-                        <div className='col mb-1 mt-4'>
+                    <div className="row">
+                        <div className="col mb-1 mt-4">
                             <h6>
                                 <CircleBullet />
                                 If coming from your savings or chequing account, where was the funds come from
@@ -739,8 +726,8 @@ const GetPropertyInfo = ({
                         </div>
                     </div>
 
-                    <div className='row'>
-                        <div className='col mb-3'>
+                    <div className="row">
+                        <div className="col mb-3">
                             <div className='form-floating mb-0'>
                                 <input type='text' className='form-control' id='fundschequingsource' placeholder='Funds source'
                                     value={purchaseInfo.fundsChequingSavingsSource}
@@ -761,8 +748,8 @@ const GetPropertyInfo = ({
             {
                 purchaseInfo.fundsSource === 'ANOTHER_INDIVIDUAL' &&
                 <>
-                    <div className='row'>
-                        <div className='col mb-1 mt-4'>
+                    <div className="row">
+                        <div className="col mb-1 mt-4">
                             <h6>
                                 <CircleBullet />
                                 If the funds came from someone else who is not a purchaser, please provide the
@@ -771,8 +758,8 @@ const GetPropertyInfo = ({
                         </div>
                     </div>
 
-                    <div className='row'>
-                        <div className='col mb-3'>
+                    <div className="row">
+                        <div className="col mb-3">
                             <div className='form-floating mb-0'>
                                 <input type='text' className='form-control' id='othername' placeholder='Name'
                                     value={purchaseInfo.nonPurchaserName}
@@ -786,11 +773,11 @@ const GetPropertyInfo = ({
                             </div>
                         </div>
 
-                        <div className='col mb-3'>
+                        <div className="col mb-3">
                             <div className='form-floating mb-0'>
                                 <input type='tel' className='form-control' id='otherphone' placeholder='Phone number'
                                     value={purchaseInfo.nonPurchaserPhone}
-                                    pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}'
+                                    pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         setPurchaseInfo({ ...purchaseInfo, nonPurchaserPhone: e.target.value });
                                     }}
@@ -803,8 +790,8 @@ const GetPropertyInfo = ({
 
                     </div>
 
-                    <div className='row'>
-                        <div className='col mb-3'>
+                    <div className="row">
+                        <div className="col mb-3">
                             <div className='form-floating mb-0'>
                                 <input type='text' className='form-control' id='otheroccupation' placeholder='Occupation'
                                     value={purchaseInfo.nonPurchaserOccupation}
@@ -818,7 +805,7 @@ const GetPropertyInfo = ({
                             </div>
                         </div>
 
-                        <div className='col mb-3'>
+                        <div className="col mb-3">
                             <div className='form-floating mb-0'>
                                 <input type='text' className='form-control' id='otheroccupation' placeholder='Relationship'
                                     value={purchaseInfo.nonPurchaserRelationship}
@@ -834,8 +821,8 @@ const GetPropertyInfo = ({
 
                     </div>
 
-                    <div className='row'>
-                        <div className='col mb-3'>
+                    <div className="row">
+                        <div className="col mb-3">
                             <div className='form-floating mb-0'>
                                 <input type='text' className='form-control' id='otherstreet1' placeholder='Street address line 1'
                                     value={purchaseInfo.nonPurchaserStreet1}
@@ -850,8 +837,8 @@ const GetPropertyInfo = ({
                         </div>
                     </div>
 
-                    <div className='row'>
-                        <div className='col mb-3'>
+                    <div className="row">
+                        <div className="col mb-3">
                             <div className='form-floating mb-0'>
                                 <input type='text' className='form-control' id='otherstreet2' placeholder='Street address line 2'
                                     value={purchaseInfo.nonPurchaserStreet2}
@@ -866,8 +853,8 @@ const GetPropertyInfo = ({
                         </div>
                     </div>
 
-                    <div className='row'>
-                        <div className='col mb-3'>
+                    <div className="row">
+                        <div className="col mb-3">
                             <div className='form-floating mb-0'>
                                 <input type='text' className='form-control' id='othercity' placeholder='City'
                                     value={purchaseInfo.nonPurchaserCity}
@@ -881,32 +868,32 @@ const GetPropertyInfo = ({
                             </div>
                         </div>
 
-                        <div className='col mb-3'>
-                            <select className='form-select p-3' aria-label='Province or territory'
+                        <div className="col mb-3">
+                            <select className="form-select p-3" aria-label="Province or territory"
                                 value={purchaseInfo.nonPurchaserProvinceTerritory}
                                 onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                                     setPurchaseInfo({ ...purchaseInfo, nonPurchaserProvinceTerritory: e.target.value });
                                 }}
                             >
                                 <option value='0'>Province or territory</option>
-                                <option value='Alberta'>Alberta</option>
-                                <option value='British Columbia'>British Columbia</option>
-                                <option value='Manitoba'>Manitoba</option>
-                                <option value='New Brunswick'>New Brunswick</option>
-                                <option value='Newfoundland and Labrador'>Newfoundland and Labrador</option>
-                                <option value='Northwest Territories'>Northwest Territories</option>
-                                <option value='Nova Scotia'>Nova Scotia</option>
-                                <option value='Nunavut'>Nunavut</option>
-                                <option value='Ontario'>Ontario</option>
-                                <option value='Prince Edward Island'>Prince Edward Island</option>
-                                <option value='Quebec'>Québec</option>
-                                <option value='Saskatchewan'>Saskatchewan</option>
-                                <option value='Yukon'>Yukon</option>
+                                <option value="Alberta">Alberta</option>
+                                <option value="British Columbia">British Columbia</option>
+                                <option value="Manitoba">Manitoba</option>
+                                <option value="New Brunswick">New Brunswick</option>
+                                <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+                                <option value="Northwest Territories">Northwest Territories</option>
+                                <option value="Nova Scotia">Nova Scotia</option>
+                                <option value="Nunavut">Nunavut</option>
+                                <option value="Ontario">Ontario</option>
+                                <option value="Prince Edward Island">Prince Edward Island</option>
+                                <option value="Quebec">Québec</option>
+                                <option value="Saskatchewan">Saskatchewan</option>
+                                <option value="Yukon">Yukon</option>
                             </select>
                         </div>
                     </div>
-                    <div className='row'>
-                        <div className='col mb-3'>
+                    <div className="row">
+                        <div className="col mb-3">
                             <div className='form-floating mb-0'>
                                 <input type='text' className='form-control' id='otherpostalcode' placeholder='Postal code'
                                     value={purchaseInfo.postalCode}
@@ -920,7 +907,7 @@ const GetPropertyInfo = ({
                             </div>
                         </div>
 
-                        <div className='col mb-3'>
+                        <div className="col mb-3">
 
                         </div>
 
@@ -928,8 +915,8 @@ const GetPropertyInfo = ({
                 </>
             }
 
-            <div className='row align-items-center mt-4'>
-                <div className='col mb-3'>
+            <div className="row align-items-center mt-4">
+                <div className="col mb-3">
                     <div style={{
                         display: 'grid',
                         gridTemplateColumns: 'min-content 1fr'
@@ -951,8 +938,8 @@ const GetPropertyInfo = ({
 
                 </div>
 
-                <div className='col mb-3'>
-                    <select className='form-select p-3' aria-label='number of guarantors'
+                <div className="col mb-3">
+                    <select className="form-select p-3" aria-label="Province or territory"
                         value={purchaseInfo.guarantorsInfo.length}
                         onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                             if (e && e.target && e.target.value) {
@@ -960,10 +947,10 @@ const GetPropertyInfo = ({
                             }
                         }}>
                         <option value='0'>No guarantors</option>
-                        <option value='1'>1</option>
-                        <option value='2'>2</option>
-                        <option value='3'>3</option>
-                        <option value='4'>4</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
                     </select>
 
                 </div>
@@ -972,8 +959,8 @@ const GetPropertyInfo = ({
             {
                 numberOfGuarantors > 0 &&
                 <>
-                    <div className='row'>
-                        <div className='col mb-1 mt-4'>
+                    <div className="row">
+                        <div className="col mb-1 mt-4">
                             <h6>
                                 IMPORTANT: All guarantors will be required to sign particular mortgage documents
                                 and attend appointment(s)
@@ -1008,8 +995,8 @@ const GetPropertyInfo = ({
                 </>
             }
 
-            <div className='row'>
-                <div className='col mb-1 mt-4'>
+            <div className="row">
+                <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
                         Do you have an appointment location preference?
@@ -1017,52 +1004,52 @@ const GetPropertyInfo = ({
                 </div>
             </div>
 
-            <div className='row'>
-                <div className='col mb-3'>
+            <div className="row">
+                <div className="col mb-3">
 
-                    <div className='form-check'>
-                        <input className='form-check-input' type='radio' name='apptlocation' id='apptlocation-coquitlam'
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name="apptlocation" id="apptlocation-coquitlam"
                             checked={purchaseInfo.apptLocationPreference === 'COQUITLAM'}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e && e.target && e.target.value && e.target.value === 'on') {
                                     setPurchaseInfo({ ...purchaseInfo, apptLocationPreference: 'COQUITLAM' });
                                 }
                             }} />
-                        <label className='form-check-label' htmlFor='apptlocation-coquitlam'>
+                        <label className="form-check-label" htmlFor="apptlocation-coquitlam">
                             Coquitlam
                         </label>
                     </div>
 
-                    <div className='form-check'>
-                        <input className='form-check-input' type='radio' name='apptlocation' id='apptlocation-vancouver'
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name="apptlocation" id="apptlocation-vancouver"
                             checked={purchaseInfo.apptLocationPreference === 'VANCOUVER'}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e && e.target && e.target.value && e.target.value === 'on') {
                                     setPurchaseInfo({ ...purchaseInfo, apptLocationPreference: 'VANCOUVER' });
                                 }
                             }} />
-                        <label className='form-check-label' htmlFor='apptlocation-vancouver'>
+                        <label className="form-check-label" htmlFor="apptlocation-vancouver">
                             Vancouver
                         </label>
                     </div>
 
-                    <div className='form-check'>
-                        <input className='form-check-input' type='radio' name='apptlocation' id='apptlocation-langley'
+                    <div className="form-check">
+                        <input className="form-check-input" type="radio" name="apptlocation" id="apptlocation-langley"
                             checked={purchaseInfo.apptLocationPreference === 'LANGLEY'}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e && e.target && e.target.value && e.target.value === 'on') {
                                     setPurchaseInfo({ ...purchaseInfo, apptLocationPreference: 'LANGLEY' });
                                 }
                             }} />
-                        <label className='form-check-label' htmlFor='apptlocation-langley'>
+                        <label className="form-check-label" htmlFor="apptlocation-langley">
                             Langley
                         </label>
                     </div>
                 </div>
             </div>
 
-            <div className='row'>
-                <div className='col mb-1 mt-4'>
+            <div className="row">
+                <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
                         Do you have any additional details, questions, or concerns?
@@ -1070,8 +1057,8 @@ const GetPropertyInfo = ({
                 </div>
             </div>
 
-            <div className='row'>
-                <div className='col mb-3'>
+            <div className="row">
+                <div className="col mb-3">
 
                     <textarea
                         className='dbm-textarea'
@@ -1089,6 +1076,6 @@ const GetPropertyInfo = ({
             </div>
         </>
     );
-}
+};
 
-export default GetPropertyInfo;
+export default PropertyInfo;

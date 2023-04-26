@@ -418,6 +418,31 @@ const Client = (props: ClientProps): ReactElement => {
                     </div>
 
                     {
+                        clientInfo.employment === 'RETIRED' &&
+                        <>
+                            <div className="row">
+                                <div className="col mb-3">
+                                    <div className='form-floating mb-0'>
+                                        <input type='text' className='form-control is-required' id={`retiredpreviousoccupation${props.num}`} placeholder='Your PREVIOUS occupation - required'
+                                            value={clientInfo.retiredPreviousOccupation}
+                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                setClientInfo({ ...clientInfo, retiredPreviousOccupation: e.target.value });
+                                            }}
+                                        />
+                                        <div className="invalid-feedback">
+                                            Please enter this field
+                                        </div>
+
+                                        <label htmlFor='floatingInput'>
+                                            Your PREVIOUS occupation (required)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    }
+
+                    {
                         clientInfo.employment === 'EMPLOYED' &&
                         <>
                             <div className="row">
