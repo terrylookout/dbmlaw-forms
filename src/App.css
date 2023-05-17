@@ -67,4 +67,13 @@
   cursor: not-allowed;
 }
 
+input.numeric-input::-webkit-outer-spin-button,
+input.numeric-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
  
+input[type=number] {  
+  -moz-appearance: textfield;
+  appearance: textfield;
+}

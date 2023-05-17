@@ -4,6 +4,8 @@ import { ClientInfo } from '../ClassesInterfaces';
 import DateInput from './DateInput';
 import { getCountries, getProvincesTerritories, getStates } from '../Helpers';
 import { v4 as uuid } from "uuid";
+import RadioGroup from './RadioGroup';
+import NumericInput from './NumericInput';
 
 interface ClientProps {
     text: string;
@@ -28,9 +30,7 @@ const Client = (props: ClientProps): ReactElement => {
     });
 
     const [employerProvinces, setEmployerProvinces] = useState<string[]>([]);
-
     const [provinces, setProvinces] = useState<string[]>([]);
-
     const [clientInfo, setClientInfo] = useState(props.clientInfo);
 
     useEffect(() => {
@@ -154,7 +154,10 @@ const Client = (props: ClientProps): ReactElement => {
                     </div>
                     <div className="col mb-3">
                         <div className='form-floating mb-0'>
-                            <input type='number' className='form-control' id={`sin${props.num}`} placeholder='Social Insurance Number'
+                            <NumericInput
+                                id={`sin${props.num}`}
+                                required={true}
+                                placeholder='Social Insurance Number'
                                 disabled={clientInfo.sinViaPhone}
                                 value={clientInfo.sinViaPhone ? '' : clientInfo.socialInsNumber}
                                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -199,6 +202,7 @@ const Client = (props: ClientProps): ReactElement => {
                                     mailingStreet1: props.client1Info.mailingStreet1,
                                     mailingStreet2: props.client1Info.mailingStreet2,
                                     mailingCity: props.client1Info.mailingCity,
+                                    mailingCountry: props.client1Info.mailingCountry,
                                     mailingProvinceTerritory: props.client1Info.mailingProvinceTerritory,
                                     mailingPostalCode: props.client1Info.mailingPostalCode,
                                 });
@@ -351,72 +355,75 @@ const Client = (props: ClientProps): ReactElement => {
                     </div>
 
                     <div className="row">
-                        <div className="col mb-3">
+                        <RadioGroup
+                            groupName="employment">
+                            <div className="col mb-3">
+                                <div className="form-check">
+                                    <input className="form-check-input" type="radio" name={`employ${props.num}`} id={`employed${props.num}`}
+                                        required={true}
+                                        checked={clientInfo.employment === 'EMPLOYED'}
+                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                            if (e.target.checked) {
+                                                setClientInfo({ ...clientInfo, employment: 'EMPLOYED' });
+                                            }
+                                        }}
+                                    />
+                                    <label className="form-check-label" htmlFor={`employed${props.num}`}>
+                                        Employed
+                                    </label>
+                                </div>
 
-                            <div className="form-check">
-                                <input className="form-check-input" type="radio" name={`employ${props.num}`} id={`employed${props.num}`}
-                                    required={true}
-                                    checked={clientInfo.employment === 'EMPLOYED'}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        if (e.target.checked) {
-                                            setClientInfo({ ...clientInfo, employment: 'EMPLOYED' });
-                                        }
-                                    }}
-                                />
-                                <label className="form-check-label" htmlFor={`employed${props.num}`}>
-                                    Employed
-                                </label>
+                                <div className="form-check">
+                                    <input className="form-check-input" type="radio" name={`employ${props.num}`} id={`retired${props.num}`}
+                                        required={true}
+                                        checked={clientInfo.employment === 'RETIRED'}
+                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                            if (e.target.checked) {
+                                                setClientInfo({ ...clientInfo, employment: 'RETIRED' });
+                                            }
+                                        }}
+                                    />
+                                    <label className="form-check-label" htmlFor={`retired${props.num}`}>
+                                        Retired
+                                    </label>
+                                </div>
+
                             </div>
 
-                            <div className="form-check">
-                                <input className="form-check-input" type="radio" name={`employ${props.num}`} id={`retired${props.num}`}
-                                    required={true}
-                                    checked={clientInfo.employment === 'RETIRED'}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        if (e.target.checked) {
-                                            setClientInfo({ ...clientInfo, employment: 'RETIRED' });
-                                        }
-                                    }}
-                                />
-                                <label className="form-check-label" htmlFor={`retired${props.num}`}>
-                                    Retired
-                                </label>
+                            <div className="col mb-3">
+                                <div className="form-check">
+                                    <input className="form-check-input" type="radio" name={`employ${props.num}`} id={`student${props.num}`}
+                                        required={true}
+                                        checked={clientInfo.employment === 'STUDENT'}
+                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                            if (e.target.checked) {
+                                                setClientInfo({ ...clientInfo, employment: 'STUDENT' });
+                                            }
+                                        }}
+                                    />
+                                    <label className="form-check-label" htmlFor={`student${props.num}`}>
+                                        Student
+                                    </label>
+                                </div>
+
+                                <div className="form-check">
+                                    <input className="form-check-input" type="radio" name={`employ${props.num}`} id={`other${props.num}`}
+                                        required={true}
+                                        checked={clientInfo.employment === 'OTHER'}
+                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                            if (e.target.checked) {
+                                                setClientInfo({ ...clientInfo, employment: 'OTHER' });
+                                            }
+                                        }}
+                                    />
+                                    <label className="form-check-label" htmlFor={`other${props.num}`}>
+                                        Other
+                                    </label>
+                                </div>
+
                             </div>
 
-                        </div>
-
-                        <div className="col mb-3">
-                            <div className="form-check">
-                                <input className="form-check-input" type="radio" name={`employ${props.num}`} id={`student${props.num}`}
-                                    required={true}
-                                    checked={clientInfo.employment === 'STUDENT'}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        if (e.target.checked) {
-                                            setClientInfo({ ...clientInfo, employment: 'STUDENT' });
-                                        }
-                                    }}
-                                />
-                                <label className="form-check-label" htmlFor={`student${props.num}`}>
-                                    Student
-                                </label>
-                            </div>
-
-                            <div className="form-check">
-                                <input className="form-check-input" type="radio" name={`employ${props.num}`} id={`other${props.num}`}
-                                    required={true}
-                                    checked={clientInfo.employment === 'OTHER'}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        if (e.target.checked) {
-                                            setClientInfo({ ...clientInfo, employment: 'OTHER' });
-                                        }
-                                    }}
-                                />
-                                <label className="form-check-label" htmlFor={`other${props.num}`}>
-                                    Other
-                                </label>
-                            </div>
-
-                        </div>
+                        </RadioGroup>
 
                         <div className="col mb-3">
 
@@ -491,7 +498,7 @@ const Client = (props: ClientProps): ReactElement => {
                                         </div>
 
                                         <label htmlFor='floatingInput'>
-                                            Your occupation (required)
+                                            Occupation / Job Title (required)
                                         </label>
                                     </div>
                                 </div>
@@ -648,6 +655,9 @@ const Client = (props: ClientProps): ReactElement => {
                                                 }
                                             }}
                                         >
+                                            <option key='not_selected' value={''} disabled={true} >
+                                                Choose country...
+                                            </option>
                                             {
                                                 employerCountries.map((c) => {
                                                     return (
@@ -682,234 +692,242 @@ const Client = (props: ClientProps): ReactElement => {
                     </div>
 
                     <div className="row">
-                        <div className="col mb-3">
+                        <RadioGroup groupName="citizenship">
+                            <div className="col mb-3">
 
-                            <div className="form-check">
-                                <input className="form-check-input" type="radio" name={`citizentype${props.num}`} id={`canadiancitizen${props.num}`}
-                                    checked={clientInfo.citizenShip === 'CANADIAN_CITIZEN'}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        if (e.target.checked) {
-                                            setClientInfo({ ...clientInfo, citizenShip: 'CANADIAN_CITIZEN' });
-                                        }
-                                    }}
-                                />
-                                <label className="form-check-label" htmlFor={`canadiancitizen${props.num}`}>
-                                    Canadian citizen
-                                </label>
+                                <div className="form-check">
+                                    <input className="form-check-input" type="radio" name={`citizentype${props.num}`} id={`canadiancitizen${props.num}`}
+                                        checked={clientInfo.citizenShip === 'CANADIAN_CITIZEN'}
+                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                            if (e.target.checked) {
+                                                setClientInfo({ ...clientInfo, citizenShip: 'CANADIAN_CITIZEN' });
+                                            }
+                                        }}
+                                    />
+                                    <label className="form-check-label" htmlFor={`canadiancitizen${props.num}`}>
+                                        Canadian citizen
+                                    </label>
+                                </div>
+
+                                <div className="form-check">
+                                    <input className="form-check-input" type="radio" name={`citizentype${props.num}`} id={`permresident${props.num}`}
+                                        checked={clientInfo.citizenShip === 'PERMANENT_RESIDENT'}
+                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                            if (e.target.checked) {
+                                                setClientInfo({ ...clientInfo, citizenShip: 'PERMANENT_RESIDENT' });
+                                            }
+                                        }}
+                                    />
+                                    <label className="form-check-label" htmlFor={`permresident${props.num}`}>
+                                        Permanent resident
+                                    </label>
+                                </div>
                             </div>
+                            <div className="col mb-3">
 
-                            <div className="form-check">
-                                <input className="form-check-input" type="radio" name={`citizentype${props.num}`} id={`permresident${props.num}`}
-                                    checked={clientInfo.citizenShip === 'PERMANENT_RESIDENT'}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        if (e.target.checked) {
-                                            setClientInfo({ ...clientInfo, citizenShip: 'PERMANENT_RESIDENT' });
-                                        }
-                                    }}
-                                />
-                                <label className="form-check-label" htmlFor={`permresident${props.num}`}>
-                                    Permanent resident
-                                </label>
+                                <div className="form-check">
+                                    <input className="form-check-input" type="radio" name={`citizentype${props.num}`} id={`residentother${props.num}`}
+                                        checked={clientInfo.citizenShip === 'RESIDENT_OTHER_COUNTRY'}
+                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                            if (e.target.checked) {
+                                                setClientInfo({ ...clientInfo, citizenShip: 'RESIDENT_OTHER_COUNTRY' });
+                                            }
+                                        }}
+                                    />
+                                    <label className="form-check-label" htmlFor={`residentother${props.num}`}>
+                                        Resident of country other than Canada
+                                    </label>
+                                </div>
+
+                                <div className="form-check">
+                                    <input className="form-check-input" type="radio" name={`citizentype${props.num}`} id={`bcprovincialnominee${props.num}`}
+                                        checked={clientInfo.citizenShip === 'BC_PROV_NOMINEE'}
+                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                            if (e.target.checked) {
+                                                setClientInfo({ ...clientInfo, citizenShip: 'BC_PROV_NOMINEE' });
+                                            }
+                                        }}
+                                    />
+                                    <label className="form-check-label" htmlFor={`bcprovincialnominee${props.num}`}>
+                                        B.C. Provincial Nominee (requires confirmation)
+                                    </label>
+                                </div>
+
                             </div>
-                        </div>
-                        <div className="col mb-3">
-
-                            <div className="form-check">
-                                <input className="form-check-input" type="radio" name={`citizentype${props.num}`} id={`residentother${props.num}`}
-                                    checked={clientInfo.citizenShip === 'RESIDENT_OTHER_COUNTRY'}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        if (e.target.checked) {
-                                            setClientInfo({ ...clientInfo, citizenShip: 'RESIDENT_OTHER_COUNTRY' });
-                                        }
-                                    }}
-                                />
-                                <label className="form-check-label" htmlFor={`residentother${props.num}`}>
-                                    Resident of country other than Canada
-                                </label>
-                            </div>
-
-                            <div className="form-check">
-                                <input className="form-check-input" type="radio" name={`citizentype${props.num}`} id={`bcprovincialnominee${props.num}`}
-                                    checked={clientInfo.citizenShip === 'BC_PROV_NOMINEE'}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        if (e.target.checked) {
-                                            setClientInfo({ ...clientInfo, citizenShip: 'BC_PROV_NOMINEE' });
-                                        }
-                                    }}
-                                />
-                                <label className="form-check-label" htmlFor={`bcprovincialnominee${props.num}`}>
-                                    B.C. Provincial Nominee (requires confirmation)
-                                </label>
-                            </div>
-
-                        </div>
+                        </RadioGroup>
                     </div>
 
                     <div className="row">
-                        <div className="col mb-1 mt-4">
-                            <h6>
-                                <CircleBullet />
-                                Are you a First-Time Home Buyer?
-                            </h6>
+                        <RadioGroup groupName="fthb">
+                            <div className="col mb-1 mt-4">
+                                <h6>
+                                    <CircleBullet />
+                                    Are you a First-Time Home Buyer?
+                                </h6>
 
-                            <div className="form-check">
-                                <input className="form-check-input" type="radio" name={`firsttimehomebuyer${props.num}`} id={`firsttimehomebuyer-yes${props.num}`}
-                                    checked={clientInfo.isFirstTimeHomeBuyer === 'YES'}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        if (e.target.checked) {
-                                            setClientInfo({ ...clientInfo, isFirstTimeHomeBuyer: 'YES' });
-                                        }
-                                    }} />
-                                <label className="form-check-label" htmlFor={`firsttimehomebuyer-yes${props.num}`}>
-                                    Yes
-                                </label>
+                                <div className="form-check">
+                                    <input className="form-check-input" type="radio" name={`firsttimehomebuyer${props.num}`} id={`firsttimehomebuyer-yes${props.num}`}
+                                        checked={clientInfo.isFirstTimeHomeBuyer === 'YES'}
+                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                            if (e.target.checked) {
+                                                setClientInfo({ ...clientInfo, isFirstTimeHomeBuyer: 'YES' });
+                                            }
+                                        }} />
+                                    <label className="form-check-label" htmlFor={`firsttimehomebuyer-yes${props.num}`}>
+                                        Yes
+                                    </label>
+                                </div>
+
+                                <div className="form-check">
+                                    <input className="form-check-input" type="radio" name={`firsttimehomebuyer${props.num}`} id={`firsttimehomebuyer-no${props.num}`}
+                                        checked={clientInfo.isFirstTimeHomeBuyer === 'NO'}
+                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                            if (e.target.checked) {
+                                                setClientInfo({ ...clientInfo, isFirstTimeHomeBuyer: 'NO' });
+                                            }
+                                        }} />
+
+                                    <label className="form-check-label" htmlFor={`firsttimehomebuyer-no${props.num}`}>
+                                        No
+                                    </label>
+                                </div>
                             </div>
-
-                            <div className="form-check">
-                                <input className="form-check-input" type="radio" name={`firsttimehomebuyer${props.num}`} id={`firsttimehomebuyer-no${props.num}`}
-                                    checked={clientInfo.isFirstTimeHomeBuyer === 'NO'}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        if (e.target.checked) {
-                                            setClientInfo({ ...clientInfo, isFirstTimeHomeBuyer: 'NO' });
-                                        }
-                                    }} />
-
-                                <label className="form-check-label" htmlFor={`firsttimehomebuyer-no${props.num}`}>
-                                    No
-                                </label>
+                            <div className="col mb-1 mt-4">
+                                <span>Please read our blog for important information! </span>
+                                <a href='https://www.dbmlaw.ca/blog/property-transfer-tax/' target='_blank' rel='noreferrer'>
+                                    https://www.dbmlaw.ca/blog/property-transfer-tax/</a>
                             </div>
-                        </div>
-                        <div className="col mb-1 mt-4">
-                            <span>Please read our blog for important information! </span>
-                            <a href='https://www.dbmlaw.ca/blog/property-transfer-tax/' target='_blank' rel='noreferrer'>
-                                https://www.dbmlaw.ca/blog/property-transfer-tax/</a>
-                        </div>
+                        </RadioGroup>
                     </div>
 
                     {
                         clientInfo.isFirstTimeHomeBuyer === 'YES' &&
                         <>
                             <div className="row">
-                                <div className="col mb-1 mt-4">
-                                    <h6>
-                                        <CircleBullet />
-                                        Have you been a resident of BC for at least a year?
-                                    </h6>
+                                <RadioGroup groupName="bcresident" makeRow={false}>
+                                    <div className="col mb-1 mt-4">
+                                        <h6>
+                                            <CircleBullet />
+                                            Have you been a resident of BC for at least a year?
+                                        </h6>
 
-                                    <div className="form-check">
-                                        <input className="form-check-input" type="radio" name={`residentbc${props.num}`} id={`residentbc-yes${props.num}`}
-                                            checked={clientInfo.hasBeenBCResidentForAYear === 'YES'}
-                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                if (e.target.checked) {
-                                                    setClientInfo({ ...clientInfo, hasBeenBCResidentForAYear: 'YES' });
-                                                }
-                                            }} />
-                                        <label className="form-check-label" htmlFor={`residentbc-yes${props.num}`}>
-                                            Yes
-                                        </label>
+                                        <div className="form-check">
+                                            <input className="form-check-input" type="radio" name={`residentbc${props.num}`} id={`residentbc-yes${props.num}`}
+                                                checked={clientInfo.hasBeenBCResidentForAYear === 'YES'}
+                                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                    if (e.target.checked) {
+                                                        setClientInfo({ ...clientInfo, hasBeenBCResidentForAYear: 'YES' });
+                                                    }
+                                                }} />
+                                            <label className="form-check-label" htmlFor={`residentbc-yes${props.num}`}>
+                                                Yes
+                                            </label>
+                                        </div>
+
+                                        <div className="form-check">
+                                            <input className="form-check-input" type="radio" name={`residentbc${props.num}`} id={`residentbc-no${props.num}`}
+                                                checked={clientInfo.hasBeenBCResidentForAYear === 'NO'}
+                                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                    if (e.target.checked) {
+                                                        setClientInfo({ ...clientInfo, hasBeenBCResidentForAYear: 'NO' });
+                                                    }
+                                                }} />
+
+                                            <label className="form-check-label" htmlFor={`residentbc-no${props.num}`}>
+                                                No
+                                            </label>
+                                        </div>
                                     </div>
+                                </RadioGroup>
+                                <RadioGroup groupName="elsewhere" makeRow={false}>
+                                    <div className="col mb-1 mt-4">
+                                        <h6>
+                                            <CircleBullet />
+                                            Have you ever owned a principal residence anywhere in the world?
+                                        </h6>
+                                        <div className="form-check">
+                                            <input className="form-check-input" type="radio" name={`principalresidenceworld${props.num}`} id={`principalresidenceworld-yes${props.num}`}
+                                                checked={clientInfo.hasOwnedPrincipalResidenceSomewhere === 'YES'}
+                                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                    if (e.target.checked) {
+                                                        setClientInfo({ ...clientInfo, hasOwnedPrincipalResidenceSomewhere: 'YES' });
+                                                    }
+                                                }} />
 
-                                    <div className="form-check">
-                                        <input className="form-check-input" type="radio" name={`residentbc${props.num}`} id={`residentbc-no${props.num}`}
-                                            checked={clientInfo.hasBeenBCResidentForAYear === 'NO'}
-                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                if (e.target.checked) {
-                                                    setClientInfo({ ...clientInfo, hasBeenBCResidentForAYear: 'NO' });
-                                                }
-                                            }} />
+                                            <label className="form-check-label" htmlFor={`principalresidenceworld-yes${props.num}`}>
+                                                Yes
+                                            </label>
+                                        </div>
 
-                                        <label className="form-check-label" htmlFor={`residentbc-no${props.num}`}>
-                                            No
-                                        </label>
+                                        <div className="form-check">
+                                            <input className="form-check-input" type="radio" name={`principalresidenceworld${props.num}`} id={`principalresidenceworld-no${props.num}`}
+                                                checked={clientInfo.hasOwnedPrincipalResidenceSomewhere === 'NO'}
+                                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                    if (e.target.checked) {
+                                                        setClientInfo({ ...clientInfo, hasOwnedPrincipalResidenceSomewhere: 'NO' });
+                                                    }
+                                                }} />
+
+                                            <label className="form-check-label" htmlFor={`principalresidenceworld-no${props.num}`}>
+                                                No
+                                            </label>
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div className="col mb-1 mt-4">
-                                    <h6>
-                                        <CircleBullet />
-                                        Have you ever owned a principal residence anywhere in the world?
-                                    </h6>
-                                    <div className="form-check">
-                                        <input className="form-check-input" type="radio" name={`principalresidenceworld${props.num}`} id={`principalresidenceworld-yes${props.num}`}
-                                            checked={clientInfo.hasOwnedPrincipalResidenceSomewhere === 'YES'}
-                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                if (e.target.checked) {
-                                                    setClientInfo({ ...clientInfo, hasOwnedPrincipalResidenceSomewhere: 'YES' });
-                                                }
-                                            }} />
-
-                                        <label className="form-check-label" htmlFor={`principalresidenceworld-yes${props.num}`}>
-                                            Yes
-                                        </label>
-                                    </div>
-
-                                    <div className="form-check">
-                                        <input className="form-check-input" type="radio" name={`principalresidenceworld${props.num}`} id={`principalresidenceworld-no${props.num}`}
-                                            checked={clientInfo.hasOwnedPrincipalResidenceSomewhere === 'NO'}
-                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                if (e.target.checked) {
-                                                    setClientInfo({ ...clientInfo, hasOwnedPrincipalResidenceSomewhere: 'NO' });
-                                                }
-                                            }} />
-
-                                        <label className="form-check-label" htmlFor={`principalresidenceworld-no${props.num}`}>
-                                            No
-                                        </label>
-                                    </div>
-                                </div>
-
+                                </RadioGroup>
                             </div>
 
                         </>
                     }
 
                     <div className="row">
-                        <div className="col mb-1 mt-4">
-                            <h6>
-                                <CircleBullet />
-                                Will you be living in the property within three months?
-                            </h6>
-                            <div className="form-check">
-                                <input className="form-check-input" type="radio" name={`livewithinthreemonths${props.num}`} id={`livewithinthreemonths-yes${props.num}`}
-                                    checked={clientInfo.willBeLivingInPropertyWithinThreeMonths === 'YES'}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        if (e.target.checked) {
-                                            setClientInfo({ ...clientInfo, willBeLivingInPropertyWithinThreeMonths: 'YES' });
-                                        }
-                                    }} />
+                        <RadioGroup groupName="livingthree">
+                            <div className="col mb-1 mt-4">
+                                <h6>
+                                    <CircleBullet />
+                                    Will you be living in the property within three months?
+                                </h6>
+                                <div className="form-check">
+                                    <input className="form-check-input" type="radio" name={`livewithinthreemonths${props.num}`} id={`livewithinthreemonths-yes${props.num}`}
+                                        checked={clientInfo.willBeLivingInPropertyWithinThreeMonths === 'YES'}
+                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                            if (e.target.checked) {
+                                                setClientInfo({ ...clientInfo, willBeLivingInPropertyWithinThreeMonths: 'YES' });
+                                            }
+                                        }} />
 
-                                <label className="form-check-label" htmlFor={`livewithinthreemonths-yes${props.num}`}>
-                                    Yes
-                                </label>
+                                    <label className="form-check-label" htmlFor={`livewithinthreemonths-yes${props.num}`}>
+                                        Yes
+                                    </label>
+                                </div>
+
+                                <div className="form-check">
+                                    <input className="form-check-input" type="radio" name={`livewithinthreemonths${props.num}`} id={`livewithinthreemonths-no${props.num}`}
+                                        checked={clientInfo.willBeLivingInPropertyWithinThreeMonths === 'NO'}
+                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                            if (e.target.checked) {
+                                                setClientInfo({ ...clientInfo, willBeLivingInPropertyWithinThreeMonths: 'NO' });
+                                            }
+                                        }} />
+
+                                    <label className="form-check-label" htmlFor={`livewithinthreemonths-no${props.num}`}>
+                                        No, use mailing address as stated above
+                                    </label>
+
+                                </div>
                             </div>
 
-                            <div className="form-check">
-                                <input className="form-check-input" type="radio" name={`livewithinthreemonths${props.num}`} id={`livewithinthreemonths-no${props.num}`}
-                                    checked={clientInfo.willBeLivingInPropertyWithinThreeMonths === 'NO'}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        if (e.target.checked) {
-                                            setClientInfo({ ...clientInfo, willBeLivingInPropertyWithinThreeMonths: 'NO' });
-                                        }
-                                    }} />
-
-                                <label className="form-check-label" htmlFor={`livewithinthreemonths-no${props.num}`}>
-                                    No, use mailing address as stated above
-                                </label>
-
+                            <div className="col mb-1 mt-4 flex align-self-end">
+                                {
+                                    (clientInfo.isFirstTimeHomeBuyer === 'YES' && clientInfo.willBeLivingInPropertyWithinThreeMonths === 'NO') &&
+                                    <span style={{
+                                        fontWeight: 600,
+                                    }}>
+                                        If you will not be living in the property within 3 months of completion you may
+                                        not qualify for the exemption
+                                    </span>
+                                }
                             </div>
-                        </div>
-
-                        <div className="col mb-1 mt-4 flex align-self-end">
-                            {
-                                (clientInfo.isFirstTimeHomeBuyer === 'YES' && clientInfo.willBeLivingInPropertyWithinThreeMonths === 'NO') &&
-                                <span style={{
-                                    fontWeight: 600,
-                                }}>
-                                    If you will not be living in the property within 3 months of completion you may
-                                    not qualify for the exemption
-                                </span>
-                            }
-                        </div>
+                        </RadioGroup>
                     </div>
 
                     {
@@ -1050,7 +1068,7 @@ const Client = (props: ClientProps): ReactElement => {
                                                     </div>
                                                 </div>
                                                 <div className="col mb-3">
-                                                    <select className="form-select p-3 is-required" aria-label="Province or territory"
+                                                    <select className={`form-select p-3 is-required prev-prov-${previousAddress.id.toString()}`} aria-label="Province or territory"
                                                         ref={provinceSelect}
                                                         value={previousAddress.provinceTerritory}
                                                         onChange={(e: ChangeEvent<HTMLSelectElement>) => {
@@ -1062,19 +1080,10 @@ const Client = (props: ClientProps): ReactElement => {
                                                                     setClientInfo({ ...clientInfo, previousAddresses: temp });
                                                                 }
                                                             }
-                                                        }}
-                                                    >
-                                                        {
-                                                            provinces.map((p) => {
-                                                                return (
-                                                                    <option
-                                                                        key={p}
-                                                                        value={p}>
-                                                                        {p}
-                                                                    </option>
-                                                                );
-                                                            })
-                                                        }
+                                                        }}>
+                                                        <option value="Not applicable">
+                                                            Not applicable
+                                                        </option>
                                                     </select>
                                                     <div className="invalid-feedback">
                                                         Please enter this field
@@ -1117,10 +1126,37 @@ const Client = (props: ClientProps): ReactElement => {
                                                                     if (entry) {
                                                                         entry.country = e.target.value;
                                                                         setClientInfo({ ...clientInfo, previousAddresses: temp });
+
+                                                                        const provStateDDL = document.querySelector(`.prev-prov-${previousAddress.id.toString()}`) as HTMLSelectElement;
+                                                                        const entries = [];
+                                                                        switch (entry.country) {
+                                                                            case 'Canada':
+                                                                                entries.push(...getProvincesTerritories());
+                                                                                break;
+
+                                                                            case 'United States':
+                                                                                entries.push(...getStates());
+                                                                                break;
+
+                                                                            default:
+                                                                                entries.push('Not applicable');
+
+                                                                        }
+
+                                                                        provStateDDL.options.length = 0;
+
+                                                                        entries.map((entry) => {
+                                                                            provStateDDL.options[provStateDDL.options.length] =
+                                                                                new Option(entry, entry);
+                                                                            return null;
+                                                                        });
                                                                     }
                                                                 }
                                                             }}
                                                         >
+                                                            <option key='not_selected' value={''} disabled={true} >
+                                                                Choose country...
+                                                            </option>
                                                             {
                                                                 countries.map((c) => {
                                                                     return (

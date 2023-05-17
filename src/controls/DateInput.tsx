@@ -1,14 +1,15 @@
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useEffect, useRef, useState } from "react";
 import { DayPicker } from 'react-day-picker';
 
 interface DateInputProps {
-    id?: string;
+    id: string;
     value: Date | null;
     onChange: (e: Date) => void;
     min?: Date;
     max?: Date;
     label?: string;
     isRequired: boolean;
+    disabled?: boolean;
 }
 
 const DeleteDate = (props: {
@@ -36,7 +37,16 @@ const DeleteDate = (props: {
     );
 };
 
+
+
 const DateInput = (props: DateInputProps): ReactElement => {
+
+    const clickRef = useRef((e: MouseEvent) => {
+        const dp = document.querySelector(`.datepicker-${props.id}`) as HTMLElement;
+        if (dp && !dp.contains(e.target as HTMLElement)) {
+            setIsOpen(false);
+        }
+    });
 
     const [dateValue, setDateValue] = useState<Date | null>(props.value);
     const [isOpen, setIsOpen] = useState(false);
@@ -58,6 +68,10 @@ const DateInput = (props: DateInputProps): ReactElement => {
             if (d) {
                 d.scrollIntoView(false);
             }
+            document.addEventListener('click', clickRef.current, true);
+        }
+        else {
+            document.removeEventListener('click', clickRef.current, true);
         }
     }, [isOpen]);
 
@@ -67,6 +81,7 @@ const DateInput = (props: DateInputProps): ReactElement => {
                 <input type='text' className={`form-control${props.isRequired ? ' is-required' : ''}`} id={`${props.id}`}
                     value={dateValue ? dateValue.toISOString().split('T')[0] : ''}
                     readOnly={true}
+                    disabled={props.disabled !== undefined && props.disabled}
                     onClick={() => {
                         //if (dateValue) {
                         setIsOpen(!isOpen);
@@ -101,6 +116,7 @@ const DateInput = (props: DateInputProps): ReactElement => {
                             }
                         }
                         }
+                        className={`datepicker-${props.id}`}
                         style={{
                             position: 'absolute',
                             zIndex: '1',
@@ -109,7 +125,6 @@ const DateInput = (props: DateInputProps): ReactElement => {
                             borderRadius: '12px',
                         }}
                     />
-
                 }
             </div>
         </>

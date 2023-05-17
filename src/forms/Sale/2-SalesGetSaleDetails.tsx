@@ -2,6 +2,7 @@ import { ChangeEvent, ReactElement } from "react";
 import CircleBullet from "../../controls/CircleBullet";
 import DateInput from "../../controls/DateInput";
 import { SalesChildProps } from ".";
+import NumericInput from "../../controls/NumericInput";
 
 const SalesGetSaleDetails = (props: SalesChildProps): ReactElement => {
 
@@ -49,13 +50,13 @@ const SalesGetSaleDetails = (props: SalesChildProps): ReactElement => {
                 </div>
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>
-                        <input type='number' className='form-control' id='saleprice' placeholder='Sale price'
+                        <NumericInput id='saleprice' placeholder='Sale price' disabled={false}
                             value={props.saleInfo.sellingPrice}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e && e.target) {
                                     props.setSaleInfo({
                                         ...props.saleInfo, sellingPrice: e.target.value ?
-                                            parseFloat(e.target.value).toString() : ''
+                                            e.target.value : ''
                                     });
                                 }
                             }}

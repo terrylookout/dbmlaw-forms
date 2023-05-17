@@ -2,6 +2,7 @@ import { ChangeEvent, Fragment } from "react";
 import { ProjectPurchaseProps } from ".";
 import CircleBullet from "../../controls/CircleBullet";
 import DateInput from "../../controls/DateInput";
+import NumericInput from "../../controls/NumericInput";
 
 
 const PropertyInfo = ({
@@ -47,13 +48,13 @@ const PropertyInfo = ({
 
                 <div className='col'>
                     <div className='form-floating mb-0'>
-                        <input type='number' className='form-control' id='purchaseprice' placeholder='Purchase price'
+                        <NumericInput type='number' className='form-control' id='purchaseprice' placeholder='Purchase price'
                             value={purchaseInfo.purchasePrice}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e && e.target) {
                                     setPurchaseInfo({
                                         ...purchaseInfo,
-                                        purchasePrice: e.target.value ? parseFloat(e.target.value).toString() : '',
+                                        purchasePrice: e.target.value ? e.target.value : '',
                                     });
                                 }
                             }}
@@ -82,13 +83,13 @@ const PropertyInfo = ({
 
                 <div className='col mt-3'>
                     <div className='form-floating mb-0'>
-                        <input type='number' className='form-control' id='depositpaid' placeholder='Deposit Paid'
+                        <NumericInput type='number' className='form-control' id='depositpaid' placeholder='Deposit Paid'
                             value={purchaseInfo.depositPaid}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e && e.target) {
                                     setPurchaseInfo({
                                         ...purchaseInfo,
-                                        depositPaid: e.target.value ? parseFloat(e.target.value).toString() : '',
+                                        depositPaid: e.target.value ? e.target.value : '',
                                     });
                                 }
                             }}

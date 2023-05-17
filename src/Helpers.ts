@@ -107,64 +107,51 @@ export const getProvincesTerritories = (): string[] => {
     ];
 }
 
-const getRequiredRadioButtonGroups = () => {
-    const radios = document.querySelectorAll(`[type='radio'][required]`);
-
-    if (radios) {
-        const uniqueGroups = Array.from(new Set(Array.from(radios).map((item: any) => item.name)));
-        if (uniqueGroups) {
-            const results = [];
-            for (const group of uniqueGroups) {
-                results.push(Array.from(document.querySelectorAll(`[name='${group}']`)));
-            }
-            return results;
-        }
-    }
-
-    return null;
-    //Array.from(new Set(Array.from(t).map((item) => item.name)))
-}
-
 export const checkInputs = (): boolean => {
     let okToGo = true;
     const inputs = document.querySelectorAll('.is-required');
     if (inputs) {
         inputs.forEach((input) => {
+            if (!(input as HTMLInputElement).disabled) {
+                if (!(input as HTMLInputElement).value) {
+                    (input as HTMLInputElement).classList.add('is-invalid');
+                    okToGo = false;
+                }
+                else if ((input as HTMLSelectElement).selectedIndex < 1 && (input as HTMLSelectElement).options.length > 1) {
+                    (input as HTMLSelectElement).classList.add('is-invalid');
+                    okToGo = false;
+                }
+                else {
+                    (input as HTMLInputElement).classList.remove('is-invalid');
+                }
 
-            if (!(input as HTMLInputElement).value) {
-                (input as HTMLInputElement).classList.add('is-invalid');
-                okToGo = false;
-            }
-            else if ((input as HTMLSelectElement).selectedIndex < 1 && (input as HTMLSelectElement).options.length > 1) {
-                (input as HTMLSelectElement).classList.add('is-invalid');
-                okToGo = false;
-            }
-            else {
-                (input as HTMLInputElement).classList.remove('is-invalid');
             }
         })
     }
 
-    const radioGroups = getRequiredRadioButtonGroups();
+    const radioGroups = document.querySelectorAll('.rdo-group-dbm');
 
     if (radioGroups) {
         for (let a = 0; a < radioGroups.length; a++) {
-            const group = radioGroups[a];
+            const group = radioGroups[a] as HTMLElement;
             let value = false;
-            let name = '';
-            let lastRadio = null;
-            for (let b = 0; b < group.length; b++) {
-                const radio = group[b] as HTMLInputElement;
-                lastRadio = radio;
-                name = radio.name;
+
+            const radios = group.querySelectorAll(`[type='radio']`);
+
+            for (let b = 0; b < radios.length; b++) {
+                const radio = radios[b] as HTMLInputElement;
 
                 if (radio.checked) {
                     value = true;
                 }
             }
             if (!value) {
-                console.log(`group ${name} has no value set`);
-                (lastRadio?.closest('.row') as HTMLElement).style.border = '1px red solid';
+                group.style.border = '1px red solid';
+                const errorDiv = document.querySelector(`.rdo-error-${group.getAttribute('data-groupname')}`);
+                if (errorDiv) {
+                    (errorDiv as HTMLElement).style.display = '';
+                }
+                okToGo = false;
             }
         }
     }

@@ -4,6 +4,7 @@ import DateInput from "../../controls/DateInput";
 import { SaleAndPurchaseProps } from ".";
 import Guarantor from "../../Guarantor";
 import { GuarantorInfo } from "../../ClassesInterfaces";
+import NumericInput from "../../controls/NumericInput";
 
 
 const PropertyInfo = ({
@@ -33,7 +34,7 @@ const PropertyInfo = ({
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>
                         <DateInput
-                            className='form-control'
+                            isRequired={!purchaseInfo.completionDateTBD}
                             id={`completiondate`}
                             value={purchaseInfo.completionDateTBD ? new Date() : purchaseInfo.completionDate}
                             min={new Date((new Date()).setFullYear(new Date().getFullYear() - 5))}
@@ -58,10 +59,15 @@ const PropertyInfo = ({
                 </div>
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>
-                        <input type='number' className='form-control is-required' id='purchaseprice' placeholder='Purchase price'
+                        <NumericInput
+                            required={true}
+                            disabled={false}
+                            value={purchaseInfo.purchasePrice}
+                            id='purchaseprice'
+                            placeholder='Purchase price'
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e && e.target && e.target.value) {
-                                    setPurchaseInfo({ ...purchaseInfo, purchasePrice: parseFloat(e.target.value).toString() });
+                                    setPurchaseInfo({ ...purchaseInfo, purchasePrice: e.target.value });
                                 }
                             }}
                         />
@@ -642,29 +648,17 @@ const PropertyInfo = ({
 
                     <div className="form-check">
                         <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-chequing`}
-                            checked={purchaseInfo.fundsSource === 'CHEQUING_ACCOUNT'}
+                            checked={purchaseInfo.fundsSource === 'CHEQUING_SAVINGS_ACCOUNT'}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e.target.checked) {
-                                    setPurchaseInfo({ ...purchaseInfo, fundsSource: 'CHEQUING_ACCOUNT' });
+                                    setPurchaseInfo({ ...purchaseInfo, fundsSource: 'CHEQUING_SAVINGS_ACCOUNT' });
                                 }
                             }} />
                         <label className="form-check-label" htmlFor={`fundsource-chequing`}>
-                            Chequing Account
+                            Chequing / Savings Account
                         </label>
                     </div>
 
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-saving`}
-                            checked={purchaseInfo.fundsSource === 'SAVINGS_ACCOUNT'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setPurchaseInfo({ ...purchaseInfo, fundsSource: 'SAVINGS_ACCOUNT' });
-                                }
-                            }} />
-                        <label className="form-check-label" htmlFor={`fundsource-saving`}>
-                            Savings Account
-                        </label>
-                    </div>
                 </div>
 
                 <div className="col mb-1">
@@ -714,14 +708,14 @@ const PropertyInfo = ({
             </div>
 
             {
-                (purchaseInfo.fundsSource && (purchaseInfo.fundsSource === 'CHEQUING_ACCOUNT' || purchaseInfo.fundsSource === 'SAVINGS_ACCOUNT')) &&
+                (purchaseInfo.fundsSource && (purchaseInfo.fundsSource === 'CHEQUING_SAVINGS_ACCOUNT')) &&
                 <>
                     <div className="row">
                         <div className="col mb-1 mt-4">
                             <h6>
                                 <CircleBullet />
                                 If coming from your savings or chequing account, where was the funds come from
-                                (i.e. savings, sale of property, gift, etc)
+                                (i.e. gift, etc)
                             </h6>
                         </div>
                     </div>
@@ -736,7 +730,7 @@ const PropertyInfo = ({
                                     }}
                                 />
                                 <label htmlFor='floatingInput'>
-                                    Savings, sale of property, gift, etc
+                                    gift, etc
                                 </label>
                             </div>
                         </div>
@@ -1033,18 +1027,7 @@ const PropertyInfo = ({
                         </label>
                     </div>
 
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name="apptlocation" id="apptlocation-langley"
-                            checked={purchaseInfo.apptLocationPreference === 'LANGLEY'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e && e.target && e.target.value && e.target.value === 'on') {
-                                    setPurchaseInfo({ ...purchaseInfo, apptLocationPreference: 'LANGLEY' });
-                                }
-                            }} />
-                        <label className="form-check-label" htmlFor="apptlocation-langley">
-                            Langley
-                        </label>
-                    </div>
+
                 </div>
             </div>
 

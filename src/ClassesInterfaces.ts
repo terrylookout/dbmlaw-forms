@@ -312,17 +312,17 @@ export class PurchaseInfo {
     public purchasePrice: string;
     public depositPaid: string = '';
 
-    public upgradesOrExtras: 'YES' | 'NO' = 'NO';
+    public upgradesOrExtras: 'YES' | 'NO' | '' = '';
 
-    public relativeLivingInstead: 'YES' | 'NO' = 'NO';
+    public relativeLivingInstead: 'YES' | 'NO' | '' = '';
     public relativeLivingInsteadName: string = '';
     public relativeLivingInsteadRelationship: string = '';
 
-    public buyingThroughAssignment: 'YES' | 'NO' = 'NO';
-    public assignorGeneratingProfit: 'YES' | 'NO' | 'UNKNOWN' = 'NO';
-    public moneysDisbursed: 'REALTORS' | 'LAWYERS' | 'UNKNOWN' = 'REALTORS';
+    public buyingThroughAssignment: 'YES' | 'NO' | '' = '';
+    public assignorGeneratingProfit: 'YES' | 'NO' | 'UNKNOWN' | '' = '';
+    public moneysDisbursed: 'REALTORS' | 'LAWYERS' | 'UNKNOWN' | '' = '';
     public lawyerForAssignor: string = '';
-    public assignorResidentCanada: 'YES' | 'NO' | 'UNKNOWN' = 'YES';
+    public assignorResidentCanada: 'YES' | 'NO' | 'UNKNOWN' | '' = '';
 
     public unitNumber: string;
     public strataLot: string;
@@ -332,15 +332,15 @@ export class PurchaseInfo {
     public provinceTerritory: string;
     public postalCode: string;
 
-    public joinType: 'JOINT_TENANTS' | 'TENANTS_IN_COMMON';
-    public joinTypeDetails: 'YES' | 'NO';
+    public joinType: 'JOINT_TENANTS' | 'TENANTS_IN_COMMON' | '' = '';
+    public joinTypeDetails: 'YES' | 'NO' | '' = '';
 
-    public buildingNewUsed: 'NEW' | 'USED';
+    public buildingNewUsed: 'NEW' | 'USED' | '' = '';
 
     public realtorName: string;
     public realtorPhone: string;
 
-    public gettingMortgageOrSLOC: 'YES' | 'NO' | 'YES_NOT_DETERMINED';
+    public gettingMortgageOrSLOC: 'YES' | 'NO' | 'YES_NOT_DETERMINED' | '' = '';
 
     public lenderName: string;
     public strataName: string;
@@ -354,7 +354,7 @@ export class PurchaseInfo {
     public insuranceAgentName: string;
     public insuranceAgentPhone: string;
 
-    public portionPropertyRentedOut: 'YES' | 'NO';
+    public portionPropertyRentedOut: 'YES' | 'NO' | '';
 
     public fundsSource: 'SALE_PREVIOUS_PROPERTY' | 'CHEQUING_SAVINGS_ACCOUNT' | 'HELOC' | 'ANOTHER_INDIVIDUAL' | 'OTHER'
         | 'INVESTMENT_FUNDS' | '';
@@ -370,7 +370,7 @@ export class PurchaseInfo {
     public nonPurchaserOccupation: string;
     public nonPurchaserRelationship: string;
 
-    public apptLocationPreference: 'VANCOUVER' | 'COQUITLAM';
+    public apptLocationPreference: 'VANCOUVER' | 'COQUITLAM' | '';
 
     public additionalComments: string;
 
@@ -392,18 +392,18 @@ export class PurchaseInfo {
         this.street1 = '';
         this.street2 = '';
         this.city = '';
-        this.provinceTerritory = 'British Columbia';
+        this.provinceTerritory = '';
         this.postalCode = '';
 
-        this.buildingNewUsed = "NEW";
+        this.buildingNewUsed = "";
 
-        this.joinType = 'JOINT_TENANTS';
-        this.joinTypeDetails = 'NO';
+        this.joinType = '';
+        this.joinTypeDetails = '';
 
         this.realtorName = '';
         this.realtorPhone = '';
 
-        this.gettingMortgageOrSLOC = 'NO';
+        this.gettingMortgageOrSLOC = '';
 
         this.lenderName = '';
 
@@ -418,9 +418,9 @@ export class PurchaseInfo {
         this.insuranceAgentName = '';
         this.insuranceAgentPhone = '';
 
-        this.portionPropertyRentedOut = 'NO';
+        this.portionPropertyRentedOut = '';
 
-        this.fundsSource = 'SALE_PREVIOUS_PROPERTY';
+        this.fundsSource = '';
         this.fundsChequingSavingsSource = '';
 
         this.nonPurchaserName = '';
@@ -433,7 +433,7 @@ export class PurchaseInfo {
         this.nonPurchaserOccupation = '';
         this.nonPurchaserRelationship = '';
 
-        this.apptLocationPreference = 'COQUITLAM';
+        this.apptLocationPreference = '';
 
         this.additionalComments = '';
     }

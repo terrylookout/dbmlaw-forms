@@ -2,6 +2,7 @@ import { ChangeEvent } from "react";
 import { SaleAndPurchaseProps } from ".";
 import CircleBullet from "../../controls/CircleBullet";
 import DateInput from "../../controls/DateInput";
+import NumericInput from "../../controls/NumericInput";
 
 
 const GetSaleDetails = ({
@@ -29,8 +30,8 @@ const GetSaleDetails = ({
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>
                         <DateInput
-                            className='form-control'
                             id={`closingdate`}
+                            isRequired={!saleInfo.closingDateTBD}
                             value={saleInfo.closingDateTBD ? new Date() : saleInfo.closingDate}
                             min={new Date((new Date()).setFullYear(new Date().getFullYear() - 5))}
                             label='Closing date'
@@ -52,13 +53,14 @@ const GetSaleDetails = ({
                 </div>
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>
-                        <input type='number' className='form-control is-required' id='saleprice' placeholder='Sale price'
+                        <NumericInput id='saleprice' placeholder='Sale price' disabled={false}
+                            required={false}
                             value={saleInfo.sellingPrice}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e && e.target && e.target.value) {
                                     setSaleInfo({
                                         ...saleInfo, sellingPrice: e.target.value ?
-                                            parseFloat(e.target.value).toString() : ''
+                                            e.target.value : ''
                                     });
                                 }
                             }}

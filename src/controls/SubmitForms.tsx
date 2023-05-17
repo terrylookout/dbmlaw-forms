@@ -45,9 +45,16 @@ export const SubmitDone = (): ReactElement => {
                 You will be contacted by Drysdale Bacon McStravick soon!
             </p>
             <p>
-                Please advise the sales office and your mortgage broker that you have hired Drysdale Bacon McStravick LLP to assist you in this transaction.
+                Please ensure that you notify the Realty Sales Office and your Mortgage Broker that you have hired
+                Drysdale Bacon McStravick LLP to assist you in this transaction.
             </p>
             <p>
+                <span style={{
+                    fontWeight: '600',
+                    fontStyle: 'italic'
+                }}>
+                    For New Builds&nbsp;
+                </span>
                 <span style={{
                     fontWeight: '600',
                 }}>
@@ -57,16 +64,17 @@ export const SubmitDone = (): ReactElement => {
 
             </p>
             <p>
-                Make sure your broker knows that if we receive mortgage instructions less
-                than 3 business days before your appointment there will be an additional
-                charge for rush service. While we will try to contact the broker on your behalf,
-                it is the responsibility of the broker to ensure that instructions are received by our
-                offices on time in order to avoid rush charges from our offices.
+                Please make sure your Mortgage Broker is aware that Mortgage instructions are due from your Lender at least three business
+                days prior to your appointment to avoid any rush charges and/or delays with your Closing.
             </p>
 
             <p>
                 If you have any questions or concerns, please feel free to call&nbsp;
                 <a href="tel:1-604-939-8321">604 939 8321</a>
+            </p>
+
+            <p>
+                We look forward to working with you and congratulations on your upcoming transaction!
             </p>
         </>
     )
