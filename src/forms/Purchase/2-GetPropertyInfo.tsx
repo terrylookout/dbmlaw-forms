@@ -40,7 +40,7 @@ const GetPropertyInfo = ({
                     <div className='form-floating mb-0'>
 
                         <DateInput
-                            className='form-control'
+                            isRequired={!purchaseInfo.completionDateTBD}
                             id={`completiondate`}
                             value={purchaseInfo.completionDateTBD ? null : purchaseInfo.completionDate}
                             min={new Date((new Date()).setFullYear(new Date().getFullYear() - 5))}
@@ -92,7 +92,7 @@ const GetPropertyInfo = ({
                 <div className='col mb-1 mt-4'>
                     <h6>
                         <CircleBullet />
-                        Address of purchased property
+                        Purchase property
                     </h6>
                 </div>
             </div>
@@ -260,6 +260,18 @@ const GetPropertyInfo = ({
                                 </label>
                             </div>
 
+
+                            <div className='d-flex flex-nowrap pt-4'>
+                                <input type='checkbox' id={`chkmoredetails`} checked={purchaseInfo.joinTypeDetails === 'YES'}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                        setPurchaseInfo({ ...purchaseInfo, joinTypeDetails: e.target.checked ? 'YES' : 'NO' })
+                                    }} />
+                                <label htmlFor={`chkmoredetails`} className='ps-2'>
+                                    Call me for details
+                                </label>
+
+                            </div>
+
                         </div>
 
                         <div className='col-7 mb-3'>
@@ -272,8 +284,9 @@ const GetPropertyInfo = ({
                                 https://www.dbmrealestatelaw.com/joint-tenancy-vs-tenancy-common/
                             </a>
                         </div>
-
                     </div>
+
+
                 </>
             }
 
@@ -427,59 +440,107 @@ const GetPropertyInfo = ({
                 <div className='col mb-1 mt-4'>
                     <h6>
                         <CircleBullet />
-                        If you are getting a mortgage, Bank or Mortgage Lender information (if applicable)
+                        Mortgage / Secured Line of Credit
                     </h6>
                 </div>
             </div>
 
             <div className='row'>
                 <div className='col mb-3'>
-                    <div className='form-floating mb-0'>
-                        <input type='text' className='form-control' id='lendername' placeholder='Lender name'
-                            value={purchaseInfo.lenderName}
+
+                    <div className='form-check'>
+                        <input className='form-check-input' type='radio' name='gettingmortgagesloc' id='gettingmortgagesloc-no'
+                            checked={purchaseInfo.gettingMortgageOrSLOC === 'NO'}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setPurchaseInfo({ ...purchaseInfo, lenderName: e.target.value });
-                            }}
-                        />
-                        <label htmlFor='floatingInput'>
-                            Lender name
+                                if (e && e.target && e.target.value && e.target.value === 'on') {
+                                    setPurchaseInfo({ ...purchaseInfo, gettingMortgageOrSLOC: 'NO' });
+                                }
+                            }} />
+                        <label className='form-check-label' htmlFor='gettingmortgagesloc-no'>
+                            No
+                        </label>
+                    </div>
+
+                    <div className='form-check'>
+                        <input className='form-check-input' type='radio' name='gettingmortgagesloc' id='gettingmortgagesloc-yes'
+                            checked={purchaseInfo.gettingMortgageOrSLOC === 'YES'}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                if (e && e.target && e.target.value && e.target.value === 'on') {
+                                    setPurchaseInfo({ ...purchaseInfo, gettingMortgageOrSLOC: 'YES' });
+                                }
+                            }} />
+                        <label className='form-check-label' htmlFor='gettingmortgagesloc-yes'>
+                            Yes (enter info below)
+                        </label>
+                    </div>
+
+                    <div className='form-check'>
+                        <input className='form-check-input' type='radio' name='gettingmortgagesloc' id='gettingmortgagesloc-yestbd'
+                            checked={purchaseInfo.gettingMortgageOrSLOC === 'YES_NOT_DETERMINED'}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                if (e && e.target && e.target.value && e.target.value === 'on') {
+                                    setPurchaseInfo({ ...purchaseInfo, gettingMortgageOrSLOC: 'YES_NOT_DETERMINED' });
+                                }
+                            }} />
+                        <label className='form-check-label' htmlFor='gettingmortgagesloc-yestbd'>
+                            Yes, but still to be determined
                         </label>
                     </div>
                 </div>
             </div>
 
-            <div className='row'>
-
-                <div className='col mb-3'>
-                    <div className='form-floating mb-0'>
-                        <input type='text' className='form-control' id='brokerbankername' placeholder='Broker/Banker name'
-                            value={purchaseInfo.brokerBankerName}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setPurchaseInfo({ ...purchaseInfo, brokerBankerName: e.target.value });
-                            }}
-                        />
-                        <label htmlFor='floatingInput'>
-                            Broker/Banker name
-                        </label>
+            {
+                (purchaseInfo.gettingMortgageOrSLOC === 'YES') &&
+                <>
+                    <div className='row'>
+                        <div className='col mb-3'>
+                            <div className='form-floating mb-0'>
+                                <input type='text' className='form-control' id='lendername' placeholder='Lender name'
+                                    value={purchaseInfo.lenderName}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                        setPurchaseInfo({ ...purchaseInfo, lenderName: e.target.value });
+                                    }}
+                                />
+                                <label htmlFor='floatingInput'>
+                                    Lender name
+                                </label>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <div className='col mb-3'>
-                    <div className='form-floating mb-0'>
-                        <input type='tel' className='form-control' id='lenderphone' placeholder='Phone number'
-                            pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}' value={purchaseInfo.brokerBankerPhone}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setPurchaseInfo({ ...purchaseInfo, brokerBankerPhone: e.target.value });
-                            }}
-                        />
-                        <label htmlFor='floatingInput'>
-                            Phone number - format: 123-456-7890
-                        </label>
+                    <div className='row'>
+
+                        <div className='col mb-3'>
+                            <div className='form-floating mb-0'>
+                                <input type='text' className='form-control' id='brokerbankername' placeholder='Broker/Banker name'
+                                    value={purchaseInfo.brokerBankerName}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                        setPurchaseInfo({ ...purchaseInfo, brokerBankerName: e.target.value });
+                                    }}
+                                />
+                                <label htmlFor='floatingInput'>
+                                    Broker/Banker name
+                                </label>
+                            </div>
+                        </div>
+
+                        <div className='col mb-3'>
+                            <div className='form-floating mb-0'>
+                                <input type='tel' className='form-control' id='lenderphone' placeholder='Phone number'
+                                    pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}' value={purchaseInfo.brokerBankerPhone}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                        setPurchaseInfo({ ...purchaseInfo, brokerBankerPhone: e.target.value });
+                                    }}
+                                />
+                                <label htmlFor='floatingInput'>
+                                    Phone number - format: 123-456-7890
+                                </label>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
 
-
+                </>
+            }
             <div className='row'>
                 <div className='col mb-1 mt-4'>
                     <h6>
@@ -586,6 +647,12 @@ const GetPropertyInfo = ({
                 </div>
             </div>
 
+            <div className="row mb-4">
+                <span>
+                    NOTE: On a house purchase, if obtaining a Mortgage / Secured Line of Credit, your insurance will need to be in place prior to closing
+                </span>
+            </div>
+
 
             <div className='row'>
                 <div className='col mb-1 mt-4'>
@@ -642,40 +709,40 @@ const GetPropertyInfo = ({
                 <div className='col mb-1'>
                     <div className='form-check'>
                         <input className='form-check-input' type='radio' name={`fundsource`} id={`fundsource-notapplicable`}
-                            checked={purchaseInfo.fundsSource === ''}
+                            checked={purchaseInfo.fundsSource === 'SALE_PREVIOUS_PROPERTY'}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e.target.checked) {
-                                    setPurchaseInfo({ ...purchaseInfo, fundsSource: '' });
+                                    setPurchaseInfo({ ...purchaseInfo, fundsSource: 'SALE_PREVIOUS_PROPERTY' });
                                 }
                             }} />
                         <label className='form-check-label' htmlFor={`fundsource-notapplicable`}>
-                            Not applicable
+                            Sale of previous home
                         </label>
                     </div>
 
                     <div className='form-check'>
-                        <input className='form-check-input' type='radio' name={`fundsource`} id={`fundsource-chequing`}
-                            checked={purchaseInfo.fundsSource === 'CHEQUING_ACCOUNT'}
+                        <input className='form-check-input' type='radio' name={`fundsource`} id={`fundsource-invest`}
+                            checked={purchaseInfo.fundsSource === 'INVESTMENT_FUNDS'}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e.target.checked) {
-                                    setPurchaseInfo({ ...purchaseInfo, fundsSource: 'CHEQUING_ACCOUNT' });
+                                    setPurchaseInfo({ ...purchaseInfo, fundsSource: 'INVESTMENT_FUNDS' });
                                 }
                             }} />
-                        <label className='form-check-label' htmlFor={`fundsource-chequing`}>
-                            Chequing Account
+                        <label className='form-check-label' htmlFor={`fundsource-invest`}>
+                            Investment funds
                         </label>
                     </div>
 
                     <div className='form-check'>
-                        <input className='form-check-input' type='radio' name={`fundsource`} id={`fundsource-saving`}
-                            checked={purchaseInfo.fundsSource === 'SAVINGS_ACCOUNT'}
+                        <input className='form-check-input' type='radio' name={`fundsource`} id={`fundsource-chequingsaving`}
+                            checked={purchaseInfo.fundsSource === 'CHEQUING_SAVINGS_ACCOUNT'}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 if (e.target.checked) {
-                                    setPurchaseInfo({ ...purchaseInfo, fundsSource: 'SAVINGS_ACCOUNT' });
+                                    setPurchaseInfo({ ...purchaseInfo, fundsSource: 'CHEQUING_SAVINGS_ACCOUNT' });
                                 }
                             }} />
-                        <label className='form-check-label' htmlFor={`fundsource-saving`}>
-                            Savings Account
+                        <label className='form-check-label' htmlFor={`fundsource-chequingsaving`}>
+                            Chequing/Savings Account
                         </label>
                     </div>
                 </div>
@@ -727,14 +794,14 @@ const GetPropertyInfo = ({
             </div>
 
             {
-                (purchaseInfo.fundsSource && (purchaseInfo.fundsSource === 'CHEQUING_ACCOUNT' || purchaseInfo.fundsSource === 'SAVINGS_ACCOUNT')) &&
+                (purchaseInfo.fundsSource && (purchaseInfo.fundsSource === 'CHEQUING_SAVINGS_ACCOUNT')) &&
                 <>
                     <div className='row'>
                         <div className='col mb-1 mt-4'>
                             <h6>
                                 <CircleBullet />
-                                If coming from your savings or chequing account, where was the funds come from
-                                (i.e. savings, sale of property, gift, etc)
+                                If coming from your savings or chequing account, where have the funds come from
+                                (i.e. gift, etc)
                             </h6>
                         </div>
                     </div>
@@ -749,7 +816,7 @@ const GetPropertyInfo = ({
                                     }}
                                 />
                                 <label htmlFor='floatingInput'>
-                                    Savings, sale of property, gift, etc
+                                    Gift, etc
                                 </label>
                             </div>
                         </div>
@@ -942,7 +1009,8 @@ const GetPropertyInfo = ({
                             <h6 style={{
                                 display: 'inline-block',
                             }}>
-                                <div>Are there any guarantors/co-signers?</div>
+                                <div>Are there any guarantors/co-signers on your mortgage?</div>
+                                <div>&nbsp;</div>
                                 <div>If so, how many?</div>
                             </h6>
                         </div>
@@ -1046,18 +1114,6 @@ const GetPropertyInfo = ({
                         </label>
                     </div>
 
-                    <div className='form-check'>
-                        <input className='form-check-input' type='radio' name='apptlocation' id='apptlocation-langley'
-                            checked={purchaseInfo.apptLocationPreference === 'LANGLEY'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e && e.target && e.target.value && e.target.value === 'on') {
-                                    setPurchaseInfo({ ...purchaseInfo, apptLocationPreference: 'LANGLEY' });
-                                }
-                            }} />
-                        <label className='form-check-label' htmlFor='apptlocation-langley'>
-                            Langley
-                        </label>
-                    </div>
                 </div>
             </div>
 

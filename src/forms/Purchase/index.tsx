@@ -64,26 +64,6 @@ const PurchaseForm = (props: FormProps): ReactElement => {
         // eslint-disable-next-line
     }, []);
 
-    // useEffect(() => {
-    //     const tempClients = [...purchaseInfo.clientsInfo];
-    //     if (numberOfClients > tempClients.length) {
-    //         do {
-    //             tempClients.push(
-    //                 new ClientInfo()
-    //             );
-    //         } while (numberOfClients > tempClients.length);
-    //     }
-    //     else if (numberOfClients < tempClients.length) {
-    //         do {
-    //             tempClients.pop();
-    //         } while (numberOfClients < tempClients.length);
-    //     }
-
-    //     setPurchaseInfo({ ...purchaseInfo, clientsInfo: tempClients });
-
-    //     // eslint-disable-next-line
-    // }, [numberOfClients]);
-
     useEffect(() => {
         if (purchaseInfo.forCompany) {
             const temp: ClientInfo[] = [];
@@ -118,16 +98,6 @@ const PurchaseForm = (props: FormProps): ReactElement => {
 
         // eslint-disable-next-line
     }, [numberOfGuarantors]);
-
-    // useEffect(() => {
-    //     if (purchaseInfo.forCompany) {
-    //         setNumberOfClients(1);
-    //     }
-    //     else {
-    //         setNumberOfClients(0);
-    //     }
-
-    // }, [purchaseInfo.forCompany]);
 
     useEffect(() => {
         setSubmitOk(false);
@@ -349,13 +319,19 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
             if (client.employment === 'RETIRED') {
                 output.push(getEntry('Previous Occupation', client.retiredPreviousOccupation));
             }
-            output.push(getEntry('Employer Name', client.employerName));
-            output.push(getEntry('Employer Phone Number', client.employerPhone));
-            output.push(getEntry('Employer Street 1', client.employerStreet1));
-            output.push(getEntry('Employer Street 2', client.employerStreet2));
-            output.push(getEntry('Employer City', client.employerCity));
-            output.push(getEntry('Employer Province or Territory', client.employerProvinceTerritory));
-            output.push(getEntry('Employer Postal Code', client.employerPostalCode, true));
+            else if (client.employment === 'OTHER') {
+                output.push(getEntry('Other Occupation', client.occupationOther));
+            }
+            else if (client.employment === 'EMPLOYED') {
+                output.push(getEntry('Employer Name', client.employerName));
+                output.push(getEntry('Employer Phone Number', client.employerPhone));
+                output.push(getEntry('Employer Street 1', client.employerStreet1));
+                output.push(getEntry('Employer Street 2', client.employerStreet2));
+                output.push(getEntry('Employer City', client.employerCity));
+                output.push(getEntry('Employer Province or Territory', client.employerProvinceTerritory));
+                output.push(getEntry('Employer Postal Code', client.employerPostalCode));
+            }
+            output.push(getEntry('', '', true));
 
             let citizenShip = '';
             switch (client.citizenShip) {
@@ -365,6 +341,10 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
 
                 case 'PERMANENT_RESIDENT':
                     citizenShip = 'Permanent resident';
+                    break;
+
+                case 'RESIDENT_OTHER_COUNTRY':
+                    citizenShip = 'Resident of country other than Canada';
                     break;
 
                 case 'BC_PROV_NOMINEE':
@@ -386,7 +366,7 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
             if (client.isFirstTimeHomeBuyer === 'YES') {
                 output.push(getHeader('Previous Address(es)'));
                 for (const prevAddress of client.previousAddresses) {
-                    output.push(getEntry('Start Date', prevAddress.startDate.toISOString().split('T')[0]));
+                    output.push(getEntry('Start Date', !prevAddress.startDate ? '' : prevAddress.startDate.toISOString().split('T')[0]));
                     output.push(getEntry('Street 1', prevAddress.street1));
                     output.push(getEntry('Street 2', prevAddress.street2));
                     output.push(getEntry('City', prevAddress.city));
@@ -438,14 +418,24 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
         output.push(getEntry('', '', true));
     }
 
+    if (joinType.indexOf('NOT A') > -1) {
+        output.push(getEntry('Call for more details', purchaseInfo.joinTypeDetails, true));
+    }
+
     output.push(getEntry('Building New or Used', purchaseInfo.buildingNewUsed, true));
 
     output.push(getEntry('Realtor Name', purchaseInfo.realtorName));
     output.push(getEntry('Realtor Phone Number', purchaseInfo.realtorPhone, true));
 
-    output.push(getEntry('Lender Name', purchaseInfo.lenderName));
-    output.push(getEntry('Broker or Banker Name', purchaseInfo.brokerBankerName));
-    output.push(getEntry('Broker or Banker Phone Number', purchaseInfo.brokerBankerPhone, true));
+    output.push(getEntry('Mortgage/SLOC', purchaseInfo.gettingMortgageOrSLOC))
+
+    if (purchaseInfo.gettingMortgageOrSLOC === 'YES') {
+        output.push(getEntry('Lender Name', purchaseInfo.lenderName));
+        output.push(getEntry('Broker or Banker Name', purchaseInfo.brokerBankerName));
+        output.push(getEntry('Broker or Banker Phone Number', purchaseInfo.brokerBankerPhone));
+    }
+
+    output.push(getEntry('', '', true));
 
     output.push(getEntry('Strata Mgmt Company', purchaseInfo.strataName, true));
 
@@ -463,8 +453,8 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
             fundsSource = 'Another Individual';
             break;
 
-        case 'CHEQUING_ACCOUNT':
-            fundsSource = 'Chequing Account';
+        case 'CHEQUING_SAVINGS_ACCOUNT':
+            fundsSource = 'Chequing/Savings Account';
             break;
 
         case 'HELOC':
@@ -475,9 +465,6 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
             fundsSource = 'Other';
             break;
 
-        case 'SAVINGS_ACCOUNT':
-            fundsSource = 'Savings Account';
-            break;
     }
 
     output.push(getEntry('Funds Brought In Source', fundsSource, true));
@@ -494,7 +481,7 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
         output.push(getEntry('Other Funder Province or Territory', purchaseInfo.nonPurchaserProvinceTerritory));
         output.push(getEntry('Other Funder Postal Code', purchaseInfo.nonPurchaserPostalCode, true));
     }
-    else if (purchaseInfo.fundsSource === 'CHEQUING_ACCOUNT' || purchaseInfo.fundsSource === 'SAVINGS_ACCOUNT') {
+    else if (purchaseInfo.fundsSource === 'CHEQUING_SAVINGS_ACCOUNT') {
         output.push(getEntry('Chequing/Savings Source', purchaseInfo.fundsChequingSavingsSource, true));
     }
 

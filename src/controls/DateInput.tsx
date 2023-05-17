@@ -5,10 +5,10 @@ interface DateInputProps {
     id?: string;
     value: Date | null;
     onChange: (e: Date) => void;
-    className?: string;
     min?: Date;
     max?: Date;
     label?: string;
+    isRequired: boolean;
 }
 
 const DeleteDate = (props: {
@@ -64,7 +64,7 @@ const DateInput = (props: DateInputProps): ReactElement => {
     return (
         <>
             <div className='form-floating mb-0'>
-                <input type='text' className='form-control' id={`${props.id}`}
+                <input type='text' className={`form-control${props.isRequired ? ' is-required' : ''}`} id={`${props.id}`}
                     value={dateValue ? dateValue.toISOString().split('T')[0] : ''}
                     readOnly={true}
                     onClick={() => {

@@ -2,8 +2,11 @@ import { ReactElement } from "react";
 import DbmLogo from '../images/dbm-logo.png';
 import './TopMenu.css';
 
+interface TopMenuProps {
+    buildDateString: string;
+}
 
-const TopMenu = (): ReactElement => {
+const TopMenu = ({ buildDateString }: TopMenuProps): ReactElement => {
 
     return (
         <div>
@@ -13,7 +16,7 @@ const TopMenu = (): ReactElement => {
                         style={{
                             height: '80px',
                         }}
-                        title='3-3-2023 1'
+                        title={buildDateString}
                         src={DbmLogo} alt='DBM Law' />
                 </div>
 

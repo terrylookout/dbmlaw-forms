@@ -36,7 +36,8 @@ const App = (): ReactElement => {
     <div className="App">
       <div>
 
-        <TopMenu />
+        <TopMenu
+          buildDateString='May 16 2023 A' />
 
         {
           <div>

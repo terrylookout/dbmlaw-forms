@@ -138,7 +138,7 @@ const Client = (props: ClientProps): ReactElement => {
                     <div className="col mb-3">
                         <div className='form-floating mb-0'>
                             <DateInput
-                                className='form-control'
+                                isRequired={true}
                                 id={`dob${props.num}`}
                                 value={clientInfo.dateOfBirth}
                                 max={new Date()}
@@ -183,7 +183,7 @@ const Client = (props: ClientProps): ReactElement => {
             <div className="row align-items-center mt-4">
                 <div className="col mb-1">
                     <h6>
-                        <CircleBullet />Your current / mailing address after date of completion
+                        <CircleBullet />Mailing address upon completion of Purchase
                     </h6>
                 </div>
 
@@ -308,12 +308,15 @@ const Client = (props: ClientProps): ReactElement => {
                 </div>
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>
-                        <select className='form-control' id='mailingcountry' placeholder='Country'
+                        <select className='form-control is-required' required={true} id='mailingcountry' placeholder='Country'
                             value={clientInfo.mailingCountry}
                             onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                                 setClientInfo({ ...clientInfo, mailingCountry: e.target.value });
                             }}
                         >
+                            <option key='not_selected' value={''} disabled={true} >
+                                Choose country...
+                            </option>
                             {
                                 countries.map((c) => {
                                     return (
@@ -342,7 +345,7 @@ const Client = (props: ClientProps): ReactElement => {
                         <div className={`col mb-1 mt-4 employment-header${props.num}`} >
                             <h6>
                                 <CircleBullet />
-                                Employment Information (required)
+                                Occupation / Employment Information (required)
                             </h6>
                         </div>
                     </div>
@@ -352,6 +355,7 @@ const Client = (props: ClientProps): ReactElement => {
 
                             <div className="form-check">
                                 <input className="form-check-input" type="radio" name={`employ${props.num}`} id={`employed${props.num}`}
+                                    required={true}
                                     checked={clientInfo.employment === 'EMPLOYED'}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         if (e.target.checked) {
@@ -366,6 +370,7 @@ const Client = (props: ClientProps): ReactElement => {
 
                             <div className="form-check">
                                 <input className="form-check-input" type="radio" name={`employ${props.num}`} id={`retired${props.num}`}
+                                    required={true}
                                     checked={clientInfo.employment === 'RETIRED'}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         if (e.target.checked) {
@@ -383,6 +388,7 @@ const Client = (props: ClientProps): ReactElement => {
                         <div className="col mb-3">
                             <div className="form-check">
                                 <input className="form-check-input" type="radio" name={`employ${props.num}`} id={`student${props.num}`}
+                                    required={true}
                                     checked={clientInfo.employment === 'STUDENT'}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         if (e.target.checked) {
@@ -397,6 +403,7 @@ const Client = (props: ClientProps): ReactElement => {
 
                             <div className="form-check">
                                 <input className="form-check-input" type="radio" name={`employ${props.num}`} id={`other${props.num}`}
+                                    required={true}
                                     checked={clientInfo.employment === 'OTHER'}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         if (e.target.checked) {
@@ -435,6 +442,31 @@ const Client = (props: ClientProps): ReactElement => {
 
                                         <label htmlFor='floatingInput'>
                                             Your PREVIOUS occupation (required)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    }
+
+                    {
+                        clientInfo.employment === 'OTHER' &&
+                        <>
+                            <div className="row">
+                                <div className="col mb-3">
+                                    <div className='form-floating mb-0'>
+                                        <input type='text' className='form-control is-required' id={`otheroccupation${props.num}`} placeholder='Please provide details'
+                                            value={clientInfo.occupationOther}
+                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                setClientInfo({ ...clientInfo, occupationOther: e.target.value });
+                                            }}
+                                        />
+                                        <div className="invalid-feedback">
+                                            Please enter this field
+                                        </div>
+
+                                        <label htmlFor='floatingInput'>
+                                            Please provide details (required)
                                         </label>
                                     </div>
                                 </div>
@@ -831,6 +863,55 @@ const Client = (props: ClientProps): ReactElement => {
                         </>
                     }
 
+                    <div className="row">
+                        <div className="col mb-1 mt-4">
+                            <h6>
+                                <CircleBullet />
+                                Will you be living in the property within three months?
+                            </h6>
+                            <div className="form-check">
+                                <input className="form-check-input" type="radio" name={`livewithinthreemonths${props.num}`} id={`livewithinthreemonths-yes${props.num}`}
+                                    checked={clientInfo.willBeLivingInPropertyWithinThreeMonths === 'YES'}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                        if (e.target.checked) {
+                                            setClientInfo({ ...clientInfo, willBeLivingInPropertyWithinThreeMonths: 'YES' });
+                                        }
+                                    }} />
+
+                                <label className="form-check-label" htmlFor={`livewithinthreemonths-yes${props.num}`}>
+                                    Yes
+                                </label>
+                            </div>
+
+                            <div className="form-check">
+                                <input className="form-check-input" type="radio" name={`livewithinthreemonths${props.num}`} id={`livewithinthreemonths-no${props.num}`}
+                                    checked={clientInfo.willBeLivingInPropertyWithinThreeMonths === 'NO'}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                        if (e.target.checked) {
+                                            setClientInfo({ ...clientInfo, willBeLivingInPropertyWithinThreeMonths: 'NO' });
+                                        }
+                                    }} />
+
+                                <label className="form-check-label" htmlFor={`livewithinthreemonths-no${props.num}`}>
+                                    No, use mailing address as stated above
+                                </label>
+
+                            </div>
+                        </div>
+
+                        <div className="col mb-1 mt-4 flex align-self-end">
+                            {
+                                (clientInfo.isFirstTimeHomeBuyer === 'YES' && clientInfo.willBeLivingInPropertyWithinThreeMonths === 'NO') &&
+                                <span style={{
+                                    fontWeight: 600,
+                                }}>
+                                    If you will not be living in the property within 3 months of completion you may
+                                    not qualify for the exemption
+                                </span>
+                            }
+                        </div>
+                    </div>
+
                     {
                         clientInfo.isFirstTimeHomeBuyer === 'YES' &&
                         <>
@@ -852,7 +933,7 @@ const Client = (props: ClientProps): ReactElement => {
                                                 <div className="col col-6">
                                                     <div className='form-floating mb-3 col-5'>
                                                         <DateInput
-                                                            className='form-control'
+                                                            isRequired={true}
                                                             id={`start${previousAddress.id}`}
                                                             value={previousAddress.startDate}
                                                             max={new Date()}
@@ -1073,7 +1154,7 @@ const Client = (props: ClientProps): ReactElement => {
                                                 const temp = clientInfo.previousAddresses;
                                                 temp.push({
                                                     city: '',
-                                                    country: 'Canada',
+                                                    country: '',
                                                     id: uuid(),
                                                     postalCode: '',
                                                     provinceTerritory: '',
@@ -1094,46 +1175,8 @@ const Client = (props: ClientProps): ReactElement => {
                         </>
                     }
 
-                    <div className="row">
-                        <div className="col mb-1 mt-4">
-                            <h6>
-                                <CircleBullet />
-                                Will you be living in the property within three months?
-                            </h6>
-                            <div className="form-check">
-                                <input className="form-check-input" type="radio" name={`livewithinthreemonths${props.num}`} id={`livewithinthreemonths-yes${props.num}`}
-                                    checked={clientInfo.willBeLivingInPropertyWithinThreeMonths === 'YES'}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        if (e.target.checked) {
-                                            setClientInfo({ ...clientInfo, willBeLivingInPropertyWithinThreeMonths: 'YES' });
-                                        }
-                                    }} />
-
-                                <label className="form-check-label" htmlFor={`livewithinthreemonths-yes${props.num}`}>
-                                    Yes
-                                </label>
-                            </div>
-
-                            <div className="form-check">
-                                <input className="form-check-input" type="radio" name={`livewithinthreemonths${props.num}`} id={`livewithinthreemonths-no${props.num}`}
-                                    checked={clientInfo.willBeLivingInPropertyWithinThreeMonths === 'NO'}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        if (e.target.checked) {
-                                            setClientInfo({ ...clientInfo, willBeLivingInPropertyWithinThreeMonths: 'NO' });
-                                        }
-                                    }} />
-
-                                <label className="form-check-label" htmlFor={`livewithinthreemonths-no${props.num}`}>
-                                    No, use current / mailing address above
-                                </label>
-                            </div>
-                        </div>
-                    </div>
                 </>
             }
-
-
-
 
             <div className="row">
                 <div className="col mb-1 mt-4 border border-primary">

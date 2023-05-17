@@ -8,9 +8,8 @@ export interface PreviousAddress {
     provinceTerritory: string;
     postalCode: string;
     country: string;
-    startDate: Date;
+    startDate: Date | null;
 }
-
 
 export class ClientInfo {
 
@@ -34,9 +33,10 @@ export class ClientInfo {
 
     public mailingCountry: string;
 
-    public employment: 'EMPLOYED' | 'RETIRED' | 'STUDENT' | 'OTHER' | 'TBF';
+    public employment: 'EMPLOYED' | 'RETIRED' | 'STUDENT' | 'OTHER' | '';
     public occupation: string;
     public retiredPreviousOccupation: string;
+    public occupationOther: string;
     public employerName: string;
     public employerPhone: string;
     public employerStreet1: string;
@@ -59,8 +59,8 @@ export class ClientInfo {
         city: '',
         provinceTerritory: '',
         postalCode: '',
-        country: 'Canada',
-        startDate: new Date(),
+        country: '',
+        startDate: null,
     }];
 
     public relationship: string;
@@ -91,13 +91,14 @@ export class ClientInfo {
         this.mailingProvinceTerritory = '';
         this.mailingPostalCode = '';
 
-        this.mailingCountry = 'Canada';
+        this.mailingCountry = '';
 
         // to be filled
-        this.employment = 'TBF';
+        this.employment = '';
 
         this.occupation = '';
         this.retiredPreviousOccupation = '';
+        this.occupationOther = '';
         this.employerName = '';
         this.employerPhone = '';
         this.employerStreet1 = '';
@@ -105,7 +106,7 @@ export class ClientInfo {
         this.employerCity = '';
         this.employerProvinceTerritory = '';
         this.employerPostalCode = '';
-        this.employerCountry = 'Canada';
+        this.employerCountry = '';
 
         this.isFirstTimeHomeBuyer = '';
         this.hasBeenBCResidentForAYear = '';
@@ -115,7 +116,7 @@ export class ClientInfo {
 
         this.timeLivingAtProperty = '';
 
-        this.citizenShip = 'CANADIAN_CITIZEN';
+        this.citizenShip = '';
     }
 
 }
@@ -306,22 +307,22 @@ export class PurchaseInfo {
     public companyName: string;
     public incorporationNumber: string;
 
-    public completionDate: Date;
+    public completionDate: Date | null;
     public completionDateTBD: boolean;
     public purchasePrice: string;
     public depositPaid: string = '';
 
-    public upgradesOrExtras: 'YES' | 'NO' | '' = '';
+    public upgradesOrExtras: 'YES' | 'NO' = 'NO';
 
-    public relativeLivingInstead: 'YES' | 'NO' | '' = '';
+    public relativeLivingInstead: 'YES' | 'NO' = 'NO';
     public relativeLivingInsteadName: string = '';
     public relativeLivingInsteadRelationship: string = '';
 
-    public buyingThroughAssignment: 'YES' | 'NO' | '' = '';
-    public assignorGeneratingProfit: 'YES' | 'NO' | 'UNKNOWN' | '' = '';
-    public moneysDisbursed: 'REALTORS' | 'LAWYERS' | 'UNKNOWN' | '' = '';
+    public buyingThroughAssignment: 'YES' | 'NO' = 'NO';
+    public assignorGeneratingProfit: 'YES' | 'NO' | 'UNKNOWN' = 'NO';
+    public moneysDisbursed: 'REALTORS' | 'LAWYERS' | 'UNKNOWN' = 'REALTORS';
     public lawyerForAssignor: string = '';
-    public assignorResidentCanada: 'YES' | 'NO' | 'UNKNOWN' | '' = '';
+    public assignorResidentCanada: 'YES' | 'NO' | 'UNKNOWN' = 'YES';
 
     public unitNumber: string;
     public strataLot: string;
@@ -331,12 +332,15 @@ export class PurchaseInfo {
     public provinceTerritory: string;
     public postalCode: string;
 
-    public joinType: 'JOINT_TENANTS' | 'TENANTS_IN_COMMON' | '';
+    public joinType: 'JOINT_TENANTS' | 'TENANTS_IN_COMMON';
+    public joinTypeDetails: 'YES' | 'NO';
 
-    public buildingNewUsed: 'NEW' | 'USED' | '';
+    public buildingNewUsed: 'NEW' | 'USED';
 
     public realtorName: string;
     public realtorPhone: string;
+
+    public gettingMortgageOrSLOC: 'YES' | 'NO' | 'YES_NOT_DETERMINED';
 
     public lenderName: string;
     public strataName: string;
@@ -350,9 +354,10 @@ export class PurchaseInfo {
     public insuranceAgentName: string;
     public insuranceAgentPhone: string;
 
-    public portionPropertyRentedOut: 'YES' | 'NO' | '';;
+    public portionPropertyRentedOut: 'YES' | 'NO';
 
-    public fundsSource: 'SAVINGS_ACCOUNT' | 'CHEQUING_ACCOUNT' | 'HELOC' | 'ANOTHER_INDIVIDUAL' | 'OTHER' | '';
+    public fundsSource: 'SALE_PREVIOUS_PROPERTY' | 'CHEQUING_SAVINGS_ACCOUNT' | 'HELOC' | 'ANOTHER_INDIVIDUAL' | 'OTHER'
+        | 'INVESTMENT_FUNDS' | '';
     public fundsChequingSavingsSource: string;
 
     public nonPurchaserName: string;
@@ -365,7 +370,7 @@ export class PurchaseInfo {
     public nonPurchaserOccupation: string;
     public nonPurchaserRelationship: string;
 
-    public apptLocationPreference: 'VANCOUVER' | 'COQUITLAM' | 'LANGLEY';
+    public apptLocationPreference: 'VANCOUVER' | 'COQUITLAM';
 
     public additionalComments: string;
 
@@ -378,7 +383,7 @@ export class PurchaseInfo {
         this.companyName = '';
         this.incorporationNumber = '';
 
-        this.completionDate = new Date();
+        this.completionDate = null;
         this.completionDateTBD = false;
         this.purchasePrice = '';
 
@@ -390,12 +395,15 @@ export class PurchaseInfo {
         this.provinceTerritory = 'British Columbia';
         this.postalCode = '';
 
-        this.buildingNewUsed = '';
+        this.buildingNewUsed = "NEW";
 
-        this.joinType = '';
+        this.joinType = 'JOINT_TENANTS';
+        this.joinTypeDetails = 'NO';
 
         this.realtorName = '';
         this.realtorPhone = '';
+
+        this.gettingMortgageOrSLOC = 'NO';
 
         this.lenderName = '';
 
@@ -410,9 +418,9 @@ export class PurchaseInfo {
         this.insuranceAgentName = '';
         this.insuranceAgentPhone = '';
 
-        this.portionPropertyRentedOut = '';
+        this.portionPropertyRentedOut = 'NO';
 
-        this.fundsSource = '';
+        this.fundsSource = 'SALE_PREVIOUS_PROPERTY';
         this.fundsChequingSavingsSource = '';
 
         this.nonPurchaserName = '';
