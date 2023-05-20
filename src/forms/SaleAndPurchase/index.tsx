@@ -7,7 +7,7 @@ import ModalBottomButtons from '../../controls/ModalBottomButtons';
 import GetSellers from './1-GetSellers';
 import GetSaleDetails from './2-GetSaleDetails';
 import GetPurchasers from './3-GetPurchasers';
-import PropertyInfo from './4-PropertInfo';
+import PropertyInfo from './4-PropertyInfo';
 
 declare var bootstrap: any;
 
@@ -215,7 +215,7 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
                             <House />
                             {
                                 currentPage === 'GET_SELLERS' &&
-                                <span>SALE &amp; PURCHASE - Seller Information</span>
+                                <span>SALE &amp; PURCHASE - Your Sale Information</span>
                             }
                             {
                                 currentPage === 'GET_SALE_DETAILS' &&
@@ -224,7 +224,7 @@ const SaleAndPurchaseForm = (props: FormProps): ReactElement => {
 
                             {
                                 currentPage === 'GET_PURCHASERS' &&
-                                <span>SALE &amp; PURCHASE - Purchaser Information</span>
+                                <span>SALE &amp; PURCHASE - Your Purchase Information</span>
                             }
 
                             {
@@ -666,6 +666,10 @@ const getOutput = (purchaseInfo: PurchaseInfo, saleInfo: SaleInfo): string => {
         output.push(getEntry('', '', true));
     }
 
+    if (joinType.indexOf('NOT A') > -1) {
+        output.push(getEntry('Call for more details', purchaseInfo.joinTypeDetails, true));
+    }
+
     output.push(getEntry('Building New or Used', purchaseInfo.buildingNewUsed, true));
 
     output.push(getEntry('Realtor Name', purchaseInfo.realtorName));
@@ -691,8 +695,8 @@ const getOutput = (purchaseInfo: PurchaseInfo, saleInfo: SaleInfo): string => {
             fundsSource = 'Another Individual';
             break;
 
-        case 'CHEQUING_ACCOUNT':
-            fundsSource = 'Chequing Account';
+        case 'CHEQUING_SAVINGS_ACCOUNT':
+            fundsSource = 'Chequing/Saving Account';
             break;
 
         case 'HELOC':
@@ -703,9 +707,14 @@ const getOutput = (purchaseInfo: PurchaseInfo, saleInfo: SaleInfo): string => {
             fundsSource = 'Other';
             break;
 
-        case 'SAVINGS_ACCOUNT':
-            fundsSource = 'Savings Account';
+        case 'INVESTMENT_FUNDS':
+            fundsSource = 'Investment funds';
             break;
+
+        case 'SALE_PREVIOUS_PROPERTY':
+            fundsSource = 'Sale of previous home';
+            break;
+
     }
 
     output.push(getEntry('Funds Brought In Source', fundsSource, true));
@@ -713,16 +722,16 @@ const getOutput = (purchaseInfo: PurchaseInfo, saleInfo: SaleInfo): string => {
     if (purchaseInfo.fundsSource === 'ANOTHER_INDIVIDUAL') {
 
         output.push(getEntry('Other Funder Name', purchaseInfo.nonPurchaserName));
-        output.push(getEntry('Other Funder Phone Number', purchaseInfo.nonPurchaserPhone));
+        //output.push(getEntry('Other Funder Phone Number', purchaseInfo.nonPurchaserPhone));
         output.push(getEntry('Other Funder Relationship', purchaseInfo.nonPurchaserRelationship));
-        output.push(getEntry('Other Funder Occupation', purchaseInfo.nonPurchaserOccupation));
-        output.push(getEntry('Other Funder Street 1', purchaseInfo.nonPurchaserStreet1));
-        output.push(getEntry('Other Funder Street 2', purchaseInfo.nonPurchaserStreet2));
-        output.push(getEntry('Other Funder City', purchaseInfo.nonPurchaserCity));
-        output.push(getEntry('Other Funder Province or Territory', purchaseInfo.nonPurchaserProvinceTerritory));
-        output.push(getEntry('Other Funder Postal Code', purchaseInfo.nonPurchaserPostalCode, true));
+        // output.push(getEntry('Other Funder Occupation', purchaseInfo.nonPurchaserOccupation));
+        // output.push(getEntry('Other Funder Street 1', purchaseInfo.nonPurchaserStreet1));
+        // output.push(getEntry('Other Funder Street 2', purchaseInfo.nonPurchaserStreet2));
+        // output.push(getEntry('Other Funder City', purchaseInfo.nonPurchaserCity));
+        // output.push(getEntry('Other Funder Province or Territory', purchaseInfo.nonPurchaserProvinceTerritory));
+        // output.push(getEntry('Other Funder Postal Code', purchaseInfo.nonPurchaserPostalCode, true));
     }
-    else if (purchaseInfo.fundsSource === 'CHEQUING_ACCOUNT' || purchaseInfo.fundsSource === 'SAVINGS_ACCOUNT') {
+    else if (purchaseInfo.fundsSource === 'CHEQUING_SAVINGS_ACCOUNT') {
         output.push(getEntry('Chequing/Savings Source', purchaseInfo.fundsChequingSavingsSource, true));
     }
 

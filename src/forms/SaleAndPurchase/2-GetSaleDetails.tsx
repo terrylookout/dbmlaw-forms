@@ -3,6 +3,7 @@ import { SaleAndPurchaseProps } from ".";
 import CircleBullet from "../../controls/CircleBullet";
 import DateInput from "../../controls/DateInput";
 import NumericInput from "../../controls/NumericInput";
+import RadioGroup from "../../controls/RadioGroup";
 
 
 const GetSaleDetails = ({
@@ -31,8 +32,9 @@ const GetSaleDetails = ({
                     <div className='form-floating mb-0'>
                         <DateInput
                             id={`closingdate`}
+                            disabled={saleInfo.closingDateTBD}
                             isRequired={!saleInfo.closingDateTBD}
-                            value={saleInfo.closingDateTBD ? new Date() : saleInfo.closingDate}
+                            value={saleInfo.closingDateTBD ? null : saleInfo.closingDate}
                             min={new Date((new Date()).setFullYear(new Date().getFullYear() - 5))}
                             label='Closing date'
                             onChange={(e) => {
@@ -218,7 +220,7 @@ const GetSaleDetails = ({
                 </div>
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>
-                        <input type='tel' className='form-control' id='realtorphoneselling' placeholder='Phone number'
+                        <input type='tel' className='form-control' id='realtorphoneselling' placeholder='realtor number'
                             value={saleInfo.realtorPhone}
                             pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -243,33 +245,35 @@ const GetSaleDetails = ({
             </div>
 
             <div className="row">
-                <div className="col mb-3">
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name="mortgageselling" id="mortgageselling-yes"
-                            checked={saleInfo.mortgageOrLoCOnTitle === 'YES'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e && e.target && e.target.value && e.target.value === 'on') {
-                                    setSaleInfo({ ...saleInfo, mortgageOrLoCOnTitle: 'YES' });
-                                }
-                            }} />
-                        <label className="form-check-label" htmlFor="mortgageselling-yes">
-                            Yes
-                        </label>
-                    </div>
+                <RadioGroup groupName="mortgage-sale">
+                    <div className="col mb-3">
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name="mortgageselling" id="mortgageselling-yes"
+                                checked={saleInfo.mortgageOrLoCOnTitle === 'YES'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e && e.target && e.target.value && e.target.value === 'on') {
+                                        setSaleInfo({ ...saleInfo, mortgageOrLoCOnTitle: 'YES' });
+                                    }
+                                }} />
+                            <label className="form-check-label" htmlFor="mortgageselling-yes">
+                                Yes
+                            </label>
+                        </div>
 
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name="mortgageselling" id="mortgageselling-no"
-                            checked={saleInfo.mortgageOrLoCOnTitle === 'NO'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e && e.target && e.target.value && e.target.value === 'on') {
-                                    setSaleInfo({ ...saleInfo, mortgageOrLoCOnTitle: 'NO' });
-                                }
-                            }} />
-                        <label className="form-check-label" htmlFor="mortgageselling-no">
-                            No
-                        </label>
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name="mortgageselling" id="mortgageselling-no"
+                                checked={saleInfo.mortgageOrLoCOnTitle === 'NO'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e && e.target && e.target.value && e.target.value === 'on') {
+                                        setSaleInfo({ ...saleInfo, mortgageOrLoCOnTitle: 'NO' });
+                                    }
+                                }} />
+                            <label className="form-check-label" htmlFor="mortgageselling-no">
+                                No
+                            </label>
+                        </div>
                     </div>
-                </div>
+                </RadioGroup>
             </div>
 
             {
@@ -317,36 +321,38 @@ const GetSaleDetails = ({
                 </div>
             </div>
             <div className="row">
-                <div className="col mb-1">
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`separation`} id={`separation-yes`}
-                            checked={saleInfo.involvesSeparationDivorce === 'YES'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setSaleInfo({ ...saleInfo, involvesSeparationDivorce: 'YES' });
-                                }
-                            }} />
+                <RadioGroup groupName="separation-divorce">
+                    <div className="col mb-1">
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`separation`} id={`separation-yes`}
+                                checked={saleInfo.involvesSeparationDivorce === 'YES'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setSaleInfo({ ...saleInfo, involvesSeparationDivorce: 'YES' });
+                                    }
+                                }} />
 
-                        <label className="form-check-label" htmlFor={`separation-yes`}>
-                            Yes
-                        </label>
+                            <label className="form-check-label" htmlFor={`separation-yes`}>
+                                Yes
+                            </label>
+                        </div>
+
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`separation`} id={`separation-no`}
+                                checked={saleInfo.involvesSeparationDivorce === 'NO'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setSaleInfo({ ...saleInfo, involvesSeparationDivorce: 'NO' });
+                                    }
+                                }} />
+
+                            <label className="form-check-label" htmlFor={`separation-no`}>
+                                No
+                            </label>
+                        </div>
+
                     </div>
-
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`separation`} id={`separation-no`}
-                            checked={saleInfo.involvesSeparationDivorce === 'NO'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setSaleInfo({ ...saleInfo, involvesSeparationDivorce: 'NO' });
-                                }
-                            }} />
-
-                        <label className="form-check-label" htmlFor={`separation-no`}>
-                            No
-                        </label>
-                    </div>
-
-                </div>
+                </RadioGroup>
             </div>
 
 
@@ -359,36 +365,38 @@ const GetSaleDetails = ({
                 </div>
             </div>
             <div className="row">
-                <div className="col mb-1">
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`propertytaxes`} id={`propertytaxes-yes`}
-                            checked={saleInfo.paidPropertyTaxes === 'YES'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setSaleInfo({ ...saleInfo, paidPropertyTaxes: 'YES' });
-                                }
-                            }} />
+                <RadioGroup groupName="paid-year-taxes">
+                    <div className="col mb-1">
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`propertytaxes`} id={`propertytaxes-yes`}
+                                checked={saleInfo.paidPropertyTaxes === 'YES'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setSaleInfo({ ...saleInfo, paidPropertyTaxes: 'YES' });
+                                    }
+                                }} />
 
-                        <label className="form-check-label" htmlFor={`propertytaxes-yes`}>
-                            Yes
-                        </label>
+                            <label className="form-check-label" htmlFor={`propertytaxes-yes`}>
+                                Yes
+                            </label>
+                        </div>
+
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`propertytaxes`} id={`propertytaxes-no`}
+                                checked={saleInfo.paidPropertyTaxes === 'NO'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setSaleInfo({ ...saleInfo, paidPropertyTaxes: 'NO' });
+                                    }
+                                }} />
+
+                            <label className="form-check-label" htmlFor={`propertytaxes-no`}>
+                                No
+                            </label>
+                        </div>
+
                     </div>
-
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`propertytaxes`} id={`propertytaxes-no`}
-                            checked={saleInfo.paidPropertyTaxes === 'NO'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setSaleInfo({ ...saleInfo, paidPropertyTaxes: 'NO' });
-                                }
-                            }} />
-
-                        <label className="form-check-label" htmlFor={`propertytaxes-no`}>
-                            No
-                        </label>
-                    </div>
-
-                </div>
+                </RadioGroup>
             </div>
 
 
@@ -401,36 +409,38 @@ const GetSaleDetails = ({
                 </div>
             </div>
             <div className="row">
-                <div className="col mb-1">
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`homeownersgrant`} id={`homeownersgrant-yes`}
-                            checked={saleInfo.claimedHownOwnersGrant === 'YES'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setSaleInfo({ ...saleInfo, claimedHownOwnersGrant: 'YES' });
-                                }
-                            }} />
+                <RadioGroup groupName="home-owner">
+                    <div className="col mb-1">
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`homeownersgrant`} id={`homeownersgrant-yes`}
+                                checked={saleInfo.claimedHownOwnersGrant === 'YES'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setSaleInfo({ ...saleInfo, claimedHownOwnersGrant: 'YES' });
+                                    }
+                                }} />
 
-                        <label className="form-check-label" htmlFor={`homeownersgrant-yes`}>
-                            Yes
-                        </label>
+                            <label className="form-check-label" htmlFor={`homeownersgrant-yes`}>
+                                Yes
+                            </label>
+                        </div>
+
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`homeownersgrant`} id={`homeownersgrant-no`}
+                                checked={saleInfo.claimedHownOwnersGrant === 'NO'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setSaleInfo({ ...saleInfo, claimedHownOwnersGrant: 'NO' });
+                                    }
+                                }} />
+
+                            <label className="form-check-label" htmlFor={`homeownersgrant-no`}>
+                                No
+                            </label>
+                        </div>
+
                     </div>
-
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`homeownersgrant`} id={`homeownersgrant-no`}
-                            checked={saleInfo.claimedHownOwnersGrant === 'NO'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setSaleInfo({ ...saleInfo, claimedHownOwnersGrant: 'NO' });
-                                }
-                            }} />
-
-                        <label className="form-check-label" htmlFor={`homeownersgrant-no`}>
-                            No
-                        </label>
-                    </div>
-
-                </div>
+                </RadioGroup>
             </div>
 
             <div className="row">
@@ -443,66 +453,68 @@ const GetSaleDetails = ({
             </div>
 
             <div className="row">
-                <div className="col mb-1">
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`emptyhome`} id={`emptyhome-occupied`}
-                            checked={saleInfo.emptyHomesDeclaration === 'OCCUPIED'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setSaleInfo({ ...saleInfo, emptyHomesDeclaration: 'OCCUPIED' });
-                                }
-                            }} />
+                <RadioGroup groupName="empty-homes-dec">
+                    <div className="col mb-1">
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`emptyhome`} id={`emptyhome-occupied`}
+                                checked={saleInfo.emptyHomesDeclaration === 'OCCUPIED'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setSaleInfo({ ...saleInfo, emptyHomesDeclaration: 'OCCUPIED' });
+                                    }
+                                }} />
 
-                        <label className="form-check-label" htmlFor={`emptyhome-occupied`}>
-                            Occupied
-                        </label>
+                            <label className="form-check-label" htmlFor={`emptyhome-occupied`}>
+                                Occupied
+                            </label>
+                        </div>
+
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`emptyhome`} id={`emptyhome-vacant`}
+                                checked={saleInfo.emptyHomesDeclaration === 'VACANT'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setSaleInfo({ ...saleInfo, emptyHomesDeclaration: 'VACANT' });
+                                    }
+                                }} />
+
+                            <label className="form-check-label" htmlFor={`emptyhome-vacant`}>
+                                Vacant
+                            </label>
+                        </div>
                     </div>
 
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`emptyhome`} id={`emptyhome-vacant`}
-                            checked={saleInfo.emptyHomesDeclaration === 'VACANT'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setSaleInfo({ ...saleInfo, emptyHomesDeclaration: 'VACANT' });
-                                }
-                            }} />
+                    <div className="col mb-1">
 
-                        <label className="form-check-label" htmlFor={`emptyhome-vacant`}>
-                            Vacant
-                        </label>
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`emptyhome`} id={`emptyhome-notfiled`}
+                                checked={saleInfo.emptyHomesDeclaration === 'NOT_COMPLETED'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setSaleInfo({ ...saleInfo, emptyHomesDeclaration: 'NOT_COMPLETED' });
+                                    }
+                                }} />
+
+                            <label className="form-check-label" htmlFor={`emptyhome-notfiled`}>
+                                Not completed/filed
+                            </label>
+                        </div>
+
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`emptyhome`} id={`emptyhome-notapplicable`}
+                                checked={saleInfo.emptyHomesDeclaration === 'NOT_APPLICABLE'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setSaleInfo({ ...saleInfo, emptyHomesDeclaration: 'NOT_APPLICABLE' });
+                                    }
+                                }} />
+
+                            <label className="form-check-label" htmlFor={`emptyhome-notapplicable`}>
+                                Not applicable
+                            </label>
+                        </div>
                     </div>
-                </div>
-
-                <div className="col mb-1">
-
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`emptyhome`} id={`emptyhome-notfiled`}
-                            checked={saleInfo.emptyHomesDeclaration === 'NOT_COMPLETED'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setSaleInfo({ ...saleInfo, emptyHomesDeclaration: 'NOT_COMPLETED' });
-                                }
-                            }} />
-
-                        <label className="form-check-label" htmlFor={`emptyhome-notfiled`}>
-                            Not completed/filed
-                        </label>
-                    </div>
-
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`emptyhome`} id={`emptyhome-notapplicable`}
-                            checked={saleInfo.emptyHomesDeclaration === 'NOT_APPLICABLE'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setSaleInfo({ ...saleInfo, emptyHomesDeclaration: 'NOT_APPLICABLE' });
-                                }
-                            }} />
-
-                        <label className="form-check-label" htmlFor={`emptyhome-notapplicable`}>
-                            Not applicable
-                        </label>
-                    </div>
-                </div>
+                </RadioGroup>
             </div>
         </>
     );

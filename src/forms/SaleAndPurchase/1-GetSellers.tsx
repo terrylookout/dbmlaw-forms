@@ -15,7 +15,7 @@ const GetSellers = ({
             <div className="row">
                 <div className="col mb-3">
                     <h6>
-                        Seller Information
+                        Your Sale Information
                     </h6>
                 </div>
             </div>

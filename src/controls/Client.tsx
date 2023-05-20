@@ -13,6 +13,7 @@ interface ClientProps {
     client1Info: ClientInfo | null;
     clientInfo: ClientInfo;
     company: boolean;
+    showFTHB?: boolean;
     updated: (c: ClientInfo, idx: number) => void;
 }
 
@@ -508,7 +509,7 @@ const Client = (props: ClientProps): ReactElement => {
                             <div className="row">
                                 <div className="col mb-3">
                                     <div className='form-floating mb-0'>
-                                        <input type='text' className='form-control is-required' id={`employername${props.num}`} placeholder='Employer name - required'
+                                        <input type='text' className='form-control' id={`employername${props.num}`} placeholder='Employer name - required'
                                             value={clientInfo.employerName}
                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                 setClientInfo({ ...clientInfo, employerName: e.target.value });
@@ -519,13 +520,13 @@ const Client = (props: ClientProps): ReactElement => {
                                         </div>
 
                                         <label htmlFor='floatingInput'>
-                                            Employer name (required)
+                                            Employer name
                                         </label>
                                     </div>
                                 </div>
                                 <div className="col mb-3">
                                     <div className='form-floating mb-0'>
-                                        <input type='tel' className='form-control is-required' id='employerphone' placeholder='Phone number'
+                                        <input type='tel' className='form-control' id='employerphone' placeholder='Phone number'
                                             pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                                             value={clientInfo.employerPhone}
                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -547,7 +548,7 @@ const Client = (props: ClientProps): ReactElement => {
                             <div className="row">
                                 <div className="col mb-3">
                                     <div className='form-floating mb-0'>
-                                        <input type='text' className='form-control is-required' id='employerstreet1' placeholder='Street address line 1'
+                                        <input type='text' className='form-control' id='employerstreet1' placeholder='Street address line 1'
                                             value={clientInfo.employerStreet1}
                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                 setClientInfo({ ...clientInfo, employerStreet1: e.target.value });
@@ -584,7 +585,7 @@ const Client = (props: ClientProps): ReactElement => {
                             <div className="row">
                                 <div className="col mb-3">
                                     <div className='form-floating mb-0'>
-                                        <input type='text' className='form-control is-required' id='employercity' placeholder='City'
+                                        <input type='text' className='form-control' id='employercity' placeholder='City'
                                             value={clientInfo.employerCity}
                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                 setClientInfo({ ...clientInfo, employerCity: e.target.value });
@@ -600,7 +601,7 @@ const Client = (props: ClientProps): ReactElement => {
                                     </div>
                                 </div>
                                 <div className="col mb-3">
-                                    <select className="form-select p-3 is-required" aria-label="Province or territory"
+                                    <select className="form-select p-3" aria-label="Province or territory"
                                         ref={employerProvinceSelect}
                                         value={clientInfo.employerProvinceTerritory}
                                         onChange={(e: ChangeEvent<HTMLSelectElement>) => {
@@ -629,7 +630,7 @@ const Client = (props: ClientProps): ReactElement => {
                             <div className="row">
                                 <div className="col mb-3">
                                     <div className='form-floating mb-0'>
-                                        <input type='text' className='form-control is-required' id='employerpostalcode' placeholder='Postal code'
+                                        <input type='text' className='form-control' id='employerpostalcode' placeholder='Postal code'
                                             value={clientInfo.employerPostalCode}
                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                 setClientInfo({ ...clientInfo, employerPostalCode: e.target.value });
@@ -757,48 +758,52 @@ const Client = (props: ClientProps): ReactElement => {
                         </RadioGroup>
                     </div>
 
-                    <div className="row">
-                        <RadioGroup groupName="fthb">
-                            <div className="col mb-1 mt-4">
-                                <h6>
-                                    <CircleBullet />
-                                    Are you a First-Time Home Buyer?
-                                </h6>
+                    {
+                        (props.showFTHB !== undefined && props.showFTHB) &&
+                        <div className="row">
+                            <RadioGroup groupName="fthb">
+                                <div className="col mb-1 mt-4">
+                                    <h6>
+                                        <CircleBullet />
+                                        Are you a First-Time Home Buyer?
+                                    </h6>
 
-                                <div className="form-check">
-                                    <input className="form-check-input" type="radio" name={`firsttimehomebuyer${props.num}`} id={`firsttimehomebuyer-yes${props.num}`}
-                                        checked={clientInfo.isFirstTimeHomeBuyer === 'YES'}
-                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                            if (e.target.checked) {
-                                                setClientInfo({ ...clientInfo, isFirstTimeHomeBuyer: 'YES' });
-                                            }
-                                        }} />
-                                    <label className="form-check-label" htmlFor={`firsttimehomebuyer-yes${props.num}`}>
-                                        Yes
-                                    </label>
+                                    <div className="form-check">
+                                        <input className="form-check-input" type="radio" name={`firsttimehomebuyer${props.num}`} id={`firsttimehomebuyer-yes${props.num}`}
+                                            checked={clientInfo.isFirstTimeHomeBuyer === 'YES'}
+                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                if (e.target.checked) {
+                                                    setClientInfo({ ...clientInfo, isFirstTimeHomeBuyer: 'YES' });
+                                                }
+                                            }} />
+                                        <label className="form-check-label" htmlFor={`firsttimehomebuyer-yes${props.num}`}>
+                                            Yes
+                                        </label>
+                                    </div>
+
+                                    <div className="form-check">
+                                        <input className="form-check-input" type="radio" name={`firsttimehomebuyer${props.num}`} id={`firsttimehomebuyer-no${props.num}`}
+                                            checked={clientInfo.isFirstTimeHomeBuyer === 'NO'}
+                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                if (e.target.checked) {
+                                                    setClientInfo({ ...clientInfo, isFirstTimeHomeBuyer: 'NO' });
+                                                }
+                                            }} />
+
+                                        <label className="form-check-label" htmlFor={`firsttimehomebuyer-no${props.num}`}>
+                                            No
+                                        </label>
+                                    </div>
                                 </div>
-
-                                <div className="form-check">
-                                    <input className="form-check-input" type="radio" name={`firsttimehomebuyer${props.num}`} id={`firsttimehomebuyer-no${props.num}`}
-                                        checked={clientInfo.isFirstTimeHomeBuyer === 'NO'}
-                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                            if (e.target.checked) {
-                                                setClientInfo({ ...clientInfo, isFirstTimeHomeBuyer: 'NO' });
-                                            }
-                                        }} />
-
-                                    <label className="form-check-label" htmlFor={`firsttimehomebuyer-no${props.num}`}>
-                                        No
-                                    </label>
+                                <div className="col mb-1 mt-4">
+                                    <span>Please read our blog for important information! </span>
+                                    <a href='https://www.dbmlaw.ca/blog/property-transfer-tax/' target='_blank' rel='noreferrer'>
+                                        https://www.dbmlaw.ca/blog/property-transfer-tax/</a>
                                 </div>
-                            </div>
-                            <div className="col mb-1 mt-4">
-                                <span>Please read our blog for important information! </span>
-                                <a href='https://www.dbmlaw.ca/blog/property-transfer-tax/' target='_blank' rel='noreferrer'>
-                                    https://www.dbmlaw.ca/blog/property-transfer-tax/</a>
-                            </div>
-                        </RadioGroup>
-                    </div>
+                            </RadioGroup>
+                        </div>
+                    }
+
 
                     {
                         clientInfo.isFirstTimeHomeBuyer === 'YES' &&

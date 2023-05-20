@@ -3,6 +3,7 @@ import CircleBullet from './CircleBullet';
 import { ClientInfo } from '../ClassesInterfaces';
 //import DateInput from './DateInput';
 import { getCountries, getProvincesTerritories, getStates } from '../Helpers';
+import RadioGroup from './RadioGroup';
 
 interface SellerProps {
     text: string;
@@ -50,7 +51,7 @@ const Seller = (props: SellerProps): ReactElement => {
             <div className="row">
                 <div className="col mb-1 mt-4">
                     <h6>
-                        <CircleBullet />Contact information - {props.text} {props.num + 1}
+                        <CircleBullet />Your Contact information - {props.text} {props.num + 1}
                     </h6>
                 </div>
             </div>
@@ -155,6 +156,7 @@ const Seller = (props: SellerProps): ReactElement => {
                                     mailingCity: props.client1Info.mailingCity,
                                     mailingProvinceTerritory: props.client1Info.mailingProvinceTerritory,
                                     mailingPostalCode: props.client1Info.mailingPostalCode,
+                                    mailingCountry: props.client1Info.mailingCountry,
                                 });
                             }
 
@@ -272,6 +274,9 @@ const Seller = (props: SellerProps): ReactElement => {
                                 }
                             }}
                         >
+                            <option key='not_selected' value={''} disabled={true} >
+                                Choose country...
+                            </option>
                             {
                                 countries.map((c) => {
                                     return (
@@ -302,37 +307,49 @@ const Seller = (props: SellerProps): ReactElement => {
             </div>
 
             <div className="row">
-                <div className="col mb-1">
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`residentofcanada${props.num}`} id={`residentofcanada-yes${props.num}`}
-                            checked={clientInfo.residentOfCanada === 'YES'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setClientInfo({ ...clientInfo, residentOfCanada: 'YES' });
-                                }
-                            }} />
+                <RadioGroup groupName="resident-of-canada-comp">
+                    <div className="col mb-1">
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`residentofcanada${props.num}`} id={`residentofcanada-yes${props.num}`}
+                                checked={clientInfo.residentOfCanada === 'YES'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setClientInfo({ ...clientInfo, residentOfCanada: 'YES' });
+                                    }
+                                }} />
 
-                        <label className="form-check-label" htmlFor={`residentofcanada-yes${props.num}`}>
-                            Yes
-                        </label>
+                            <label className="form-check-label" htmlFor={`residentofcanada-yes${props.num}`}>
+                                Yes
+                            </label>
+                        </div>
+
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`residentofcanada${props.num}`} id={`residentofcanada-no${props.num}`}
+                                checked={clientInfo.residentOfCanada === 'NO'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setClientInfo({ ...clientInfo, residentOfCanada: 'NO' });
+                                    }
+                                }} />
+
+                            <label className="form-check-label" htmlFor={`residentofcanada-no${props.num}`}>
+                                No
+                            </label>
+                        </div>
                     </div>
-
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`residentofcanada${props.num}`} id={`residentofcanada-no${props.num}`}
-                            checked={clientInfo.residentOfCanada === 'NO'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setClientInfo({ ...clientInfo, residentOfCanada: 'NO' });
-                                }
-                            }} />
-
-                        <label className="form-check-label" htmlFor={`residentofcanada-no${props.num}`}>
-                            No
-                        </label>
-                    </div>
-                </div>
+                </RadioGroup>
             </div>
 
+            {
+                clientInfo.residentOfCanada === 'NO' &&
+                <div className="row">
+                    <div className="col mt-2 mb-3">
+                        <h6>
+                            Please ensure you have contacted an Accountant to begin any paperwork that may be necessary due to non-residency
+                        </h6>
+                    </div>
+                </div>
+            }
 
             <div className="row">
                 <div className="col mb-1 mt-4 border border-primary">

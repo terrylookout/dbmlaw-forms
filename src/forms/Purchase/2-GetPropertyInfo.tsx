@@ -869,38 +869,6 @@ const GetPropertyInfo = ({
 
                         <div className='col mb-3'>
                             <div className='form-floating mb-0'>
-                                <input type='tel' className='form-control' id='otherphone' placeholder='Phone number'
-                                    value={purchaseInfo.nonPurchaserPhone}
-                                    pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}'
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        setPurchaseInfo({ ...purchaseInfo, nonPurchaserPhone: e.target.value });
-                                    }}
-                                />
-                                <label htmlFor='floatingInput'>
-                                    Phone number - format: 123-456-7890
-                                </label>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div className='row'>
-                        <div className='col mb-3'>
-                            <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id='otheroccupation' placeholder='Occupation'
-                                    value={purchaseInfo.nonPurchaserOccupation}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        setPurchaseInfo({ ...purchaseInfo, nonPurchaserOccupation: e.target.value });
-                                    }}
-                                />
-                                <label htmlFor='floatingInput'>
-                                    Occupation
-                                </label>
-                            </div>
-                        </div>
-
-                        <div className='col mb-3'>
-                            <div className='form-floating mb-0'>
                                 <input type='text' className='form-control' id='otheroccupation' placeholder='Relationship'
                                     value={purchaseInfo.nonPurchaserRelationship}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -915,97 +883,6 @@ const GetPropertyInfo = ({
 
                     </div>
 
-                    <div className='row'>
-                        <div className='col mb-3'>
-                            <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id='otherstreet1' placeholder='Street address line 1'
-                                    value={purchaseInfo.nonPurchaserStreet1}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        setPurchaseInfo({ ...purchaseInfo, nonPurchaserStreet1: e.target.value });
-                                    }}
-                                />
-                                <label htmlFor='floatingInput'>
-                                    Street address line 1
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className='row'>
-                        <div className='col mb-3'>
-                            <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id='otherstreet2' placeholder='Street address line 2'
-                                    value={purchaseInfo.nonPurchaserStreet2}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        setPurchaseInfo({ ...purchaseInfo, nonPurchaserStreet2: e.target.value });
-                                    }}
-                                />
-                                <label htmlFor='floatingInput'>
-                                    Street address line 2
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className='row'>
-                        <div className='col mb-3'>
-                            <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id='othercity' placeholder='City'
-                                    value={purchaseInfo.nonPurchaserCity}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        setPurchaseInfo({ ...purchaseInfo, nonPurchaserCity: e.target.value });
-                                    }}
-                                />
-                                <label htmlFor='floatingInput'>
-                                    City
-                                </label>
-                            </div>
-                        </div>
-
-                        <div className='col mb-3'>
-                            <select className='form-select p-3' aria-label='Province or territory'
-                                value={purchaseInfo.nonPurchaserProvinceTerritory}
-                                onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                                    setPurchaseInfo({ ...purchaseInfo, nonPurchaserProvinceTerritory: e.target.value });
-                                }}
-                            >
-                                <option value='0'>Province or territory</option>
-                                <option value='Alberta'>Alberta</option>
-                                <option value='British Columbia'>British Columbia</option>
-                                <option value='Manitoba'>Manitoba</option>
-                                <option value='New Brunswick'>New Brunswick</option>
-                                <option value='Newfoundland and Labrador'>Newfoundland and Labrador</option>
-                                <option value='Northwest Territories'>Northwest Territories</option>
-                                <option value='Nova Scotia'>Nova Scotia</option>
-                                <option value='Nunavut'>Nunavut</option>
-                                <option value='Ontario'>Ontario</option>
-                                <option value='Prince Edward Island'>Prince Edward Island</option>
-                                <option value='Quebec'>Québec</option>
-                                <option value='Saskatchewan'>Saskatchewan</option>
-                                <option value='Yukon'>Yukon</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div className='row'>
-                        <div className='col mb-3'>
-                            <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id='otherpostalcode' placeholder='Postal code'
-                                    value={purchaseInfo.postalCode}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        setPurchaseInfo({ ...purchaseInfo, nonPurchaserPostalCode: e.target.value });
-                                    }}
-                                />
-                                <label htmlFor='floatingInput'>
-                                    Postal code
-                                </label>
-                            </div>
-                        </div>
-
-                        <div className='col mb-3'>
-
-                        </div>
-
-                    </div>
                 </>
             }
 

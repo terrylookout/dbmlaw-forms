@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
 import { SaleAndPurchaseProps } from ".";
 import Client from "../../controls/Client";
 import { ClientInfo } from "../../ClassesInterfaces";
@@ -13,12 +13,15 @@ const GetPurchasers = ({
     setSellersArePurchasers,
 
 }: SaleAndPurchaseProps) => {
+
+    const [showFTHB, setShowFTHB] = useState(true);
+
     return (
         <>
             <div className="row">
                 <div className="col mb-3">
                     <h6>
-                        Purchaser Information
+                        Your Purchase Information
                     </h6>
                 </div>
             </div>
@@ -35,6 +38,7 @@ const GetPurchasers = ({
                         value={numberOfClients}
                         onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                             if (e && e.target && e.target.value) {
+                                setShowFTHB(true);
                                 setNumberOfClients(parseInt(e.target.value));
                             }
                         }}>
@@ -66,6 +70,7 @@ const GetPurchasers = ({
                                 e.stopPropagation();
 
                                 setSellersArePurchasers(!sellersArePurchasers);
+                                setShowFTHB(false);
                             }}
                         />
                     </div>
@@ -128,6 +133,7 @@ const GetPurchasers = ({
                                 <Client text={purchaseInfo.forCompany ? 'Signatory' : 'Purchaser'}
                                     num={i}
                                     key={c.id}
+                                    showFTHB={showFTHB}
                                     clientInfo={purchaseInfo.clientsInfo[i]}
                                     client1Info={purchaseInfo.clientsInfo.length > 1 ? purchaseInfo.clientsInfo[0] : null}
                                     company={purchaseInfo.forCompany}

@@ -5,6 +5,7 @@ import { SaleAndPurchaseProps } from ".";
 import Guarantor from "../../Guarantor";
 import { GuarantorInfo } from "../../ClassesInterfaces";
 import NumericInput from "../../controls/NumericInput";
+import RadioGroup from "../../controls/RadioGroup";
 
 
 const PropertyInfo = ({
@@ -25,7 +26,7 @@ const PropertyInfo = ({
                 <div className="col mb-1">
                     <h6>
                         <CircleBullet />
-                        Purchase and Property Information
+                        Purchase Property Information
                     </h6>
                 </div>
             </div>
@@ -35,8 +36,9 @@ const PropertyInfo = ({
                     <div className='form-floating mb-0'>
                         <DateInput
                             isRequired={!purchaseInfo.completionDateTBD}
+                            disabled={purchaseInfo.completionDateTBD}
                             id={`completiondate`}
-                            value={purchaseInfo.completionDateTBD ? new Date() : purchaseInfo.completionDate}
+                            value={purchaseInfo.completionDateTBD ? null : purchaseInfo.completionDate}
                             min={new Date((new Date()).setFullYear(new Date().getFullYear() - 5))}
                             label='Completion date'
                             onChange={(e) => {
@@ -90,6 +92,30 @@ const PropertyInfo = ({
                         Address of purchased property
                     </h6>
                 </div>
+                <div className="col mb-1 mt-4 d-flex justify-content-end">
+                    {
+                        (purchaseInfo.clientsInfo && purchaseInfo.clientsInfo.length > 0 &&
+                            purchaseInfo.clientsInfo[0].mailingProvinceTerritory === 'British Columbia') &&
+                        <button className="btn btn-secondary position-relative"
+                            style={{
+                                top: '-7px',
+                            }}
+                            onClick={(e: React.MouseEvent) => {
+                                setPurchaseInfo({
+                                    ...purchaseInfo,
+                                    street1: purchaseInfo.clientsInfo[0].mailingStreet1,
+                                    street2: purchaseInfo.clientsInfo[0].mailingStreet2,
+                                    city: purchaseInfo.clientsInfo[0].mailingCity,
+                                    postalCode: purchaseInfo.clientsInfo[0].mailingPostalCode,
+                                    provinceTerritory: purchaseInfo.clientsInfo[0].mailingProvinceTerritory,
+                                })
+                            }}
+                        >
+                            Use address from {purchaseInfo.clientsInfo[0].fullLegalName}
+                        </button>
+                    }
+                </div>
+
             </div>
 
             <div className="row">
@@ -209,60 +235,74 @@ const PropertyInfo = ({
 
 
                     <div className='row'>
-                        <div className='col mb-3'>
-                            <div className='form-check'>
-                                <input className='form-check-input' type='radio' name='ownertype' id='jointtenants'
-                                    checked={purchaseInfo.joinType === 'JOINT_TENANTS'}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        if (e.target.checked) {
-                                            const tempClients = [];
-                                            for (const client of purchaseInfo.clientsInfo) {
-                                                client.tenantInCommonPercent = 0;
-                                                tempClients.push(client);
-                                            }
+                        <RadioGroup groupName="joint-info">
+                            <div className='col mb-3'>
+                                <div className='form-check'>
+                                    <input className='form-check-input' type='radio' name='ownertype' id='jointtenants'
+                                        checked={purchaseInfo.joinType === 'JOINT_TENANTS'}
+                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                            if (e.target.checked) {
+                                                const tempClients = [];
+                                                for (const client of purchaseInfo.clientsInfo) {
+                                                    client.tenantInCommonPercent = 0;
+                                                    tempClients.push(client);
+                                                }
 
-                                            setPurchaseInfo({ ...purchaseInfo, joinType: 'JOINT_TENANTS', clientsInfo: tempClients, });
-                                        }
-                                    }}
-                                />
-                                <label className='form-check-label' htmlFor='jointtenants'>
-                                    Joint Tenants
-                                </label>
+                                                setPurchaseInfo({ ...purchaseInfo, joinType: 'JOINT_TENANTS', clientsInfo: tempClients, });
+                                            }
+                                        }}
+                                    />
+                                    <label className='form-check-label' htmlFor='jointtenants'>
+                                        Joint Tenants
+                                    </label>
+                                </div>
+
+                                <div className='form-check'>
+                                    <input className='form-check-input' type='radio' name='ownertype' id='tenantsincommon'
+                                        checked={purchaseInfo.joinType === 'TENANTS_IN_COMMON'}
+                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                            if (e.target.checked) {
+                                                const tempClients = [];
+                                                for (const client of purchaseInfo.clientsInfo) {
+                                                    client.tenantInCommonPercent = 0;
+                                                    tempClients.push(client);
+                                                }
+
+                                                setPurchaseInfo({ ...purchaseInfo, joinType: 'TENANTS_IN_COMMON', clientsInfo: tempClients, });
+                                            }
+                                        }}
+
+                                    />
+                                    <label className='form-check-label' htmlFor='tenantsincommon'>
+                                        Tenants-In-Common
+                                    </label>
+                                </div>
+
+                                <div className='d-flex flex-nowrap pt-4'>
+                                    <input type='checkbox' id={`chkmoredetails`} checked={purchaseInfo.joinTypeDetails === 'YES'}
+                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                            setPurchaseInfo({ ...purchaseInfo, joinTypeDetails: e.target.checked ? 'YES' : 'NO' })
+                                        }} />
+                                    <label htmlFor={`chkmoredetails`} className='ps-2'>
+                                        Call me for details
+                                    </label>
+
+                                </div>
+
                             </div>
 
-                            <div className='form-check'>
-                                <input className='form-check-input' type='radio' name='ownertype' id='tenantsincommon'
-                                    checked={purchaseInfo.joinType === 'TENANTS_IN_COMMON'}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        if (e.target.checked) {
-                                            const tempClients = [];
-                                            for (const client of purchaseInfo.clientsInfo) {
-                                                client.tenantInCommonPercent = 0;
-                                                tempClients.push(client);
-                                            }
+                            <div className='col-7 mb-3'>
 
-                                            setPurchaseInfo({ ...purchaseInfo, joinType: 'TENANTS_IN_COMMON', clientsInfo: tempClients, });
-                                        }
-                                    }}
+                                <span>
+                                    For more information between Joint Tenancy and Tenancy In Common, click on the following link to our blog post:&nbsp;&nbsp;
+                                </span>
 
-                                />
-                                <label className='form-check-label' htmlFor='tenantsincommon'>
-                                    Tenants-In-Common
-                                </label>
+                                <a href='https://www.dbmrealestatelaw.com/joint-tenancy-vs-tenancy-common/' target='_blank' rel='noreferrer'>
+                                    https://www.dbmrealestatelaw.com/joint-tenancy-vs-tenancy-common/
+                                </a>
                             </div>
 
-                        </div>
-
-                        <div className='col-7 mb-3'>
-
-                            <span>
-                                For more information between Joint Tenancy and Tenancy In Common, click on the following link to our blog post:&nbsp;&nbsp;
-                            </span>
-
-                            <a href='https://www.dbmrealestatelaw.com/joint-tenancy-vs-tenancy-common/' target='_blank' rel='noreferrer'>
-                                https://www.dbmrealestatelaw.com/joint-tenancy-vs-tenancy-common/
-                            </a>
-                        </div>
+                        </RadioGroup>
 
                     </div>
                 </>
@@ -347,33 +387,35 @@ const PropertyInfo = ({
             </div>
 
             <div className="row">
-                <div className="col mb-3">
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name="neworused" id="neworused-yes"
-                            checked={purchaseInfo.buildingNewUsed === 'NEW'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e && e.target && e.target.value && e.target.value === 'on') {
-                                    setPurchaseInfo({ ...purchaseInfo, buildingNewUsed: 'NEW' });
-                                }
-                            }} />
-                        <label className="form-check-label" htmlFor="neworused-yes">
-                            New
-                        </label>
-                    </div>
+                <RadioGroup groupName="new-used">
+                    <div className="col mb-3">
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name="neworused" id="neworused-yes"
+                                checked={purchaseInfo.buildingNewUsed === 'NEW'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e && e.target && e.target.value && e.target.value === 'on') {
+                                        setPurchaseInfo({ ...purchaseInfo, buildingNewUsed: 'NEW' });
+                                    }
+                                }} />
+                            <label className="form-check-label" htmlFor="neworused-yes">
+                                New
+                            </label>
+                        </div>
 
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name="neworused" id="neworused-no"
-                            checked={purchaseInfo.buildingNewUsed === 'USED'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e && e.target && e.target.value && e.target.value === 'on') {
-                                    setPurchaseInfo({ ...purchaseInfo, buildingNewUsed: 'USED' });
-                                }
-                            }} />
-                        <label className="form-check-label" htmlFor="neworused-no">
-                            Used
-                        </label>
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name="neworused" id="neworused-no"
+                                checked={purchaseInfo.buildingNewUsed === 'USED'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e && e.target && e.target.value && e.target.value === 'on') {
+                                        setPurchaseInfo({ ...purchaseInfo, buildingNewUsed: 'USED' });
+                                    }
+                                }} />
+                            <label className="form-check-label" htmlFor="neworused-no">
+                                Used
+                            </label>
+                        </div>
                     </div>
-                </div>
+                </RadioGroup>
             </div>
 
             <div className="row">
@@ -590,33 +632,35 @@ const PropertyInfo = ({
             </div>
 
             <div className="row">
-                <div className="col mb-3">
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name="rented" id="rented-yes"
-                            checked={purchaseInfo.portionPropertyRentedOut === 'YES'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e && e.target && e.target.value && e.target.value === 'on') {
-                                    setPurchaseInfo({ ...purchaseInfo, portionPropertyRentedOut: 'YES' });
-                                }
-                            }} />
-                        <label className="form-check-label" htmlFor="rented-yes">
-                            Yes
-                        </label>
-                    </div>
+                <RadioGroup groupName="rented-out">
+                    <div className="col mb-3">
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name="rented" id="rented-yes"
+                                checked={purchaseInfo.portionPropertyRentedOut === 'YES'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e && e.target && e.target.value && e.target.value === 'on') {
+                                        setPurchaseInfo({ ...purchaseInfo, portionPropertyRentedOut: 'YES' });
+                                    }
+                                }} />
+                            <label className="form-check-label" htmlFor="rented-yes">
+                                Yes
+                            </label>
+                        </div>
 
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name="rented" id="rented-no"
-                            checked={purchaseInfo.portionPropertyRentedOut === 'NO'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e && e.target && e.target.value && e.target.value === 'on') {
-                                    setPurchaseInfo({ ...purchaseInfo, portionPropertyRentedOut: 'NO' });
-                                }
-                            }} />
-                        <label className="form-check-label" htmlFor="rented-no">
-                            No
-                        </label>
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name="rented" id="rented-no"
+                                checked={purchaseInfo.portionPropertyRentedOut === 'NO'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e && e.target && e.target.value && e.target.value === 'on') {
+                                        setPurchaseInfo({ ...purchaseInfo, portionPropertyRentedOut: 'NO' });
+                                    }
+                                }} />
+                            <label className="form-check-label" htmlFor="rented-no">
+                                No
+                            </label>
+                        </div>
                     </div>
-                </div>
+                </RadioGroup>
             </div>
 
 
@@ -632,79 +676,90 @@ const PropertyInfo = ({
 
 
             <div className="row">
-                <div className="col mb-1">
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-notapplicable`}
-                            checked={purchaseInfo.fundsSource === ''}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setPurchaseInfo({ ...purchaseInfo, fundsSource: '' });
-                                }
-                            }} />
-                        <label className="form-check-label" htmlFor={`fundsource-notapplicable`}>
-                            Not applicable
-                        </label>
+                <RadioGroup groupName="funds-source">
+                    <div className="col mb-1">
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-sale-prev`}
+                                checked={purchaseInfo.fundsSource === 'SALE_PREVIOUS_PROPERTY'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setPurchaseInfo({ ...purchaseInfo, fundsSource: 'SALE_PREVIOUS_PROPERTY' });
+                                    }
+                                }} />
+                            <label className="form-check-label" htmlFor={`fundsource-sale-prev`}>
+                                Sale of previous home
+                            </label>
+                        </div>
+
+                        <div className='form-check'>
+                            <input className='form-check-input' type='radio' name={`fundsource`} id={`fundsource-invest`}
+                                checked={purchaseInfo.fundsSource === 'INVESTMENT_FUNDS'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setPurchaseInfo({ ...purchaseInfo, fundsSource: 'INVESTMENT_FUNDS' });
+                                    }
+                                }} />
+                            <label className='form-check-label' htmlFor={`fundsource-invest`}>
+                                Investment funds
+                            </label>
+                        </div>
+
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-chequing`}
+                                checked={purchaseInfo.fundsSource === 'CHEQUING_SAVINGS_ACCOUNT'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setPurchaseInfo({ ...purchaseInfo, fundsSource: 'CHEQUING_SAVINGS_ACCOUNT' });
+                                    }
+                                }} />
+                            <label className="form-check-label" htmlFor={`fundsource-chequing`}>
+                                Chequing/Savings Account
+                            </label>
+                        </div>
+
                     </div>
 
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-chequing`}
-                            checked={purchaseInfo.fundsSource === 'CHEQUING_SAVINGS_ACCOUNT'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setPurchaseInfo({ ...purchaseInfo, fundsSource: 'CHEQUING_SAVINGS_ACCOUNT' });
-                                }
-                            }} />
-                        <label className="form-check-label" htmlFor={`fundsource-chequing`}>
-                            Chequing / Savings Account
-                        </label>
+                    <div className="col mb-1">
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-heloc`}
+                                checked={purchaseInfo.fundsSource === 'HELOC'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setPurchaseInfo({ ...purchaseInfo, fundsSource: 'HELOC' });
+                                    }
+                                }} />
+                            <label className="form-check-label" htmlFor={`fundsource-heloc`}>
+                                Home Equity Line of Credit
+                            </label>
+                        </div>
+
+
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-another`}
+                                checked={purchaseInfo.fundsSource === 'ANOTHER_INDIVIDUAL'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setPurchaseInfo({ ...purchaseInfo, fundsSource: 'ANOTHER_INDIVIDUAL' });
+                                    }
+                                }} />
+                            <label className="form-check-label" htmlFor={`fundsource-another`}>
+                                Another individual
+                            </label>
+                        </div>
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-other`}
+                                checked={purchaseInfo.fundsSource === 'OTHER'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setPurchaseInfo({ ...purchaseInfo, fundsSource: 'OTHER' });
+                                    }
+                                }} />
+                            <label className="form-check-label" htmlFor={`fundsource-other`}>
+                                Other or not applicable
+                            </label>
+                        </div>
                     </div>
-
-                </div>
-
-                <div className="col mb-1">
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-heloc`}
-                            checked={purchaseInfo.fundsSource === 'HELOC'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setPurchaseInfo({ ...purchaseInfo, fundsSource: 'HELOC' });
-                                }
-                            }} />
-                        <label className="form-check-label" htmlFor={`fundsource-heloc`}>
-                            Home Equity Line of Credit
-                        </label>
-                    </div>
-
-
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-another`}
-                            checked={purchaseInfo.fundsSource === 'ANOTHER_INDIVIDUAL'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setPurchaseInfo({ ...purchaseInfo, fundsSource: 'ANOTHER_INDIVIDUAL' });
-                                }
-                            }} />
-                        <label className="form-check-label" htmlFor={`fundsource-another`}>
-                            Another individual
-                        </label>
-                    </div>
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`fundsource`} id={`fundsource-other`}
-                            checked={purchaseInfo.fundsSource === 'OTHER'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setPurchaseInfo({ ...purchaseInfo, fundsSource: 'OTHER' });
-                                }
-                            }} />
-                        <label className="form-check-label" htmlFor={`fundsource-other`}>
-                            Other
-                        </label>
-                    </div>
-                </div>
-
-                <div className="col mb-1 mt-4">
-
-                </div>
+                </RadioGroup>
             </div>
 
             {
@@ -766,39 +821,6 @@ const PropertyInfo = ({
                                 </label>
                             </div>
                         </div>
-
-                        <div className="col mb-3">
-                            <div className='form-floating mb-0'>
-                                <input type='tel' className='form-control' id='otherphone' placeholder='Phone number'
-                                    value={purchaseInfo.nonPurchaserPhone}
-                                    pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        setPurchaseInfo({ ...purchaseInfo, nonPurchaserPhone: e.target.value });
-                                    }}
-                                />
-                                <label htmlFor='floatingInput'>
-                                    Phone number - format: 123-456-7890
-                                </label>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div className="row">
-                        <div className="col mb-3">
-                            <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id='otheroccupation' placeholder='Occupation'
-                                    value={purchaseInfo.nonPurchaserOccupation}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        setPurchaseInfo({ ...purchaseInfo, nonPurchaserOccupation: e.target.value });
-                                    }}
-                                />
-                                <label htmlFor='floatingInput'>
-                                    Occupation
-                                </label>
-                            </div>
-                        </div>
-
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
                                 <input type='text' className='form-control' id='otheroccupation' placeholder='Relationship'
@@ -813,97 +835,6 @@ const PropertyInfo = ({
                             </div>
                         </div>
 
-                    </div>
-
-                    <div className="row">
-                        <div className="col mb-3">
-                            <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id='otherstreet1' placeholder='Street address line 1'
-                                    value={purchaseInfo.nonPurchaserStreet1}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        setPurchaseInfo({ ...purchaseInfo, nonPurchaserStreet1: e.target.value });
-                                    }}
-                                />
-                                <label htmlFor='floatingInput'>
-                                    Street address line 1
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="row">
-                        <div className="col mb-3">
-                            <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id='otherstreet2' placeholder='Street address line 2'
-                                    value={purchaseInfo.nonPurchaserStreet2}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        setPurchaseInfo({ ...purchaseInfo, nonPurchaserStreet2: e.target.value });
-                                    }}
-                                />
-                                <label htmlFor='floatingInput'>
-                                    Street address line 2
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="row">
-                        <div className="col mb-3">
-                            <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id='othercity' placeholder='City'
-                                    value={purchaseInfo.nonPurchaserCity}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        setPurchaseInfo({ ...purchaseInfo, nonPurchaserCity: e.target.value });
-                                    }}
-                                />
-                                <label htmlFor='floatingInput'>
-                                    City
-                                </label>
-                            </div>
-                        </div>
-
-                        <div className="col mb-3">
-                            <select className="form-select p-3" aria-label="Province or territory"
-                                value={purchaseInfo.nonPurchaserProvinceTerritory}
-                                onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                                    setPurchaseInfo({ ...purchaseInfo, nonPurchaserProvinceTerritory: e.target.value });
-                                }}
-                            >
-                                <option value='0'>Province or territory</option>
-                                <option value="Alberta">Alberta</option>
-                                <option value="British Columbia">British Columbia</option>
-                                <option value="Manitoba">Manitoba</option>
-                                <option value="New Brunswick">New Brunswick</option>
-                                <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
-                                <option value="Northwest Territories">Northwest Territories</option>
-                                <option value="Nova Scotia">Nova Scotia</option>
-                                <option value="Nunavut">Nunavut</option>
-                                <option value="Ontario">Ontario</option>
-                                <option value="Prince Edward Island">Prince Edward Island</option>
-                                <option value="Quebec">Québec</option>
-                                <option value="Saskatchewan">Saskatchewan</option>
-                                <option value="Yukon">Yukon</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col mb-3">
-                            <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id='otherpostalcode' placeholder='Postal code'
-                                    value={purchaseInfo.postalCode}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        setPurchaseInfo({ ...purchaseInfo, nonPurchaserPostalCode: e.target.value });
-                                    }}
-                                />
-                                <label htmlFor='floatingInput'>
-                                    Postal code
-                                </label>
-                            </div>
-                        </div>
-
-                        <div className="col mb-3">
-
-                        </div>
 
                     </div>
                 </>

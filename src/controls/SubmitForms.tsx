@@ -65,7 +65,7 @@ export const SubmitDone = (): ReactElement => {
             </p>
             <p>
                 Please make sure your Mortgage Broker is aware that Mortgage instructions are due from your Lender at least three business
-                days prior to your appointment to avoid any rush charges and/or delays with your Closing.
+                days prior to your appointment to avoid any potential rush charges and/or delays with your Closing.
             </p>
 
             <p>

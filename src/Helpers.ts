@@ -1,4 +1,4 @@
-import emailjs, { EmailJSResponseStatus } from 'emailjs-com';
+//import emailjs, { EmailJSResponseStatus } from 'emailjs-com';
 
 export interface FormProps {
     dismissed: () => void;

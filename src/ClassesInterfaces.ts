@@ -144,7 +144,7 @@ export class SaleInfo {
     public companyName: string;
     public incorporationNumber: string;
 
-    public closingDate: Date;
+    public closingDate: Date | null;
     public closingDateTBD: boolean;
 
     public sellingPrice: string;
@@ -181,7 +181,7 @@ export class SaleInfo {
 
         this.sellingPrice = '';
 
-        this.closingDate = new Date();
+        this.closingDate = null;
         this.closingDateTBD = false;
 
         this.street1 = '';
@@ -313,6 +313,8 @@ export class PurchaseInfo {
     public depositPaid: string = '';
 
     public upgradesOrExtras: 'YES' | 'NO' | '' = '';
+    public upgradesOrExtrasAmount: string = '';
+    public upgradesOrExtrasDetais: string = '';
 
     public relativeLivingInstead: 'YES' | 'NO' | '' = '';
     public relativeLivingInsteadName: string = '';
