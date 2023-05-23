@@ -4,6 +4,7 @@ import { ClientInfo } from '../ClassesInterfaces';
 //import DateInput from './DateInput';
 import { getCountries, getProvincesTerritories, getStates } from '../Helpers';
 import RadioGroup from './RadioGroup';
+import IsRequired from './IsRequired';
 
 interface SellerProps {
     text: string;
@@ -69,7 +70,8 @@ const Seller = (props: SellerProps): ReactElement => {
                             Please enter this field
                         </div>
                         <label htmlFor='floatingInput'>
-                            {`${props.text} ${props.num + 1} full legal name - required`}
+                            {`${props.text} ${props.num + 1} full legal name`}
+                            <IsRequired />
                         </label>
                     </div>
                     <div>
@@ -92,6 +94,7 @@ const Seller = (props: SellerProps): ReactElement => {
                         </div>
                         <label htmlFor='floatingInput'>
                             Phone number - format: 123-456-7890
+                            <IsRequired />
                         </label>
                     </div>
                 </div>
@@ -180,6 +183,7 @@ const Seller = (props: SellerProps): ReactElement => {
                         </div>
                         <label htmlFor='floatingInput'>
                             Street address line 1
+                            <IsRequired />
                         </label>
                     </div>
                 </div>
@@ -216,6 +220,7 @@ const Seller = (props: SellerProps): ReactElement => {
                         </div>
                         <label htmlFor='floatingInput'>
                             City
+                            <IsRequired />
                         </label>
                     </div>
                 </div>
@@ -301,7 +306,7 @@ const Seller = (props: SellerProps): ReactElement => {
                 <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
-                        At time of completion of the sale will you be a resident of Canada?
+                        At time of completion of the sale will you be a resident of Canada? <IsRequired />
                     </h6>
                 </div>
             </div>

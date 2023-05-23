@@ -1,6 +1,7 @@
 import { ChangeEvent } from "react";
 import CircleBullet from "../../controls/CircleBullet";
 import { RefinanceProps } from ".";
+import IsRequired from "../../controls/IsRequired";
 
 
 const GetPropertyDetails = ({
@@ -40,6 +41,7 @@ const GetPropertyDetails = ({
                         </div>
                         <label htmlFor='floatingInput'>
                             Street address line 1
+                            <IsRequired />
                         </label>
                     </div>
                 </div>
@@ -76,6 +78,7 @@ const GetPropertyDetails = ({
                         </div>
                         <label htmlFor='floatingInput'>
                             City
+                            <IsRequired />
                         </label>
                     </div>
                 </div>
@@ -120,6 +123,7 @@ const GetPropertyDetails = ({
                         </div>
                         <label htmlFor='floatingInput'>
                             Postal code
+                            <IsRequired />
                         </label>
                     </div>
                 </div>

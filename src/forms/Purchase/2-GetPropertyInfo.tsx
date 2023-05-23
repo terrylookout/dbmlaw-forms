@@ -6,6 +6,7 @@ import { GuarantorInfo } from "../../ClassesInterfaces";
 import Guarantor from "../../Guarantor";
 import RadioGroup from "../../controls/RadioGroup";
 import NumericInput from "../../controls/NumericInput";
+import IsRequired from "../../controls/IsRequired";
 
 interface PurchaseGetPropertyInfoDetailsProps extends PurchaseFormChildProps {
     numberOfGuarantors: number;
@@ -67,29 +68,21 @@ const GetPropertyInfo = ({
                     </div>
                 </div>
                 <div className='col mb-3'>
-                    <div className='form-floating mb-0'>
-                        <NumericInput
-                            id='purchaseprice' placeholder='Purchase price'
-                            required={true}
-                            disabled={false}
-                            value={purchaseInfo.purchasePrice}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e && e.target) {
-                                    setPurchaseInfo({
-                                        ...purchaseInfo,
-                                        purchasePrice: e.target.value ? e.target.value : '',
-                                    });
-                                }
-                            }}
-                        />
-                        <div className="invalid-feedback">
-                            Please enter this field
-                        </div>
+                    <NumericInput
+                        id='purchaseprice' placeholder='Purchase price (CAD)'
+                        required={true}
+                        disabled={false}
+                        value={purchaseInfo.purchasePrice}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                            if (e && e.target) {
+                                setPurchaseInfo({
+                                    ...purchaseInfo,
+                                    purchasePrice: e.target.value ? e.target.value : '',
+                                });
+                            }
+                        }}
+                    />
 
-                        <label htmlFor='floatingInput'>
-                            Purchase price (CAD)
-                        </label>
-                    </div>
                 </div>
             </div>
 
@@ -118,6 +111,7 @@ const GetPropertyInfo = ({
 
                         <label htmlFor='floatingInput'>
                             Street address line 1
+                            <IsRequired />
                         </label>
                     </div>
                 </div>
@@ -155,6 +149,7 @@ const GetPropertyInfo = ({
 
                         <label htmlFor='floatingInput'>
                             City
+                            <IsRequired />
                         </label>
                     </div>
                 </div>
@@ -217,7 +212,7 @@ const GetPropertyInfo = ({
                         <div className='col mb-1 mt-4'>
                             <h6>
                                 <CircleBullet />
-                                Do you want to own the property as Joint Tenants or as Tenants-In-Common?
+                                Do you want to own the property as Joint Tenants or as Tenants-In-Common? <IsRequired />
                             </h6>
                         </div>
                     </div>
@@ -367,7 +362,7 @@ const GetPropertyInfo = ({
                 <div className='col mb-1 mt-4 newused'>
                     <h6>
                         <CircleBullet />
-                        Is this a NEW or USED building? (required)
+                        Is this a NEW or USED building? <IsRequired />
                     </h6>
                 </div>
             </div>
@@ -408,7 +403,7 @@ const GetPropertyInfo = ({
                 <div className='col mb-1 mt-4'>
                     <h6>
                         <CircleBullet />
-                        Your realtor information (if applicable)
+                        Your Realtor information (if applicable)
                     </h6>
                 </div>
             </div>
@@ -448,7 +443,7 @@ const GetPropertyInfo = ({
                 <div className='col mb-1 mt-4'>
                     <h6>
                         <CircleBullet />
-                        Mortgage / Secured Line of Credit
+                        Mortgage / Secured Line of Credit <IsRequired />
                     </h6>
                 </div>
             </div>
@@ -548,6 +543,87 @@ const GetPropertyInfo = ({
                             </div>
                         </div>
                     </div>
+
+                    <div className='row align-items-center mt-4'>
+                        <div className='col mb-3'>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'min-content 1fr'
+                            }}>
+                                <div>
+                                    <CircleBullet />
+                                </div>
+                                <div>
+
+                                    <h6 style={{
+                                        display: 'inline-block',
+                                    }}>
+                                        <div>Are there any guarantors/co-signers on your mortgage?</div>
+                                        <div>&nbsp;</div>
+                                        <div>If so, how many?</div>
+                                    </h6>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div className='col mb-3'>
+                            <select className='form-select p-3' aria-label='number of guarantors'
+                                value={purchaseInfo.guarantorsInfo.length}
+                                onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                                    if (e && e.target && e.target.value) {
+                                        setNumberOfGuarantors(parseInt(e.target.value));
+                                    }
+                                }}>
+                                <option value='0'>No guarantors</option>
+                                <option value='1'>1</option>
+                                <option value='2'>2</option>
+                                <option value='3'>3</option>
+                                <option value='4'>4</option>
+                            </select>
+
+                        </div>
+                    </div>
+
+                    {
+                        numberOfGuarantors > 0 &&
+                        <>
+                            <div className='row'>
+                                <div className='col mb-1 mt-4'>
+                                    <h6>
+                                        IMPORTANT: All guarantors will be required to sign particular mortgage documents
+                                        and attend appointment(s)
+                                    </h6>
+                                </div>
+                            </div>
+                            {
+                                purchaseInfo.guarantorsInfo.map((c, i) => {
+                                    return (
+                                        <Guarantor text={'Guarantor/Co-signer'}
+                                            num={i}
+                                            key={c.id}
+                                            numberOfPurchasers={purchaseInfo.clientsInfo.length}
+                                            guarantorInfo={purchaseInfo.guarantorsInfo[i]}
+                                            updated={(c: GuarantorInfo, idx: number) => {
+                                                const tempGuarantors: GuarantorInfo[] = [];
+                                                for (let t = 0; t < purchaseInfo.guarantorsInfo.length; t++) {
+                                                    if (t === idx) {
+                                                        tempGuarantors.push(c);
+                                                    }
+                                                    else {
+                                                        tempGuarantors.push(purchaseInfo.guarantorsInfo[t]);
+                                                    }
+                                                }
+                                                setPurchaseInfo({ ...purchaseInfo, guarantorsInfo: tempGuarantors });
+                                            }}
+                                        />
+                                    );
+                                })
+                            }
+
+                        </>
+                    }
 
                 </>
             }
@@ -668,7 +744,7 @@ const GetPropertyInfo = ({
                 <div className='col mb-1 mt-4'>
                     <h6>
                         <CircleBullet />
-                        Will any portion of the property be rented out?
+                        Will any portion of the property be rented out? <IsRequired />
                     </h6>
                 </div>
             </div>
@@ -711,7 +787,7 @@ const GetPropertyInfo = ({
                     <h6>
                         <CircleBullet />
                         If you will need to bring in funds to complete this transaction, please advise where
-                        the funds will be coming from (NOTE: required by the B.C. Government)
+                        the funds will be coming from (NOTE: required by the B.C. Government) <IsRequired />
                     </h6>
                 </div>
             </div>
@@ -846,7 +922,7 @@ const GetPropertyInfo = ({
                         <div className='col mb-1 mt-4'>
                             <h6>
                                 <CircleBullet />
-                                If the funds came from someone else who is not a purchaser, please provide the
+                                If the funds came from someone else who is not a Purchaser, please provide the
                                 name, phone number, address and occupation, and relationship of that payer
                             </h6>
                         </div>
@@ -882,87 +958,6 @@ const GetPropertyInfo = ({
                         </div>
 
                     </div>
-
-                </>
-            }
-
-            <div className='row align-items-center mt-4'>
-                <div className='col mb-3'>
-                    <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'min-content 1fr'
-                    }}>
-                        <div>
-                            <CircleBullet />
-                        </div>
-                        <div>
-
-                            <h6 style={{
-                                display: 'inline-block',
-                            }}>
-                                <div>Are there any guarantors/co-signers on your mortgage?</div>
-                                <div>&nbsp;</div>
-                                <div>If so, how many?</div>
-                            </h6>
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div className='col mb-3'>
-                    <select className='form-select p-3' aria-label='number of guarantors'
-                        value={purchaseInfo.guarantorsInfo.length}
-                        onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                            if (e && e.target && e.target.value) {
-                                setNumberOfGuarantors(parseInt(e.target.value));
-                            }
-                        }}>
-                        <option value='0'>No guarantors</option>
-                        <option value='1'>1</option>
-                        <option value='2'>2</option>
-                        <option value='3'>3</option>
-                        <option value='4'>4</option>
-                    </select>
-
-                </div>
-            </div>
-
-            {
-                numberOfGuarantors > 0 &&
-                <>
-                    <div className='row'>
-                        <div className='col mb-1 mt-4'>
-                            <h6>
-                                IMPORTANT: All guarantors will be required to sign particular mortgage documents
-                                and attend appointment(s)
-                            </h6>
-                        </div>
-                    </div>
-                    {
-                        purchaseInfo.guarantorsInfo.map((c, i) => {
-                            return (
-                                <Guarantor text={'Guarantor/Co-signer'}
-                                    num={i}
-                                    key={c.id}
-                                    numberOfPurchasers={purchaseInfo.clientsInfo.length}
-                                    guarantorInfo={purchaseInfo.guarantorsInfo[i]}
-                                    updated={(c: GuarantorInfo, idx: number) => {
-                                        const tempGuarantors: GuarantorInfo[] = [];
-                                        for (let t = 0; t < purchaseInfo.guarantorsInfo.length; t++) {
-                                            if (t === idx) {
-                                                tempGuarantors.push(c);
-                                            }
-                                            else {
-                                                tempGuarantors.push(purchaseInfo.guarantorsInfo[t]);
-                                            }
-                                        }
-                                        setPurchaseInfo({ ...purchaseInfo, guarantorsInfo: tempGuarantors });
-                                    }}
-                                />
-                            );
-                        })
-                    }
 
                 </>
             }

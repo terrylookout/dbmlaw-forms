@@ -1,6 +1,7 @@
 import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
 import CircleBullet from './controls/CircleBullet';
 import { GuarantorInfo } from './ClassesInterfaces';
+import IsRequired from './controls/IsRequired';
 
 interface GuarantorProps {
     text: string;
@@ -44,7 +45,8 @@ const Guarantor = (props: GuarantorProps): ReactElement => {
                         </div>
 
                         <label htmlFor='floatingInput'>
-                            {`${props.text} ${props.num + 1} full legal name - required`}
+                            {`${props.text} ${props.num + 1} full legal name`}
+                            <IsRequired />
                         </label>
                     </div>
                 </div>
@@ -65,6 +67,7 @@ const Guarantor = (props: GuarantorProps): ReactElement => {
 
                         <label htmlFor='floatingInput'>
                             Phone number - format: 123-456-7890
+                            <IsRequired />
                         </label>
                     </div>
                 </div>
@@ -95,7 +98,7 @@ const Guarantor = (props: GuarantorProps): ReactElement => {
                             }}
                         />
                         <label htmlFor='floatingInput'>
-                            {`Relationship to purchaser${props.numberOfPurchasers > 1 ? 's' : ''}`}
+                            {`Relationship to Purchaser${props.numberOfPurchasers > 1 ? 's' : ''}`}
                         </label>
 
                     </div>

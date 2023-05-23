@@ -3,6 +3,7 @@ import CircleBullet from './CircleBullet';
 import { ClientInfo, RefinanceInfo } from '../ClassesInterfaces';
 import DateInput from './DateInput';
 import { getCountries, getProvincesTerritories, getStates } from '../Helpers';
+import IsRequired from './IsRequired';
 
 interface TransferAddedProps {
     text: string;
@@ -86,7 +87,8 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                             Please enter this field
                         </div>
                         <label htmlFor='floatingInput'>
-                            {`${props.text} ${props.num + 1} full legal name - required`}
+                            {`${props.text} ${props.num + 1} full legal name`}
+                            <IsRequired />
                         </label>
                     </div>
                     <div>
@@ -109,6 +111,7 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                         </div>
                         <label htmlFor='floatingInput'>
                             Phone number - format: 123-456-7890
+                            <IsRequired />
                         </label>
                     </div>
                 </div>
@@ -131,7 +134,7 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>
                         <DateInput
-                            className='form-control is-required'
+                            isRequired={true}
                             id={`dob${props.num}`}
                             value={clientInfo.dateOfBirth}
                             max={new Date()}
@@ -272,6 +275,8 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
 
                                 <label htmlFor='floatingInput'>
                                     City
+                                    <IsRequired />
+
                                 </label>
                             </div>
                         </div>
@@ -318,6 +323,8 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
 
                                 <label htmlFor='floatingInput'>
                                     Postal code
+                                    <IsRequired />
+
                                 </label>
                             </div>
                         </div>
@@ -479,7 +486,9 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                                 </div>
 
                                 <label htmlFor='floatingInput'>
-                                    Your occupation (required)
+                                    Your occupation
+                                    <IsRequired />
+
                                 </label>
                             </div>
                         </div>
@@ -500,7 +509,9 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                                 </div>
 
                                 <label htmlFor='floatingInput'>
-                                    Employer name (required)
+                                    Employer name
+                                    <IsRequired />
+
                                 </label>
                             </div>
                         </div>
@@ -519,6 +530,8 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
 
                                 <label htmlFor='floatingInput'>
                                     Phone number - format: 123-456-7890
+                                    <IsRequired />
+
                                 </label>
                             </div>
                         </div>
@@ -540,6 +553,8 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
 
                                 <label htmlFor='floatingInput'>
                                     Street address line 1
+                                    <IsRequired />
+
                                 </label>
                             </div>
                         </div>
@@ -577,6 +592,8 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
 
                                 <label htmlFor='floatingInput'>
                                     City
+                                    <IsRequired />
+
                                 </label>
                             </div>
                         </div>
@@ -622,6 +639,8 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
 
                                 <label htmlFor='floatingInput'>
                                     Postal code
+                                    <IsRequired />
+
                                 </label>
                             </div>
                         </div>

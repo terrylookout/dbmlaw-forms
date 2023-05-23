@@ -6,6 +6,7 @@ import { getCountries, getProvincesTerritories, getStates } from '../Helpers';
 import { v4 as uuid } from "uuid";
 import RadioGroup from './RadioGroup';
 import NumericInput from './NumericInput';
+import IsRequired from './IsRequired';
 
 interface ClientProps {
     text: string;
@@ -92,7 +93,7 @@ const Client = (props: ClientProps): ReactElement => {
                             Please enter this field
                         </div>
                         <label htmlFor='floatingInput'>
-                            {`${props.text} ${props.num + 1} full legal name - required`}
+                            {`${props.text} ${props.num + 1} full legal name`}<IsRequired />
                         </label>
                     </div>
                     <div>
@@ -115,6 +116,7 @@ const Client = (props: ClientProps): ReactElement => {
                         </div>
                         <label htmlFor='floatingInput'>
                             Phone number - format: 123-456-7890
+                            <IsRequired />
                         </label>
                     </div>
                 </div>
@@ -154,20 +156,15 @@ const Client = (props: ClientProps): ReactElement => {
                         </div>
                     </div>
                     <div className="col mb-3">
-                        <div className='form-floating mb-0'>
-                            <NumericInput
-                                id={`sin${props.num}`}
-                                required={true}
-                                placeholder='Social Insurance Number'
-                                disabled={clientInfo.sinViaPhone}
-                                value={clientInfo.sinViaPhone ? '' : clientInfo.socialInsNumber}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                    setClientInfo({ ...clientInfo, socialInsNumber: e.target.value });
-                                }} />
-                            <label htmlFor='floatingInput'>
-                                Social Insurance Number
-                            </label>
-                        </div>
+                        <NumericInput
+                            id={`sin${props.num}`}
+                            required={true}
+                            placeholder='Social Insurance Number'
+                            disabled={clientInfo.sinViaPhone}
+                            value={clientInfo.sinViaPhone ? '' : clientInfo.socialInsNumber}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                setClientInfo({ ...clientInfo, socialInsNumber: e.target.value });
+                            }} />
                         <div className='d-flex flex-nowrap pt-2'>
                             <input type='checkbox' id={`chksin${props.num.toString()}`} checked={clientInfo.sinViaPhone}
                                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -229,6 +226,7 @@ const Client = (props: ClientProps): ReactElement => {
                         </div>
                         <label htmlFor='floatingInput'>
                             Street address line 1
+                            <IsRequired />
                         </label>
                     </div>
                 </div>
@@ -265,6 +263,7 @@ const Client = (props: ClientProps): ReactElement => {
                         </div>
                         <label htmlFor='floatingInput'>
                             City
+                            <IsRequired />
                         </label>
                     </div>
                 </div>
@@ -307,7 +306,7 @@ const Client = (props: ClientProps): ReactElement => {
                             Please enter this field
                         </div>
                         <label htmlFor='floatingInput'>
-                            Postal code
+                            Postal code<IsRequired />
                         </label>
                     </div>
                 </div>
@@ -335,7 +334,7 @@ const Client = (props: ClientProps): ReactElement => {
                             }
                         </select>
                         <label htmlFor='mailingcountry'>
-                            Country
+                            Country<IsRequired />
                         </label>
                     </div>
                 </div>
@@ -350,7 +349,7 @@ const Client = (props: ClientProps): ReactElement => {
                         <div className={`col mb-1 mt-4 employment-header${props.num}`} >
                             <h6>
                                 <CircleBullet />
-                                Occupation / Employment Information (required)
+                                Occupation / Employment Information <IsRequired />
                             </h6>
                         </div>
                     </div>
@@ -449,7 +448,7 @@ const Client = (props: ClientProps): ReactElement => {
                                         </div>
 
                                         <label htmlFor='floatingInput'>
-                                            Your PREVIOUS occupation (required)
+                                            Your PREVIOUS occupation<IsRequired />
                                         </label>
                                     </div>
                                 </div>
@@ -474,7 +473,7 @@ const Client = (props: ClientProps): ReactElement => {
                                         </div>
 
                                         <label htmlFor='floatingInput'>
-                                            Please provide details (required)
+                                            Please provide details<IsRequired />
                                         </label>
                                     </div>
                                 </div>
@@ -499,7 +498,7 @@ const Client = (props: ClientProps): ReactElement => {
                                         </div>
 
                                         <label htmlFor='floatingInput'>
-                                            Occupation / Job Title (required)
+                                            Occupation / Job Title<IsRequired />
                                         </label>
                                     </div>
                                 </div>
@@ -687,7 +686,7 @@ const Client = (props: ClientProps): ReactElement => {
                         <div className={`col mb-1 mt-4 citizenship-header${props.num}`}>
                             <h6>
                                 <CircleBullet />
-                                Citizenship (required)
+                                Citizenship <IsRequired />
                             </h6>
                         </div>
                     </div>
@@ -765,7 +764,7 @@ const Client = (props: ClientProps): ReactElement => {
                                 <div className="col mb-1 mt-4">
                                     <h6>
                                         <CircleBullet />
-                                        Are you a First-Time Home Buyer?
+                                        Are you a First-Time Home Buyer? <IsRequired />
                                     </h6>
 
                                     <div className="form-check">
@@ -813,7 +812,7 @@ const Client = (props: ClientProps): ReactElement => {
                                     <div className="col mb-1 mt-4">
                                         <h6>
                                             <CircleBullet />
-                                            Have you been a resident of BC for at least a year?
+                                            Have you been a resident of BC for at least a year? <IsRequired />
                                         </h6>
 
                                         <div className="form-check">
@@ -848,7 +847,7 @@ const Client = (props: ClientProps): ReactElement => {
                                     <div className="col mb-1 mt-4">
                                         <h6>
                                             <CircleBullet />
-                                            Have you ever owned a principal residence anywhere in the world?
+                                            Have you ever owned a principal residence anywhere in the world? <IsRequired />
                                         </h6>
                                         <div className="form-check">
                                             <input className="form-check-input" type="radio" name={`principalresidenceworld${props.num}`} id={`principalresidenceworld-yes${props.num}`}
@@ -889,7 +888,7 @@ const Client = (props: ClientProps): ReactElement => {
                             <div className="col mb-1 mt-4">
                                 <h6>
                                     <CircleBullet />
-                                    Will you be living in the property within three months?
+                                    Will you be living in the property within three months? <IsRequired />
                                 </h6>
                                 <div className="form-check">
                                     <input className="form-check-input" type="radio" name={`livewithinthreemonths${props.num}`} id={`livewithinthreemonths-yes${props.num}`}
@@ -1018,7 +1017,7 @@ const Client = (props: ClientProps): ReactElement => {
                                                             Please enter this field
                                                         </div>
                                                         <label htmlFor='floatingInput'>
-                                                            Street address line 1
+                                                            Street address line 1<IsRequired />
                                                         </label>
                                                     </div>
                                                 </div>
@@ -1068,7 +1067,7 @@ const Client = (props: ClientProps): ReactElement => {
                                                             Please enter this field
                                                         </div>
                                                         <label htmlFor='floatingInput'>
-                                                            City
+                                                            City<IsRequired />
                                                         </label>
                                                     </div>
                                                 </div>
@@ -1116,7 +1115,7 @@ const Client = (props: ClientProps): ReactElement => {
                                                             Please enter this field
                                                         </div>
                                                         <label htmlFor='floatingInput'>
-                                                            Postal code
+                                                            Postal code<IsRequired />
                                                         </label>
                                                     </div>
                                                 </div>

@@ -2,6 +2,7 @@ import React, { ChangeEvent, ReactElement, useEffect, useRef, useState } from 'r
 import CircleBullet from './CircleBullet';
 import { ClientInfo } from '../ClassesInterfaces';
 import { getCountries, getProvincesTerritories, getStates } from '../Helpers';
+import IsRequired from './IsRequired';
 
 interface BorrowerProps {
     text: string;
@@ -70,7 +71,7 @@ const Owner = (props: BorrowerProps): ReactElement => {
                             Please enter the full legal name.
                         </div>
                         <label htmlFor='floatingInput'>
-                            {`${props.text} ${props.num + 1} full legal name - required`}
+                            {`${props.text} ${props.num + 1} full legal name`} <IsRequired />
                         </label>
                     </div>
                     <div>
@@ -93,7 +94,7 @@ const Owner = (props: BorrowerProps): ReactElement => {
                         </div>
 
                         <label htmlFor='floatingInput'>
-                            Phone number - format: 123-456-7890
+                            Phone number - format: 123-456-7890 <IsRequired />
                         </label>
                     </div>
                 </div>
@@ -179,6 +180,7 @@ const Owner = (props: BorrowerProps): ReactElement => {
 
                                 <label htmlFor='floatingInput'>
                                     Street address line 1
+                                    <IsRequired />
                                 </label>
                             </div>
                         </div>
@@ -216,6 +218,7 @@ const Owner = (props: BorrowerProps): ReactElement => {
 
                                 <label htmlFor='floatingInput'>
                                     City
+                                    <IsRequired />
                                 </label>
                             </div>
                         </div>

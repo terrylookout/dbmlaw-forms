@@ -4,6 +4,7 @@ import CircleBullet from "../../controls/CircleBullet";
 import DateInput from "../../controls/DateInput";
 import NumericInput from "../../controls/NumericInput";
 import RadioGroup from "../../controls/RadioGroup";
+import IsRequired from "../../controls/IsRequired";
 
 
 const GetSaleDetails = ({
@@ -22,7 +23,7 @@ const GetSaleDetails = ({
                 <div className="col mb-1">
                     <h6>
                         <CircleBullet />
-                        Sale and Property Information
+                        Your Sale and Property Information
                     </h6>
                 </div>
             </div>
@@ -54,29 +55,23 @@ const GetSaleDetails = ({
                     </div>
                 </div>
                 <div className="col mb-3">
-                    <div className='form-floating mb-0'>
-                        <NumericInput id='saleprice' placeholder='Sale price' disabled={false}
-                            required={false}
-                            value={saleInfo.sellingPrice}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e && e.target && e.target.value) {
-                                    setSaleInfo({
-                                        ...saleInfo, sellingPrice: e.target.value ?
-                                            e.target.value : ''
-                                    });
-                                }
-                            }}
-                        />
-                        <div className="invalid-feedback">
-                            Please enter this field
-                        </div>
 
-                        <label htmlFor='saleprice'>
-                            Sale price (CAD) if known
-                        </label>
-                    </div>
+                    <NumericInput id='saleprice' placeholder='Sale price (CAD) if known'
+                        disabled={false}
+                        required={false}
+                        value={saleInfo.sellingPrice}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                            if (e && e.target && e.target.value) {
+                                setSaleInfo({
+                                    ...saleInfo, sellingPrice: e.target.value ?
+                                        e.target.value : ''
+                                });
+                            }
+                        }}
+                    />
+
                 </div>
-            </div>
+            </div >
 
 
             <div className="row">
@@ -103,6 +98,7 @@ const GetSaleDetails = ({
 
                         <label htmlFor='floatingInput'>
                             Street address line 1
+                            <IsRequired />
                         </label>
                     </div>
                 </div>
@@ -140,6 +136,7 @@ const GetSaleDetails = ({
 
                         <label htmlFor='floatingInput'>
                             City
+                            <IsRequired />
                         </label>
                     </div>
                 </div>
@@ -199,7 +196,7 @@ const GetSaleDetails = ({
                 <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
-                        Your realtor information (if applicable)
+                        Your Realtor information (if applicable)
                     </h6>
                 </div>
             </div>
@@ -239,7 +236,7 @@ const GetSaleDetails = ({
                 <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
-                        Is there a mortgage or line of credit on title?
+                        Is there a mortgage or line of credit on title? <IsRequired />
                     </h6>
                 </div>
             </div>
@@ -316,7 +313,7 @@ const GetSaleDetails = ({
                 <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
-                        Does this involve a separation or divorce?
+                        Does this involve a separation or divorce? <IsRequired />
                     </h6>
                 </div>
             </div>
@@ -360,7 +357,7 @@ const GetSaleDetails = ({
                 <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
-                        Have you paid the property taxes for the current applicable year?
+                        Have you paid the property taxes for the current applicable year? <IsRequired />
                     </h6>
                 </div>
             </div>
@@ -404,7 +401,7 @@ const GetSaleDetails = ({
                 <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
-                        Have you claimed the Home Owner&apos;s Grant for the current applicable year?
+                        Have you claimed the Home Owner&apos;s Grant for the current applicable year? <IsRequired />
                     </h6>
                 </div>
             </div>
@@ -447,7 +444,7 @@ const GetSaleDetails = ({
                 <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
-                        If applicable, have you filed your Empty Homes Declaration (Vancouver property)?
+                        If applicable, have you filed your Empty Homes Declaration (Vancouver property)? <IsRequired />
                     </h6>
                 </div>
             </div>

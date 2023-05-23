@@ -427,12 +427,23 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
     output.push(getEntry('Realtor Name', purchaseInfo.realtorName));
     output.push(getEntry('Realtor Phone Number', purchaseInfo.realtorPhone, true));
 
-    output.push(getEntry('Mortgage/SLOC', purchaseInfo.gettingMortgageOrSLOC))
+    output.push(getEntry('Mortgage/Secured Line of Credit', purchaseInfo.gettingMortgageOrSLOC))
 
     if (purchaseInfo.gettingMortgageOrSLOC === 'YES') {
         output.push(getEntry('Lender Name', purchaseInfo.lenderName));
         output.push(getEntry('Broker or Banker Name', purchaseInfo.brokerBankerName));
         output.push(getEntry('Broker or Banker Phone Number', purchaseInfo.brokerBankerPhone));
+    }
+
+    for (let i = 0; i < purchaseInfo.guarantorsInfo.length; i++) {
+
+        const guarantor = purchaseInfo.guarantorsInfo[i];
+
+        output.push(getEntry(`GUARANTOR ${(i + 1).toString()}`, ''));
+        output.push(getEntry('Full Legal Name', guarantor.fullLegalName));
+        output.push(getEntry('Phone Number', guarantor.phoneNumber));
+        output.push(getEntry('Email', guarantor.emailAddress));
+        output.push(getEntry('Relationship', guarantor.relationship, true));
     }
 
     output.push(getEntry('', '', true));
@@ -472,28 +483,10 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
     if (purchaseInfo.fundsSource === 'ANOTHER_INDIVIDUAL') {
 
         output.push(getEntry('Other Funder Name', purchaseInfo.nonPurchaserName));
-        //output.push(getEntry('Other Funder Phone Number', purchaseInfo.nonPurchaserPhone));
         output.push(getEntry('Other Funder Relationship', purchaseInfo.nonPurchaserRelationship));
-        // output.push(getEntry('Other Funder Occupation', purchaseInfo.nonPurchaserOccupation));
-        // output.push(getEntry('Other Funder Street 1', purchaseInfo.nonPurchaserStreet1));
-        // output.push(getEntry('Other Funder Street 2', purchaseInfo.nonPurchaserStreet2));
-        // output.push(getEntry('Other Funder City', purchaseInfo.nonPurchaserCity));
-        // output.push(getEntry('Other Funder Province or Territory', purchaseInfo.nonPurchaserProvinceTerritory));
-        // output.push(getEntry('Other Funder Postal Code', purchaseInfo.nonPurchaserPostalCode, true));
     }
     else if (purchaseInfo.fundsSource === 'CHEQUING_SAVINGS_ACCOUNT') {
         output.push(getEntry('Chequing/Savings Source', purchaseInfo.fundsChequingSavingsSource, true));
-    }
-
-    for (let i = 0; i < purchaseInfo.guarantorsInfo.length; i++) {
-
-        const guarantor = purchaseInfo.guarantorsInfo[i];
-
-        output.push(getEntry(`GUARANTOR ${(i + 1).toString()}`, ''));
-        output.push(getEntry('Full Legal Name', guarantor.fullLegalName));
-        output.push(getEntry('Phone Number', guarantor.phoneNumber));
-        output.push(getEntry('Email', guarantor.emailAddress));
-        output.push(getEntry('Relationship', guarantor.relationship, true));
     }
 
     output.push(getEntry('Appointment Location Preference', purchaseInfo.apptLocationPreference, true));

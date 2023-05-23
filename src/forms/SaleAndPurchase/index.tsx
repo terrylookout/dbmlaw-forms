@@ -675,9 +675,27 @@ const getOutput = (purchaseInfo: PurchaseInfo, saleInfo: SaleInfo): string => {
     output.push(getEntry('Realtor Name', purchaseInfo.realtorName));
     output.push(getEntry('Realtor Phone Number', purchaseInfo.realtorPhone, true));
 
-    output.push(getEntry('Lender Name', purchaseInfo.lenderName));
-    output.push(getEntry('Broker or Banker Name', purchaseInfo.brokerBankerName));
-    output.push(getEntry('Broker or Banker Phone Number', purchaseInfo.brokerBankerPhone, true));
+    output.push(getEntry('Mortgage/Secured Line of Credit', purchaseInfo.gettingMortgageOrSLOC));
+
+    if (purchaseInfo.gettingMortgageOrSLOC !== 'NO') {
+        output.push(getEntry('Lender name', purchaseInfo.gettingMortgageOrSLOC === 'YES_NOT_DETERMINED' ? 'TBD' : purchaseInfo.lenderName));
+        output.push(getEntry('Broker/Banker name', purchaseInfo.gettingMortgageOrSLOC === 'YES_NOT_DETERMINED' ? 'TBD' : purchaseInfo.brokerBankerName));
+        output.push(getEntry('Broker/Banker phone', purchaseInfo.gettingMortgageOrSLOC === 'YES_NOT_DETERMINED' ? 'TBD' : purchaseInfo.brokerBankerPhone));
+    }
+    output.push(getEntry('', '', true));
+
+    output.push(getEntry('Guarantors', purchaseInfo.guarantorsInfo.length === 0 ? 'None' : purchaseInfo.guarantorsInfo.length.toString(), true));
+
+    for (let i = 0; i < purchaseInfo.guarantorsInfo.length; i++) {
+
+        const guarantor = purchaseInfo.guarantorsInfo[i];
+
+        output.push(getEntry(`GUARANTOR ${(i + 1).toString()}`, ''));
+        output.push(getEntry('Full Legal Name', guarantor.fullLegalName));
+        output.push(getEntry('Phone Number', guarantor.phoneNumber));
+        output.push(getEntry('Email', guarantor.emailAddress));
+        output.push(getEntry('Relationship', guarantor.relationship, true));
+    }
 
     output.push(getEntry('Strata Mgmt Company', purchaseInfo.strataName, true));
 
@@ -689,51 +707,44 @@ const getOutput = (purchaseInfo: PurchaseInfo, saleInfo: SaleInfo): string => {
 
     output.push(getEntry('Portion of Property to be Rented Out', purchaseInfo.portionPropertyRentedOut, true));
 
-    let fundsSource = '';
-    switch (purchaseInfo.fundsSource) {
-        case 'ANOTHER_INDIVIDUAL':
-            fundsSource = 'Another Individual';
-            break;
+    // let fundsSource = '';
+    // switch (purchaseInfo.fundsSource) {
+    //     case 'ANOTHER_INDIVIDUAL':
+    //         fundsSource = 'Another Individual';
+    //         break;
 
-        case 'CHEQUING_SAVINGS_ACCOUNT':
-            fundsSource = 'Chequing/Saving Account';
-            break;
+    //     case 'CHEQUING_SAVINGS_ACCOUNT':
+    //         fundsSource = 'Chequing/Saving Account';
+    //         break;
 
-        case 'HELOC':
-            fundsSource = 'Home Equity Line of Credit';
-            break;
+    //     case 'HELOC':
+    //         fundsSource = 'Home Equity Line of Credit';
+    //         break;
 
-        case 'OTHER':
-            fundsSource = 'Other';
-            break;
+    //     case 'OTHER':
+    //         fundsSource = 'Other';
+    //         break;
 
-        case 'INVESTMENT_FUNDS':
-            fundsSource = 'Investment funds';
-            break;
+    //     case 'INVESTMENT_FUNDS':
+    //         fundsSource = 'Investment funds';
+    //         break;
 
-        case 'SALE_PREVIOUS_PROPERTY':
-            fundsSource = 'Sale of previous home';
-            break;
+    //     case 'SALE_PREVIOUS_PROPERTY':
+    //         fundsSource = 'Sale of previous home';
+    //         break;
 
-    }
+    // }
 
-    output.push(getEntry('Funds Brought In Source', fundsSource, true));
+    // output.push(getEntry('Funds Brought In Source', fundsSource, true));
 
-    if (purchaseInfo.fundsSource === 'ANOTHER_INDIVIDUAL') {
+    // if (purchaseInfo.fundsSource === 'ANOTHER_INDIVIDUAL') {
 
-        output.push(getEntry('Other Funder Name', purchaseInfo.nonPurchaserName));
-        //output.push(getEntry('Other Funder Phone Number', purchaseInfo.nonPurchaserPhone));
-        output.push(getEntry('Other Funder Relationship', purchaseInfo.nonPurchaserRelationship));
-        // output.push(getEntry('Other Funder Occupation', purchaseInfo.nonPurchaserOccupation));
-        // output.push(getEntry('Other Funder Street 1', purchaseInfo.nonPurchaserStreet1));
-        // output.push(getEntry('Other Funder Street 2', purchaseInfo.nonPurchaserStreet2));
-        // output.push(getEntry('Other Funder City', purchaseInfo.nonPurchaserCity));
-        // output.push(getEntry('Other Funder Province or Territory', purchaseInfo.nonPurchaserProvinceTerritory));
-        // output.push(getEntry('Other Funder Postal Code', purchaseInfo.nonPurchaserPostalCode, true));
-    }
-    else if (purchaseInfo.fundsSource === 'CHEQUING_SAVINGS_ACCOUNT') {
-        output.push(getEntry('Chequing/Savings Source', purchaseInfo.fundsChequingSavingsSource, true));
-    }
+    //     output.push(getEntry('Other Funder Name', purchaseInfo.nonPurchaserName));
+    //     output.push(getEntry('Other Funder Relationship', purchaseInfo.nonPurchaserRelationship));
+    // }
+    // else if (purchaseInfo.fundsSource === 'CHEQUING_SAVINGS_ACCOUNT') {
+    //     output.push(getEntry('Chequing/Savings Source', purchaseInfo.fundsChequingSavingsSource, true));
+    // }
 
     for (let i = 0; i < purchaseInfo.guarantorsInfo.length; i++) {
 

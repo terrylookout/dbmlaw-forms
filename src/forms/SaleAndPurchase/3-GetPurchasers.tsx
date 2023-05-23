@@ -29,7 +29,7 @@ const GetPurchasers = ({
             <div className="row mt-2">
                 <div className="col mb-3">
                     <h6>
-                        How many purchasers are there?
+                        How many Purchasers are there?
                     </h6>
                 </div>
 

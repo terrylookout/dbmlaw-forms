@@ -22,7 +22,7 @@ const GetPurchasers = ({
             <div className='row align-items-center'>
                 <div className='col col-5 mb-3'>
                     <h6>
-                        How many purchasers are there?
+                        How many Purchasers are there?
                     </h6>
                 </div>
 

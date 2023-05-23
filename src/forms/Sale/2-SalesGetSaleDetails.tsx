@@ -3,6 +3,7 @@ import CircleBullet from "../../controls/CircleBullet";
 import DateInput from "../../controls/DateInput";
 import { SalesChildProps } from ".";
 import NumericInput from "../../controls/NumericInput";
+import IsRequired from "../../controls/IsRequired";
 
 const SalesGetSaleDetails = (props: SalesChildProps): ReactElement => {
 
@@ -27,7 +28,8 @@ const SalesGetSaleDetails = (props: SalesChildProps): ReactElement => {
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>
                         <DateInput
-                            className='form-control'
+                            isRequired={!props.saleInfo.closingDateTBD}
+                            disabled={props.saleInfo.closingDateTBD}
                             id={`closingdate`}
                             value={props.saleInfo.closingDateTBD ? null : props.saleInfo.closingDate}
                             min={new Date((new Date()).setFullYear(new Date().getFullYear() - 5))}
@@ -49,22 +51,20 @@ const SalesGetSaleDetails = (props: SalesChildProps): ReactElement => {
                     </div>
                 </div>
                 <div className="col mb-3">
-                    <div className='form-floating mb-0'>
-                        <NumericInput id='saleprice' placeholder='Sale price' disabled={false}
-                            value={props.saleInfo.sellingPrice}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e && e.target) {
-                                    props.setSaleInfo({
-                                        ...props.saleInfo, sellingPrice: e.target.value ?
-                                            e.target.value : ''
-                                    });
-                                }
-                            }}
-                        />
-                        <label htmlFor='saleprice'>
-                            Sale price (CAD) if known
-                        </label>
-                    </div>
+
+                    <NumericInput id='saleprice' placeholder='Sale price (CAD) if known' disabled={false}
+                        required={false}
+                        value={props.saleInfo.sellingPrice}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                            if (e && e.target) {
+                                props.setSaleInfo({
+                                    ...props.saleInfo, sellingPrice: e.target.value ?
+                                        e.target.value : ''
+                                });
+                            }
+                        }}
+                    />
+
                 </div>
             </div>
 
@@ -92,6 +92,7 @@ const SalesGetSaleDetails = (props: SalesChildProps): ReactElement => {
                         </div>
                         <label htmlFor='floatingInput'>
                             Street address line 1
+                            <IsRequired />
                         </label>
                     </div>
                 </div>
@@ -128,6 +129,7 @@ const SalesGetSaleDetails = (props: SalesChildProps): ReactElement => {
                         </div>
                         <label htmlFor='floatingInput'>
                             City
+                            <IsRequired />
                         </label>
                     </div>
                 </div>
@@ -172,6 +174,7 @@ const SalesGetSaleDetails = (props: SalesChildProps): ReactElement => {
                         </div>
                         <label htmlFor='floatingInput'>
                             Postal code
+                            <IsRequired />
                         </label>
                     </div>
                 </div>
@@ -184,7 +187,7 @@ const SalesGetSaleDetails = (props: SalesChildProps): ReactElement => {
                 <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
-                        Your realtor information (if applicable)
+                        Your Realtor information (if applicable)
                     </h6>
                 </div>
             </div>

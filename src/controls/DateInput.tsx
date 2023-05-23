@@ -1,5 +1,6 @@
 import { ReactElement, useEffect, useRef, useState } from "react";
 import { DayPicker } from 'react-day-picker';
+import IsRequired from "./IsRequired";
 
 interface DateInputProps {
     id: string;
@@ -93,6 +94,7 @@ const DateInput = (props: DateInputProps): ReactElement => {
                     props.label &&
                     <label htmlFor='floatingInput'>
                         {`${props.label}`}
+                        {props.isRequired && <IsRequired />}
                     </label>
                 }
 

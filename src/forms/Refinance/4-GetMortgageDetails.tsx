@@ -3,6 +3,7 @@ import CircleBullet from "../../controls/CircleBullet";
 import { RefinanceProps } from ".";
 import Guarantor from "../../Guarantor";
 import { GuarantorInfo } from "../../ClassesInterfaces";
+import IsRequired from "../../controls/IsRequired";
 
 const GetMortgateDetails = ({
     refinanceInfo,
@@ -39,6 +40,7 @@ const GetMortgateDetails = ({
 
                         <label htmlFor='mortgagelendername'>
                             Mortgage Lender name
+                            <IsRequired />
                         </label>
                     </div>
                 </div>

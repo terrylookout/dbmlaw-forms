@@ -6,6 +6,7 @@ import Guarantor from "../../Guarantor";
 import { GuarantorInfo } from "../../ClassesInterfaces";
 import NumericInput from "../../controls/NumericInput";
 import RadioGroup from "../../controls/RadioGroup";
+import IsRequired from "../../controls/IsRequired";
 
 
 const PropertyInfo = ({
@@ -60,27 +61,19 @@ const PropertyInfo = ({
                     </div>
                 </div>
                 <div className="col mb-3">
-                    <div className='form-floating mb-0'>
-                        <NumericInput
-                            required={true}
-                            disabled={false}
-                            value={purchaseInfo.purchasePrice}
-                            id='purchaseprice'
-                            placeholder='Purchase price'
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e && e.target && e.target.value) {
-                                    setPurchaseInfo({ ...purchaseInfo, purchasePrice: e.target.value });
-                                }
-                            }}
-                        />
-                        <div className="invalid-feedback">
-                            Please enter this field
-                        </div>
 
-                        <label htmlFor='floatingInput'>
-                            Purchase price (CAD)
-                        </label>
-                    </div>
+                    <NumericInput
+                        required={true}
+                        disabled={false}
+                        value={purchaseInfo.purchasePrice}
+                        id='purchaseprice'
+                        placeholder='Purchase price (CAD)'
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                            if (e && e.target && e.target.value) {
+                                setPurchaseInfo({ ...purchaseInfo, purchasePrice: e.target.value });
+                            }
+                        }}
+                    />
                 </div>
             </div>
 
@@ -133,6 +126,7 @@ const PropertyInfo = ({
 
                         <label htmlFor='floatingInput'>
                             Street address line 1
+                            <IsRequired />
                         </label>
                     </div>
                 </div>
@@ -170,6 +164,7 @@ const PropertyInfo = ({
 
                         <label htmlFor='floatingInput'>
                             City
+                            <IsRequired />
                         </label>
                     </div>
                 </div>
@@ -228,7 +223,7 @@ const PropertyInfo = ({
                         <div className='col mb-1 mt-4'>
                             <h6>
                                 <CircleBullet />
-                                Do you want to own the property as Joint Tenants or as Tenants-In-Common?
+                                Do you want to own the property as Joint Tenants or as Tenants-In-Common? <IsRequired />
                             </h6>
                         </div>
                     </div>
@@ -381,7 +376,7 @@ const PropertyInfo = ({
                 <div className="col mb-1 mt-4 newused">
                     <h6>
                         <CircleBullet />
-                        Is this a NEW or USED building? (required)
+                        Is this a NEW or USED building? <IsRequired />
                     </h6>
                 </div>
             </div>
@@ -422,7 +417,7 @@ const PropertyInfo = ({
                 <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
-                        Your realtor information (if applicable)
+                        Your Realtor information (if applicable)
                     </h6>
                 </div>
             </div>
@@ -462,58 +457,187 @@ const PropertyInfo = ({
                 <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
-                        If you are getting a mortgage, Bank or Mortgage Lender information (if applicable)
+                        Are you are getting a Mortgage or Secured Line of Credit? <IsRequired />
                     </h6>
                 </div>
             </div>
 
             <div className="row">
-                <div className="col mb-3">
-                    <div className='form-floating mb-0'>
-                        <input type='text' className='form-control' id='lendername' placeholder='Lender name'
-                            value={purchaseInfo.lenderName}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setPurchaseInfo({ ...purchaseInfo, lenderName: e.target.value });
-                            }}
-                        />
-                        <label htmlFor='floatingInput'>
-                            Lender name
-                        </label>
+                <RadioGroup groupName="mortgage-sloc">
+                    <div className="col mb-3">
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name="mortgage-sloc" id="mortgage-sloc-yes"
+                                checked={purchaseInfo.gettingMortgageOrSLOC === 'YES'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e && e.target && e.target.value && e.target.value === 'on') {
+                                        setPurchaseInfo({ ...purchaseInfo, gettingMortgageOrSLOC: 'YES' });
+                                    }
+                                }} />
+                            <label className="form-check-label" htmlFor="mortgage-sloc-yes">
+                                Yes
+                            </label>
+                        </div>
+
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name="mortgage-sloc" id="mortgage-sloc-no"
+                                checked={purchaseInfo.gettingMortgageOrSLOC === 'NO'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e && e.target && e.target.value && e.target.value === 'on') {
+                                        setPurchaseInfo({ ...purchaseInfo, gettingMortgageOrSLOC: 'NO' });
+                                    }
+                                }} />
+                            <label className="form-check-label" htmlFor="mortgage-sloc-no">
+                                No
+                            </label>
+                        </div>
+
+                        <div className='form-check'>
+                            <input className='form-check-input' type='radio' name='mortgage-sloc' id='mortgage-sloc-yestbd'
+                                checked={purchaseInfo.gettingMortgageOrSLOC === 'YES_NOT_DETERMINED'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e && e.target && e.target.value && e.target.value === 'on') {
+                                        setPurchaseInfo({ ...purchaseInfo, gettingMortgageOrSLOC: 'YES_NOT_DETERMINED' });
+                                    }
+                                }} />
+                            <label className='form-check-label' htmlFor='mortgage-sloc-yestbd'>
+                                Yes, but still to be determined
+                            </label>
+                        </div>
                     </div>
-                </div>
+                </RadioGroup>
             </div>
 
-            <div className="row">
-
-                <div className="col mb-3">
-                    <div className='form-floating mb-0'>
-                        <input type='text' className='form-control' id='brokerbankername' placeholder='Broker/Banker name'
-                            value={purchaseInfo.brokerBankerName}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setPurchaseInfo({ ...purchaseInfo, brokerBankerName: e.target.value });
-                            }}
-                        />
-                        <label htmlFor='floatingInput'>
-                            Broker/Banker name
-                        </label>
+            {
+                purchaseInfo.gettingMortgageOrSLOC === 'YES' &&
+                <>
+                    <div className="row">
+                        <div className="col mb-3">
+                            <div className='form-floating mb-0'>
+                                <input type='text' className='form-control' id='lendername' placeholder='Lender name'
+                                    value={purchaseInfo.lenderName}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                        setPurchaseInfo({ ...purchaseInfo, lenderName: e.target.value });
+                                    }}
+                                />
+                                <label htmlFor='floatingInput'>
+                                    Lender name
+                                </label>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <div className="col mb-3">
-                    <div className='form-floating mb-0'>
-                        <input type='tel' className='form-control' id='lenderphone' placeholder='Phone number'
-                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" value={purchaseInfo.brokerBankerPhone}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setPurchaseInfo({ ...purchaseInfo, brokerBankerPhone: e.target.value });
-                            }}
-                        />
-                        <label htmlFor='floatingInput'>
-                            Phone number - format: 123-456-7890
-                        </label>
+                    <div className="row">
+                        <div className="col mb-1">
+                            <div className='form-floating mb-0'>
+                                <input type='text' className='form-control' id='brokerbankername' placeholder='Broker/Banker name'
+                                    value={purchaseInfo.brokerBankerName}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                        setPurchaseInfo({ ...purchaseInfo, brokerBankerName: e.target.value });
+                                    }}
+                                />
+                                <label htmlFor='floatingInput'>
+                                    Broker/Banker name
+                                </label>
+                            </div>
+                        </div>
+
+                        <div className="col mb-1">
+                            <div className='form-floating mb-0'>
+                                <input type='tel' className='form-control' id='lenderphone' placeholder='Phone number'
+                                    pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" value={purchaseInfo.brokerBankerPhone}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                        setPurchaseInfo({ ...purchaseInfo, brokerBankerPhone: e.target.value });
+                                    }}
+                                />
+                                <label htmlFor='floatingInput'>
+                                    Phone number - format: 123-456-7890
+                                </label>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
 
+                    <div className="row align-items-center mt-4">
+                        <div className="col mb-3">
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'min-content 1fr'
+                            }}>
+                                <div>
+                                    <CircleBullet />
+                                </div>
+                                <div>
+
+                                    <h6 style={{
+                                        display: 'inline-block',
+                                    }}>
+                                        <div>Are there any guarantors/co-signers?</div>
+                                        <div>If so, how many?</div>
+                                    </h6>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div className="col mb-3">
+                            <select className="form-select p-3" aria-label="Province or territory"
+                                value={purchaseInfo.guarantorsInfo.length}
+                                onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                                    if (e && e.target && e.target.value) {
+                                        setNumberOfGuarantors(parseInt(e.target.value));
+                                    }
+                                }}>
+                                <option value='0'>No guarantors</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                            </select>
+
+                        </div>
+                    </div>
+
+                    {
+                        numberOfGuarantors > 0 &&
+                        <>
+                            <div className="row">
+                                <div className="col mb-1 mt-4">
+                                    <h6>
+                                        IMPORTANT: All guarantors will be required to sign particular mortgage documents
+                                        and attend appointment(s)
+                                    </h6>
+                                </div>
+                            </div>
+                            {
+                                purchaseInfo.guarantorsInfo.map((c, i) => {
+                                    return (
+                                        <Guarantor text={'Guarantor/Co-signer'}
+                                            num={i}
+                                            key={c.id}
+                                            numberOfPurchasers={purchaseInfo.clientsInfo.length}
+                                            guarantorInfo={purchaseInfo.guarantorsInfo[i]}
+                                            updated={(c: GuarantorInfo, idx: number) => {
+                                                const tempGuarantors: GuarantorInfo[] = [];
+                                                for (let t = 0; t < purchaseInfo.guarantorsInfo.length; t++) {
+                                                    if (t === idx) {
+                                                        tempGuarantors.push(c);
+                                                    }
+                                                    else {
+                                                        tempGuarantors.push(purchaseInfo.guarantorsInfo[t]);
+                                                    }
+                                                }
+                                                setPurchaseInfo({ ...purchaseInfo, guarantorsInfo: tempGuarantors });
+                                            }}
+                                        />
+                                    );
+                                })
+                            }
+
+                        </>
+                    }
+
+                </>
+            }
 
             <div className="row">
                 <div className="col mb-1 mt-4">
@@ -626,7 +750,7 @@ const PropertyInfo = ({
                 <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
-                        Will any portion of the property be rented out?
+                        Will any portion of the property be rented out? <IsRequired />
                     </h6>
                 </div>
             </div>
@@ -664,7 +788,7 @@ const PropertyInfo = ({
             </div>
 
 
-            <div className="row">
+            {/* <div className="row">
                 <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
@@ -838,87 +962,7 @@ const PropertyInfo = ({
 
                     </div>
                 </>
-            }
-
-            <div className="row align-items-center mt-4">
-                <div className="col mb-3">
-                    <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'min-content 1fr'
-                    }}>
-                        <div>
-                            <CircleBullet />
-                        </div>
-                        <div>
-
-                            <h6 style={{
-                                display: 'inline-block',
-                            }}>
-                                <div>Are there any guarantors/co-signers?</div>
-                                <div>If so, how many?</div>
-                            </h6>
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div className="col mb-3">
-                    <select className="form-select p-3" aria-label="Province or territory"
-                        value={purchaseInfo.guarantorsInfo.length}
-                        onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                            if (e && e.target && e.target.value) {
-                                setNumberOfGuarantors(parseInt(e.target.value));
-                            }
-                        }}>
-                        <option value='0'>No guarantors</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                    </select>
-
-                </div>
-            </div>
-
-            {
-                numberOfGuarantors > 0 &&
-                <>
-                    <div className="row">
-                        <div className="col mb-1 mt-4">
-                            <h6>
-                                IMPORTANT: All guarantors will be required to sign particular mortgage documents
-                                and attend appointment(s)
-                            </h6>
-                        </div>
-                    </div>
-                    {
-                        purchaseInfo.guarantorsInfo.map((c, i) => {
-                            return (
-                                <Guarantor text={'Guarantor/Co-signer'}
-                                    num={i}
-                                    key={c.id}
-                                    numberOfPurchasers={purchaseInfo.clientsInfo.length}
-                                    guarantorInfo={purchaseInfo.guarantorsInfo[i]}
-                                    updated={(c: GuarantorInfo, idx: number) => {
-                                        const tempGuarantors: GuarantorInfo[] = [];
-                                        for (let t = 0; t < purchaseInfo.guarantorsInfo.length; t++) {
-                                            if (t === idx) {
-                                                tempGuarantors.push(c);
-                                            }
-                                            else {
-                                                tempGuarantors.push(purchaseInfo.guarantorsInfo[t]);
-                                            }
-                                        }
-                                        setPurchaseInfo({ ...purchaseInfo, guarantorsInfo: tempGuarantors });
-                                    }}
-                                />
-                            );
-                        })
-                    }
-
-                </>
-            }
+            } */}
 
             <div className="row">
                 <div className="col mb-1 mt-4">

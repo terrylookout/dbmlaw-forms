@@ -2,6 +2,7 @@ import { ChangeEvent } from "react";
 import { SaleAndPurchaseProps } from ".";
 import Seller from "../../controls/Seller";
 import { ClientInfo } from "../../ClassesInterfaces";
+import IsRequired from "../../controls/IsRequired";
 
 
 const GetSellers = ({
@@ -82,7 +83,8 @@ const GetSellers = ({
                                     Please enter this field
                                 </div>
                                 <label htmlFor='companynameseller'>
-                                    Company name (required)
+                                    Company name
+                                    <IsRequired />
                                 </label>
                             </div>
                         </div>
@@ -99,7 +101,8 @@ const GetSellers = ({
                                     Please enter this field
                                 </div>
                                 <label htmlFor='incorporationnumberseller'>
-                                    Incorporation # (required)
+                                    Incorporation #
+                                    <IsRequired />
                                 </label>
                             </div>
                         </div>
