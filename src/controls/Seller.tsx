@@ -254,7 +254,7 @@ const Seller = (props: SellerProps): ReactElement => {
             <div className="row">
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>
-                        <input type='text' className='form-control' id='mailingpostalcode' placeholder='Postal code'
+                        <input type='text' className='form-control is-required' id='mailingpostalcode' placeholder='Postal code'
                             value={clientInfo.mailingPostalCode}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setClientInfo({ ...clientInfo, mailingPostalCode: e.target.value });
@@ -264,7 +264,7 @@ const Seller = (props: SellerProps): ReactElement => {
                             Please enter this field
                         </div>
                         <label htmlFor='floatingInput'>
-                            Postal code
+                            Postal code<IsRequired />
                         </label>
                     </div>
                 </div>

@@ -47,7 +47,6 @@ const GetPropertyInfo = ({
                             isRequired={!purchaseInfo.completionDateTBD}
                             id={`completiondate`}
                             value={purchaseInfo.completionDateTBD ? null : purchaseInfo.completionDate}
-                            min={new Date((new Date()).setFullYear(new Date().getFullYear() - 5))}
                             label='Completion date'
                             onChange={(e) => {
                                 if (e) {

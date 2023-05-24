@@ -139,21 +139,18 @@ const Client = (props: ClientProps): ReactElement => {
                 !props.company &&
                 <div className="row">
                     <div className="col mb-3">
-                        <div className='form-floating mb-0'>
-                            <DateInput
-                                isRequired={true}
-                                id={`dob${props.num}`}
-                                value={clientInfo.dateOfBirth}
-                                max={new Date()}
-                                label='Date of birth'
-                                onChange={(e) => {
-                                    if (e) {
-                                        setClientInfo({ ...clientInfo, dateOfBirth: e })
-                                    }
+                        <DateInput
+                            isRequired={true}
+                            id={`dob${props.num}`}
+                            value={clientInfo.dateOfBirth}
+                            isDoB={true}
+                            label='Date of birth'
+                            onChange={(e) => {
+                                if (e) {
+                                    setClientInfo({ ...clientInfo, dateOfBirth: e })
+                                }
 
-                                }} />
-
-                        </div>
+                            }} />
                     </div>
                     <div className="col mb-3">
                         <NumericInput
@@ -210,7 +207,6 @@ const Client = (props: ClientProps): ReactElement => {
                     </div>
                 }
             </div>
-
 
             <div className="row">
                 <div className="col mb-3">
@@ -294,9 +290,9 @@ const Client = (props: ClientProps): ReactElement => {
             </div>
 
             <div className="row">
-                <div className="col mb-3">
+                <div className="col-6 mb-3">
                     <div className='form-floating mb-0'>
-                        <input type='text' className='form-control' id='mailingpostalcode' placeholder='Postal code'
+                        <input type='text' className='form-control is-required' id='mailingpostalcode' placeholder='Postal code'
                             value={clientInfo.mailingPostalCode}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setClientInfo({ ...clientInfo, mailingPostalCode: e.target.value });
@@ -310,7 +306,8 @@ const Client = (props: ClientProps): ReactElement => {
                         </label>
                     </div>
                 </div>
-                <div className="col mb-3">
+
+                <div className="col-6 mb-3">
                     <div className='form-floating mb-0'>
                         <select className='form-control is-required' required={true} id='mailingcountry' placeholder='Country'
                             value={clientInfo.mailingCountry}
@@ -338,6 +335,7 @@ const Client = (props: ClientProps): ReactElement => {
                         </label>
                     </div>
                 </div>
+
             </div>
 
 
@@ -758,7 +756,7 @@ const Client = (props: ClientProps): ReactElement => {
                     </div>
 
                     {
-                        (props.showFTHB !== undefined && props.showFTHB) &&
+                        ((props.showFTHB !== undefined && props.showFTHB) || props.showFTHB === undefined) &&
                         <div className="row">
                             <RadioGroup groupName="fthb">
                                 <div className="col mb-1 mt-4">
@@ -958,7 +956,6 @@ const Client = (props: ClientProps): ReactElement => {
                                                             isRequired={true}
                                                             id={`start${previousAddress.id}`}
                                                             value={previousAddress.startDate}
-                                                            max={new Date()}
                                                             label='Start date'
                                                             onChange={(e) => {
                                                                 if (e) {

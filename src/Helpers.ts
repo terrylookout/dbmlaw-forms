@@ -1,4 +1,4 @@
-//import emailjs, { EmailJSResponseStatus } from 'emailjs-com';
+import emailjs, { EmailJSResponseStatus } from 'emailjs-com';
 
 export interface FormProps {
     dismissed: () => void;
@@ -41,19 +41,19 @@ export const sendEmail = async (formTitle: string, messageBody: string): Promise
         newMessageBody += '</html>'
     }
 
-    // const sendResult: EmailJSResponseStatus = await emailjs.send(
-    //     'service_keeosye',
-    //     'template_coruqjt', {
-    //     formtitle: formTitle,
-    //     message: newMessageBody,
-    // }, 'QrfLKkXmnG6mF2P_1',
-    // );
+    const sendResult: EmailJSResponseStatus = await emailjs.send(
+        'service_keeosye',
+        'template_coruqjt', {
+        formtitle: formTitle,
+        message: newMessageBody,
+    }, 'QrfLKkXmnG6mF2P_1',
+    );
 
-    // console.log(formTitle, sendResult);
-    // return Promise.resolve(sendResult.status);
+    console.log(formTitle, sendResult);
+    return Promise.resolve(sendResult.status);
 
-    console.log(newMessageBody);
-    return Promise.resolve(200);
+    // console.log(newMessageBody);
+    // return Promise.resolve(200);
 }
 
 export const getCountries = (lang = 'en') => {
@@ -147,6 +147,7 @@ export const checkInputs = (): boolean => {
             }
             if (!value) {
                 group.style.border = '1px red solid';
+                group.style.paddingTop = '15px';
                 const errorDiv = document.querySelector(`.rdo-error-${group.getAttribute('data-groupname')}`);
                 if (errorDiv) {
                     (errorDiv as HTMLElement).style.display = '';

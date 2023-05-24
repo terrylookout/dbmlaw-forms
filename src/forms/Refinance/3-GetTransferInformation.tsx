@@ -3,6 +3,8 @@ import CircleBullet from "../../controls/CircleBullet";
 import { RefinanceProps } from ".";
 import TransferAdded from "../../controls/TransferAdded";
 import { ClientInfo } from "../../ClassesInterfaces";
+import IsRequired from "../../controls/IsRequired";
+import RadioGroup from "../../controls/RadioGroup";
 
 
 const GetTransferInformation = ({
@@ -33,39 +35,41 @@ const GetTransferInformation = ({
                 <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
-                        Is anyone going to be removed from the title?
+                        Is anyone going to be removed from the title?<IsRequired />
                     </h6>
                 </div>
             </div>
 
             <div className="row">
-                <div className="col mb-3">
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`removeowners`} id={`removeowners-yes`}
-                            checked={refinanceInfo.ownersToBeRemoved === 'YES'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e && e.target && e.target.value && e.target.value === 'on') {
-                                    setRefinanceInfo({ ...refinanceInfo, ownersToBeRemoved: 'YES' });
-                                }
-                            }} />
-                        <label className="form-check-label" htmlFor={`removeowners-yes`}>
-                            Yes
-                        </label>
-                    </div>
+                <RadioGroup groupName="remove-from-title">
+                    <div className="col mb-3">
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`removeowners`} id={`removeowners-yes`}
+                                checked={refinanceInfo.ownersToBeRemoved === 'YES'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e && e.target && e.target.value && e.target.value === 'on') {
+                                        setRefinanceInfo({ ...refinanceInfo, ownersToBeRemoved: 'YES' });
+                                    }
+                                }} />
+                            <label className="form-check-label" htmlFor={`removeowners-yes`}>
+                                Yes
+                            </label>
+                        </div>
 
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`removeowners`} id={`removeowners-no`}
-                            checked={refinanceInfo.ownersToBeRemoved === 'NO'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e && e.target && e.target.value && e.target.value === 'on') {
-                                    setRefinanceInfo({ ...refinanceInfo, ownersToBeRemoved: 'NO' });
-                                }
-                            }} />
-                        <label className="form-check-label" htmlFor={`removeowners-no`}>
-                            No
-                        </label>
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`removeowners`} id={`removeowners-no`}
+                                checked={refinanceInfo.ownersToBeRemoved === 'NO'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e && e.target && e.target.value && e.target.value === 'on') {
+                                        setRefinanceInfo({ ...refinanceInfo, ownersToBeRemoved: 'NO' });
+                                    }
+                                }} />
+                            <label className="form-check-label" htmlFor={`removeowners-no`}>
+                                No
+                            </label>
+                        </div>
                     </div>
-                </div>
+                </RadioGroup>
             </div>
 
             {

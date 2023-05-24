@@ -1,9 +1,10 @@
-import { ChangeEvent, Fragment } from "react";
+import { ChangeEvent, Fragment, } from "react";
 import CircleBullet from "../../controls/CircleBullet";
 import { RefinanceProps } from ".";
 import Guarantor from "../../Guarantor";
 import { GuarantorInfo } from "../../ClassesInterfaces";
 import IsRequired from "../../controls/IsRequired";
+import RadioGroup from "../../controls/RadioGroup";
 
 const GetMortgateDetails = ({
     refinanceInfo,
@@ -51,38 +52,41 @@ const GetMortgateDetails = ({
                     <h6>
                         <CircleBullet />
                         Is there currently a mortgage or line of credit on title that will need to be paid out and discharged?
+                        <IsRequired />
                     </h6>
                 </div>
             </div>
 
             <div className="row">
-                <div className="col mb-3">
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name="mortgageselling" id="mortgageselling-yes"
-                            checked={refinanceInfo.mortgageOrLoCOnTitle === 'YES'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e && e.target && e.target.value && e.target.value === 'on') {
-                                    setRefinanceInfo({ ...refinanceInfo, mortgageOrLoCOnTitle: 'YES' });
-                                }
-                            }} />
-                        <label className="form-check-label" htmlFor="mortgageselling-yes">
-                            Yes
-                        </label>
-                    </div>
+                <RadioGroup groupName="current-mort">
+                    <div className="col mb-3">
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name="mortgageselling" id="mortgageselling-yes"
+                                checked={refinanceInfo.mortgageOrLoCOnTitle === 'YES'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e && e.target && e.target.value && e.target.value === 'on') {
+                                        setRefinanceInfo({ ...refinanceInfo, mortgageOrLoCOnTitle: 'YES' });
+                                    }
+                                }} />
+                            <label className="form-check-label" htmlFor="mortgageselling-yes">
+                                Yes
+                            </label>
+                        </div>
 
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name="mortgageselling" id="mortgageselling-no"
-                            checked={refinanceInfo.mortgageOrLoCOnTitle === 'NO'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e && e.target && e.target.value && e.target.value === 'on') {
-                                    setRefinanceInfo({ ...refinanceInfo, mortgageOrLoCOnTitle: 'NO' });
-                                }
-                            }} />
-                        <label className="form-check-label" htmlFor="mortgageselling-no">
-                            No
-                        </label>
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name="mortgageselling" id="mortgageselling-no"
+                                checked={refinanceInfo.mortgageOrLoCOnTitle === 'NO'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e && e.target && e.target.value && e.target.value === 'on') {
+                                        setRefinanceInfo({ ...refinanceInfo, mortgageOrLoCOnTitle: 'NO' });
+                                    }
+                                }} />
+                            <label className="form-check-label" htmlFor="mortgageselling-no">
+                                No
+                            </label>
+                        </div>
                     </div>
-                </div>
+                </RadioGroup>
             </div>
 
             {
@@ -91,28 +95,28 @@ const GetMortgateDetails = ({
                     <div className="row">
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id='referencenumber' placeholder='Reference number'
+                                <input type='text' className='form-control is-required' id='referencenumber' placeholder='Reference number'
                                     value={refinanceInfo.mortgageOrLoCOnTitleReferenceNumber}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         setRefinanceInfo({ ...refinanceInfo, mortgageOrLoCOnTitleReferenceNumber: e.target.value });
                                     }}
                                 />
                                 <label htmlFor='referencenumber'>
-                                    Reference number
+                                    Reference number<IsRequired />
                                 </label>
                             </div>
                         </div>
 
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id='bankbranch' placeholder='Bank and Brank'
+                                <input type='text' className='form-control is-required' id='bankbranch' placeholder='Bank and Brank'
                                     value={refinanceInfo.mortgageOrLoCOnTitleBankBranch}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         setRefinanceInfo({ ...refinanceInfo, mortgageOrLoCOnTitleBankBranch: e.target.value });
                                     }}
                                 />
                                 <label htmlFor='floatingInput'>
-                                    Bank and Branch
+                                    Bank and Branch<IsRequired />
                                 </label>
                             </div>
                         </div>
@@ -124,39 +128,41 @@ const GetMortgateDetails = ({
                 <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
-                        Does Mortgage Lender require other debts to be paid?
+                        Does Mortgage Lender require other debts to be paid?<IsRequired />
                     </h6>
                 </div>
             </div>
 
             <div className="row">
-                <div className="col mb-3">
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name="mortgagedebt" id="mortgagedebts-yes"
-                            checked={refinanceInfo.mortgageLenderRequiresOtherDebtsPaid === 'YES'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e && e.target && e.target.value && e.target.value === 'on') {
-                                    setRefinanceInfo({ ...refinanceInfo, mortgageLenderRequiresOtherDebtsPaid: 'YES' });
-                                }
-                            }} />
-                        <label className="form-check-label" htmlFor="mortgagedebts-yes">
-                            Yes
-                        </label>
-                    </div>
+                <RadioGroup groupName="other-debts-tbp">
+                    <div className="col mb-3">
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name="mortgagedebt" id="mortgagedebts-yes"
+                                checked={refinanceInfo.mortgageLenderRequiresOtherDebtsPaid === 'YES'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e && e.target && e.target.value && e.target.value === 'on') {
+                                        setRefinanceInfo({ ...refinanceInfo, mortgageLenderRequiresOtherDebtsPaid: 'YES' });
+                                    }
+                                }} />
+                            <label className="form-check-label" htmlFor="mortgagedebts-yes">
+                                Yes
+                            </label>
+                        </div>
 
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name="mortgagedebts" id="mortgagedebts-no"
-                            checked={refinanceInfo.mortgageLenderRequiresOtherDebtsPaid === 'NO'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e && e.target && e.target.value && e.target.value === 'on') {
-                                    setRefinanceInfo({ ...refinanceInfo, mortgageLenderRequiresOtherDebtsPaid: 'NO' });
-                                }
-                            }} />
-                        <label className="form-check-label" htmlFor="mortgagedebts-no">
-                            No
-                        </label>
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name="mortgagedebts" id="mortgagedebts-no"
+                                checked={refinanceInfo.mortgageLenderRequiresOtherDebtsPaid === 'NO'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e && e.target && e.target.value && e.target.value === 'on') {
+                                        setRefinanceInfo({ ...refinanceInfo, mortgageLenderRequiresOtherDebtsPaid: 'NO' });
+                                    }
+                                }} />
+                            <label className="form-check-label" htmlFor="mortgagedebts-no">
+                                No
+                            </label>
+                        </div>
                     </div>
-                </div>
+                </RadioGroup>
             </div>
 
             {
@@ -164,14 +170,14 @@ const GetMortgateDetails = ({
                 <div className="row">
                     <div className="col mb-3">
                         <div className='form-floating mb-0'>
-                            <input type='text' className='form-control' id='mortgagelenderotherdebts' placeholder='Mortgage Lender Other Debts'
+                            <input type='text' className='form-control is-required' id='mortgagelenderotherdebts' placeholder='Mortgage Lender Other Debts'
                                 value={refinanceInfo.mortgageLenderRequiresOtherDebtsPaidDetails}
                                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                     setRefinanceInfo({ ...refinanceInfo, mortgageLenderRequiresOtherDebtsPaidDetails: e.target.value });
                                 }}
                             />
                             <label htmlFor='mortgagelendername'>
-                                Enter details ie. Credit card, student loans, etc.
+                                Enter details ie. Credit card, student loans, etc.<IsRequired />
                             </label>
                         </div>
                     </div>
@@ -184,41 +190,43 @@ const GetMortgateDetails = ({
                 <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
-                        Does this involve a separation or divorce?
+                        Does this involve a separation or divorce?<IsRequired />
                     </h6>
                 </div>
             </div>
             <div className="row">
-                <div className="col mb-1">
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`separation`} id={`separation-yes`}
-                            checked={refinanceInfo.involvesSeparationDivorce === 'YES'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setRefinanceInfo({ ...refinanceInfo, involvesSeparationDivorce: 'YES' });
-                                }
-                            }} />
+                <RadioGroup groupName="sep-div">
+                    <div className="col mb-1">
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`separation`} id={`separation-yes`}
+                                checked={refinanceInfo.involvesSeparationDivorce === 'YES'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setRefinanceInfo({ ...refinanceInfo, involvesSeparationDivorce: 'YES' });
+                                    }
+                                }} />
 
-                        <label className="form-check-label" htmlFor={`separation-yes`}>
-                            Yes
-                        </label>
+                            <label className="form-check-label" htmlFor={`separation-yes`}>
+                                Yes
+                            </label>
+                        </div>
+
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`separation`} id={`separation-no`}
+                                checked={refinanceInfo.involvesSeparationDivorce === 'NO'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setRefinanceInfo({ ...refinanceInfo, involvesSeparationDivorce: 'NO' });
+                                    }
+                                }} />
+
+                            <label className="form-check-label" htmlFor={`separation-no`}>
+                                No
+                            </label>
+                        </div>
+
                     </div>
-
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`separation`} id={`separation-no`}
-                            checked={refinanceInfo.involvesSeparationDivorce === 'NO'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setRefinanceInfo({ ...refinanceInfo, involvesSeparationDivorce: 'NO' });
-                                }
-                            }} />
-
-                        <label className="form-check-label" htmlFor={`separation-no`}>
-                            No
-                        </label>
-                    </div>
-
-                </div>
+                </RadioGroup>
             </div>
 
             {
@@ -228,7 +236,7 @@ const GetMortgateDetails = ({
                         <div className='col mb-1 mt-4'>
                             <h6>
                                 <CircleBullet />
-                                Do you want to own the property as Joint Tenants or as Tenants-In-Common?
+                                Do you want to own the property as Joint Tenants or as Tenants-In-Common?<IsRequired />
                             </h6>
                         </div>
                     </div>
@@ -236,65 +244,77 @@ const GetMortgateDetails = ({
 
                     <div className='row'>
                         <div className='col mb-3'>
-                            <div className='form-check'>
-                                <input className='form-check-input' type='radio' name='ownertype' id='jointtenants'
-                                    checked={refinanceInfo.joinType === 'JOINT_TENANTS'}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        if (e.target.checked) {
-                                            const tempClients = [];
-                                            for (const client of refinanceInfo.clientsInfo) {
-                                                client.tenantInCommonPercent = 0;
-                                                tempClients.push(client);
+                            <RadioGroup groupName="join-type-group">
+                                <div className='form-check'>
+                                    <input className='form-check-input' type='radio' name='ownertype' id='jointtenants'
+                                        checked={refinanceInfo.joinType === 'JOINT_TENANTS'}
+                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                            if (e.target.checked) {
+                                                const tempClients = [];
+                                                for (const client of refinanceInfo.clientsInfo) {
+                                                    client.tenantInCommonPercent = 0;
+                                                    tempClients.push(client);
+                                                }
+
+                                                const tempAddedClients = [];
+                                                for (const client of refinanceInfo.clientsAddedInfo) {
+                                                    client.tenantInCommonPercent = 0;
+                                                    tempAddedClients.push(client);
+                                                }
+
+                                                setRefinanceInfo({
+                                                    ...refinanceInfo, joinType: 'JOINT_TENANTS',
+                                                    clientsInfo: tempClients, clientsAddedInfo: tempAddedClients
+                                                });
                                             }
+                                        }}
+                                    />
+                                    <label className='form-check-label' htmlFor='jointtenants'>
+                                        Joint Tenants
+                                    </label>
+                                </div>
 
-                                            const tempAddedClients = [];
-                                            for (const client of refinanceInfo.clientsAddedInfo) {
-                                                client.tenantInCommonPercent = 0;
-                                                tempAddedClients.push(client);
+                                <div className='form-check'>
+                                    <input className='form-check-input' type='radio' name='ownertype' id='tenantsincommon'
+                                        checked={refinanceInfo.joinType === 'TENANTS_IN_COMMON'}
+                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                            if (e.target.checked) {
+                                                const tempClients = [];
+                                                for (const client of refinanceInfo.clientsInfo) {
+                                                    client.tenantInCommonPercent = 0;
+                                                    tempClients.push(client);
+                                                }
+
+                                                const tempAddedClients = [];
+                                                for (const client of refinanceInfo.clientsAddedInfo) {
+                                                    client.tenantInCommonPercent = 0;
+                                                    tempAddedClients.push(client);
+                                                }
+
+                                                setRefinanceInfo({
+                                                    ...refinanceInfo, joinType: 'TENANTS_IN_COMMON',
+                                                    clientsInfo: tempClients, clientsAddedInfo: tempAddedClients
+                                                });
                                             }
+                                        }}
 
-                                            setRefinanceInfo({
-                                                ...refinanceInfo, joinType: 'JOINT_TENANTS',
-                                                clientsInfo: tempClients, clientsAddedInfo: tempAddedClients
-                                            });
-                                        }
-                                    }}
-                                />
-                                <label className='form-check-label' htmlFor='jointtenants'>
-                                    Joint Tenants
-                                </label>
-                            </div>
+                                    />
+                                    <label className='form-check-label' htmlFor='tenantsincommon'>
+                                        Tenants-In-Common
+                                    </label>
+                                </div>
 
-                            <div className='form-check'>
-                                <input className='form-check-input' type='radio' name='ownertype' id='tenantsincommon'
-                                    checked={refinanceInfo.joinType === 'TENANTS_IN_COMMON'}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        if (e.target.checked) {
-                                            const tempClients = [];
-                                            for (const client of refinanceInfo.clientsInfo) {
-                                                client.tenantInCommonPercent = 0;
-                                                tempClients.push(client);
-                                            }
+                                <div className='d-flex flex-nowrap pt-4'>
+                                    <input type='checkbox' id={`chkmoredetails`} checked={refinanceInfo.joinTypeDetails === 'YES'}
+                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                            setRefinanceInfo({ ...refinanceInfo, joinTypeDetails: e.target.checked ? 'YES' : 'NO' })
+                                        }} />
+                                    <label htmlFor={`chkmoredetails`} className='ps-2'>
+                                        Call me for details
+                                    </label>
 
-                                            const tempAddedClients = [];
-                                            for (const client of refinanceInfo.clientsAddedInfo) {
-                                                client.tenantInCommonPercent = 0;
-                                                tempAddedClients.push(client);
-                                            }
-
-                                            setRefinanceInfo({
-                                                ...refinanceInfo, joinType: 'TENANTS_IN_COMMON',
-                                                clientsInfo: tempClients, clientsAddedInfo: tempAddedClients
-                                            });
-                                        }
-                                    }}
-
-                                />
-                                <label className='form-check-label' htmlFor='tenantsincommon'>
-                                    Tenants-In-Common
-                                </label>
-                            </div>
-
+                                </div>
+                            </RadioGroup>
                         </div>
 
                         <div className='col-7 mb-3'>

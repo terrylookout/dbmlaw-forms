@@ -1,5 +1,4 @@
 import { ReactElement } from "react";
-import DbmLogo from '../images/dbm-logo.png';
 import './TopMenu.css';
 
 interface TopMenuProps {
@@ -17,7 +16,7 @@ const TopMenu = ({ buildDateString }: TopMenuProps): ReactElement => {
                             height: '80px',
                         }}
                         title={buildDateString}
-                        src={DbmLogo} alt='DBM Law' />
+                        src={`./assets/dbm-logo.png`} alt='DBM Law' />
                 </div>
 
                 <div className='col col-lg-8  dbm-x-top-menu-right'>

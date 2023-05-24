@@ -3,6 +3,7 @@ import CircleBullet from './CircleBullet';
 import { ClientInfo } from '../ClassesInterfaces';
 import { getCountries, getProvincesTerritories, getStates } from '../Helpers';
 import IsRequired from './IsRequired';
+import RadioGroup from './RadioGroup';
 
 interface BorrowerProps {
     text: string;
@@ -117,39 +118,41 @@ const Owner = (props: BorrowerProps): ReactElement => {
                 <div className="col mb-1 mt-4">
                     <h6>
                         <CircleBullet />
-                        Is your address the same as mortgaged/subject property?
+                        Is your address the same as mortgaged/subject property?<IsRequired />
                     </h6>
                 </div>
             </div>
 
             <div className="row">
-                <div className="col mb-3">
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`addresssame${props.num}`} id={`addresssame-yes${props.num}`}
-                            checked={clientInfo.addressSameAsProperty === 'YES'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e && e.target && e.target.value && e.target.value === 'on') {
-                                    setClientInfo({ ...clientInfo, addressSameAsProperty: 'YES' });
-                                }
-                            }} />
-                        <label className="form-check-label" htmlFor={`addresssame-yes${props.num}`}>
-                            Yes
-                        </label>
-                    </div>
+                <RadioGroup groupName="same-address">
+                    <div className="col mb-3">
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`addresssame${props.num}`} id={`addresssame-yes${props.num}`}
+                                checked={clientInfo.addressSameAsProperty === 'YES'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e && e.target && e.target.value && e.target.value === 'on') {
+                                        setClientInfo({ ...clientInfo, addressSameAsProperty: 'YES' });
+                                    }
+                                }} />
+                            <label className="form-check-label" htmlFor={`addresssame-yes${props.num}`}>
+                                Yes
+                            </label>
+                        </div>
 
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`addresssame${props.num}`} id={`addresssame-no${props.num}`}
-                            checked={clientInfo.addressSameAsProperty === 'NO'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e && e.target && e.target.value && e.target.value === 'on') {
-                                    setClientInfo({ ...clientInfo, addressSameAsProperty: 'NO' });
-                                }
-                            }} />
-                        <label className="form-check-label" htmlFor={`addresssame-no${props.num}`}>
-                            No
-                        </label>
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`addresssame${props.num}`} id={`addresssame-no${props.num}`}
+                                checked={clientInfo.addressSameAsProperty === 'NO'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e && e.target && e.target.value && e.target.value === 'on') {
+                                        setClientInfo({ ...clientInfo, addressSameAsProperty: 'NO' });
+                                    }
+                                }} />
+                            <label className="form-check-label" htmlFor={`addresssame-no${props.num}`}>
+                                No
+                            </label>
+                        </div>
                     </div>
-                </div>
+                </RadioGroup>
             </div>
 
             {
@@ -254,14 +257,14 @@ const Owner = (props: BorrowerProps): ReactElement => {
 
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id='mailingpostalcode' placeholder='Postal code'
+                                <input type='text' className='form-control is-required' id='mailingpostalcode' placeholder='Postal code'
                                     value={clientInfo.mailingPostalCode}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         setClientInfo({ ...clientInfo, mailingPostalCode: e.target.value });
                                     }}
                                 />
                                 <label htmlFor='floatingInput'>
-                                    Postal code
+                                    Postal code<IsRequired />
                                 </label>
                             </div>
                         </div>
@@ -314,14 +317,14 @@ const Owner = (props: BorrowerProps): ReactElement => {
                     <div className="row">
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <input type='text' className='form-control' id='timelivingproperty' placeholder='Time in Property'
+                                <input type='text' className='form-control is-required' id='timelivingproperty' placeholder='Time in Property'
                                     value={clientInfo.timeLivingAtProperty}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         setClientInfo({ ...clientInfo, timeLivingAtProperty: e.target.value });
                                     }}
                                 />
                                 <label htmlFor='floatingInput'>
-                                    How long have you lived in the property? Ie '2 years, 3 months'
+                                    How long have you lived in the property? Ie '2 years, 3 months'<IsRequired />
                                 </label>
                             </div>
                         </div>

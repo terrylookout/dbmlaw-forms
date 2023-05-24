@@ -266,7 +266,7 @@ const RefinanceForm = (props: FormProps): ReactElement => {
                                             setNumberOfOwners={setNumberOfOwners}
                                             numberOfAdded={numberOfAdded}
                                             setNumberOfAdded={setNumberOfAdded}
-                                            numberOfGuarantors={numberOfAdded}
+                                            numberOfGuarantors={numberOfGuarantors}
                                             setNumberOfGuarantors={setNumberOfGuarantors}
                                         />
                                     }
@@ -505,15 +505,27 @@ const getOutput = (refinanceInfo: RefinanceInfo): string => {
 
             output.push(getEntry('Relationship', client.relationship));
 
-            output.push(getEntry('Occupation', client.occupation));
-            output.push(getEntry('Employer Name', client.employerName));
-            output.push(getEntry('Employer Phone Number', client.employerPhone));
-            output.push(getEntry('Employer Street 1', client.employerStreet1));
-            output.push(getEntry('Employer Street 2', client.employerStreet2));
-            output.push(getEntry('Employer City', client.employerCity));
-            output.push(getEntry('Employer Province or Territory', client.employerProvinceTerritory));
-            output.push(getEntry('Employer Postal Code', client.employerPostalCode));
-            output.push(getEntry('Employer Country', client.employerCountry, true));
+            output.push(getEntry('Employment', client.employment, true));
+
+            if (client.employment === 'EMPLOYED') {
+                output.push(getEntry('Occupation', client.occupation));
+                output.push(getEntry('Employer Name', client.employerName));
+                output.push(getEntry('Employer Phone Number', client.employerPhone));
+                output.push(getEntry('Employer Street 1', client.employerStreet1));
+                output.push(getEntry('Employer Street 2', client.employerStreet2));
+                output.push(getEntry('Employer City', client.employerCity));
+                output.push(getEntry('Employer Province or Territory', client.employerProvinceTerritory));
+                output.push(getEntry('Employer Postal Code', client.employerPostalCode, true));
+            }
+            else if (client.employment === 'RETIRED') {
+                output.push(getEntry('Previous Occupation', client.retiredPreviousOccupation, true));
+            }
+            else if (client.employment === 'OTHER') {
+                output.push(getEntry('Previous Occupation', client.retiredPreviousOccupation, true));
+                output.push(getEntry('Details', client.occupationOther));
+                output.push(getEntry('', '', true));
+            }
+
 
             let citizenShip = '';
             switch (client.citizenShip) {
@@ -587,6 +599,10 @@ const getOutput = (refinanceInfo: RefinanceInfo): string => {
             output.push(getEntry(`${client.fullLegalName}`, `${client.tenantInCommonPercent}%`));
         }
         output.push(getEntry('', '', true));
+    }
+
+    if (joinType.indexOf('NOT A') > -1) {
+        output.push(getEntry('Call for more details', refinanceInfo.joinTypeDetails, true));
     }
 
     for (let i = 0; i < refinanceInfo.guarantorsInfo.length; i++) {

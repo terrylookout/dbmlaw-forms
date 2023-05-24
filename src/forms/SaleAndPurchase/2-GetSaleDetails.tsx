@@ -36,7 +36,6 @@ const GetSaleDetails = ({
                             disabled={saleInfo.closingDateTBD}
                             isRequired={!saleInfo.closingDateTBD}
                             value={saleInfo.closingDateTBD ? null : saleInfo.closingDate}
-                            min={new Date((new Date()).setFullYear(new Date().getFullYear() - 5))}
                             label='Closing date'
                             onChange={(e) => {
                                 if (e) {
@@ -171,7 +170,7 @@ const GetSaleDetails = ({
             <div className='row'>
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>
-                        <input type='text' className='form-control' id='sellingpostalcode' placeholder='Postal code'
+                        <input type='text' className='form-control is-required' id='sellingpostalcode' placeholder='Postal code'
                             value={saleInfo.postalCode}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setSaleInfo({ ...saleInfo, postalCode: e.target.value });
@@ -182,7 +181,7 @@ const GetSaleDetails = ({
                         </div>
 
                         <label htmlFor='floatingInput'>
-                            Postal code
+                            Postal code<IsRequired />
                         </label>
                     </div>
                 </div>

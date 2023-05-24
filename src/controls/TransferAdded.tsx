@@ -4,6 +4,8 @@ import { ClientInfo, RefinanceInfo } from '../ClassesInterfaces';
 import DateInput from './DateInput';
 import { getCountries, getProvincesTerritories, getStates } from '../Helpers';
 import IsRequired from './IsRequired';
+import RadioGroup from './RadioGroup';
+import NumericInput from './NumericInput';
 
 interface TransferAddedProps {
     text: string;
@@ -135,9 +137,9 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                     <div className='form-floating mb-0'>
                         <DateInput
                             isRequired={true}
+                            isDoB={true}
                             id={`dob${props.num}`}
                             value={clientInfo.dateOfBirth}
-                            max={new Date()}
                             label='Date of birth'
                             onChange={(e) => {
                                 if (e) {
@@ -152,17 +154,16 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                     </div>
                 </div>
                 <div className="col mb-3">
-                    <div className='form-floating mb-0'>
-                        <input type='number' className='form-control' id={`sin${props.num}`} placeholder='Social Insurance Number'
-                            disabled={clientInfo.sinViaPhone}
-                            value={clientInfo.sinViaPhone ? '' : clientInfo.socialInsNumber}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setClientInfo({ ...clientInfo, socialInsNumber: e.target.value });
-                            }} />
-                        <label htmlFor='floatingInput'>
-                            Social Insurance Number
-                        </label>
-                    </div>
+
+                    <NumericInput
+                        id={`sin-added${props.num}`}
+                        required={true}
+                        placeholder='Social Insurance Number'
+                        disabled={clientInfo.sinViaPhone}
+                        value={clientInfo.sinViaPhone ? '' : clientInfo.socialInsNumber}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                            setClientInfo({ ...clientInfo, socialInsNumber: e.target.value });
+                        }} />
                     <div className='d-flex flex-nowrap pt-2'>
                         <input type='checkbox' id={`chksin${props.num.toString()}`} checked={clientInfo.sinViaPhone}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -175,6 +176,7 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                             I will provide later via phone
                         </label>
                     </div>
+
                 </div>
             </div>
 
@@ -184,39 +186,41 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                     <div className="col mb-1 mt-4">
                         <h6>
                             <CircleBullet />
-                            Is your address the same as mortgage property?
+                            Is your address the same as mortgage property?<IsRequired />
                         </h6>
                     </div>
                 </div>
 
                 <div className="row">
-                    <div className="col mb-3">
-                        <div className="form-check">
-                            <input className="form-check-input" type="radio" name={`addresssame${props.num}`} id={`addresssame-yes${props.num}`}
-                                checked={clientInfo.addressSameAsProperty === 'YES'}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                    if (e && e.target && e.target.value && e.target.value === 'on') {
-                                        setClientInfo({ ...clientInfo, addressSameAsProperty: 'YES' });
-                                    }
-                                }} />
-                            <label className="form-check-label" htmlFor={`addresssame-yes${props.num}`}>
-                                Yes
-                            </label>
-                        </div>
+                    <RadioGroup groupName="address-same-prop">
+                        <div className="col mb-3">
+                            <div className="form-check">
+                                <input className="form-check-input" type="radio" name={`addresssame${props.num}`} id={`addresssame-yes${props.num}`}
+                                    checked={clientInfo.addressSameAsProperty === 'YES'}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                        if (e && e.target && e.target.value && e.target.value === 'on') {
+                                            setClientInfo({ ...clientInfo, addressSameAsProperty: 'YES' });
+                                        }
+                                    }} />
+                                <label className="form-check-label" htmlFor={`addresssame-yes${props.num}`}>
+                                    Yes
+                                </label>
+                            </div>
 
-                        <div className="form-check">
-                            <input className="form-check-input" type="radio" name={`addresssame${props.num}`} id={`addresssame-no${props.num}`}
-                                checked={clientInfo.addressSameAsProperty === 'NO'}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                    if (e && e.target && e.target.value && e.target.value === 'on') {
-                                        setClientInfo({ ...clientInfo, addressSameAsProperty: 'NO' });
-                                    }
-                                }} />
-                            <label className="form-check-label" htmlFor={`addresssame-no${props.num}`}>
-                                No
-                            </label>
+                            <div className="form-check">
+                                <input className="form-check-input" type="radio" name={`addresssame${props.num}`} id={`addresssame-no${props.num}`}
+                                    checked={clientInfo.addressSameAsProperty === 'NO'}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                        if (e && e.target && e.target.value && e.target.value === 'on') {
+                                            setClientInfo({ ...clientInfo, addressSameAsProperty: 'NO' });
+                                        }
+                                    }} />
+                                <label className="form-check-label" htmlFor={`addresssame-no${props.num}`}>
+                                    No
+                                </label>
+                            </div>
                         </div>
-                    </div>
+                    </RadioGroup>
                 </div>
             </div>
 
@@ -237,7 +241,7 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                                     Please enter this field
                                 </div>
                                 <label htmlFor='floatingInput'>
-                                    Street address line 1
+                                    Street address line 1<IsRequired />
                                 </label>
                             </div>
                         </div>
@@ -366,7 +370,7 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                 </>
             }
             <div className="row">
-                <div className={`col mb-1 mt-4 employment-header${props.num}`} >
+                <div className={`col mb-1 mt-4 add-header${props.num}`} >
                     <h6>
                         <CircleBullet />
                         Relationship
@@ -377,14 +381,14 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
             <div className="row">
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>
-                        <input type='text' className='form-control' id='relationship' placeholder='relationship'
+                        <input type='text' className='form-control is-required' id='relationship' placeholder='relationship'
                             value={clientInfo.relationship}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 setClientInfo({ ...clientInfo, relationship: e.target.value });
                             }}
                         />
                         <label htmlFor='floatingInput'>
-                            Relationship to Seller/Vendor/Transferor
+                            Relationship to Seller/Vendor/Transferor<IsRequired />
                         </label>
                     </div>
                 </div>
@@ -394,80 +398,131 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                 <div className={`col mb-1 mt-4 employment-header${props.num}`} >
                     <h6>
                         <CircleBullet />
-                        Employment Information (required)
+                        Occupation / Employment Information <IsRequired />
                     </h6>
                 </div>
             </div>
 
             <div className="row">
-                <div className="col mb-3">
+                <RadioGroup groupName="transfer-add">
+                    <div className="col mb-3">
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`employ${props.num}`} id={`employed${props.num}`}
+                                checked={clientInfo.employment === 'EMPLOYED'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setClientInfo({ ...clientInfo, employment: 'EMPLOYED' });
+                                    }
+                                }}
+                            />
+                            <label className="form-check-label" htmlFor={`employed${props.num}`}>
+                                Employed
+                            </label>
+                        </div>
 
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`employ${props.num}`} id={`employed${props.num}`}
-                            checked={clientInfo.employment === 'EMPLOYED'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setClientInfo({ ...clientInfo, employment: 'EMPLOYED' });
-                                }
-                            }}
-                        />
-                        <label className="form-check-label" htmlFor={`employed${props.num}`}>
-                            Employed
-                        </label>
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`employ${props.num}`} id={`retired${props.num}`}
+                                checked={clientInfo.employment === 'RETIRED'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setClientInfo({ ...clientInfo, employment: 'RETIRED' });
+                                    }
+                                }}
+                            />
+                            <label className="form-check-label" htmlFor={`retired${props.num}`}>
+                                Retired
+                            </label>
+                        </div>
+
                     </div>
 
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`employ${props.num}`} id={`retired${props.num}`}
-                            checked={clientInfo.employment === 'RETIRED'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setClientInfo({ ...clientInfo, employment: 'RETIRED' });
-                                }
-                            }}
-                        />
-                        <label className="form-check-label" htmlFor={`retired${props.num}`}>
-                            Retired
-                        </label>
+                    <div className="col mb-3">
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`employ${props.num}`} id={`student${props.num}`}
+                                checked={clientInfo.employment === 'STUDENT'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setClientInfo({ ...clientInfo, employment: 'STUDENT' });
+                                    }
+                                }}
+                            />
+                            <label className="form-check-label" htmlFor={`student${props.num}`}>
+                                Student
+                            </label>
+                        </div>
+
+                        <div className="form-check">
+                            <input className="form-check-input" type="radio" name={`employ${props.num}`} id={`other${props.num}`}
+                                checked={clientInfo.employment === 'OTHER'}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                    if (e.target.checked) {
+                                        setClientInfo({ ...clientInfo, employment: 'OTHER' });
+                                    }
+                                }}
+                            />
+                            <label className="form-check-label" htmlFor={`other${props.num}`}>
+                                Other
+                            </label>
+                        </div>
+
                     </div>
-
-                </div>
-
-                <div className="col mb-3">
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`employ${props.num}`} id={`student${props.num}`}
-                            checked={clientInfo.employment === 'STUDENT'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setClientInfo({ ...clientInfo, employment: 'STUDENT' });
-                                }
-                            }}
-                        />
-                        <label className="form-check-label" htmlFor={`student${props.num}`}>
-                            Student
-                        </label>
-                    </div>
-
-                    <div className="form-check">
-                        <input className="form-check-input" type="radio" name={`employ${props.num}`} id={`other${props.num}`}
-                            checked={clientInfo.employment === 'OTHER'}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                if (e.target.checked) {
-                                    setClientInfo({ ...clientInfo, employment: 'OTHER' });
-                                }
-                            }}
-                        />
-                        <label className="form-check-label" htmlFor={`other${props.num}`}>
-                            Other
-                        </label>
-                    </div>
-
-                </div>
+                </RadioGroup>
 
                 <div className="col mb-3">
 
                 </div>
 
             </div>
+
+            {
+                clientInfo.employment === 'RETIRED' &&
+                <>
+                    <div className="row">
+                        <div className="col mb-3">
+                            <div className='form-floating mb-0'>
+                                <input type='text' className='form-control is-required' id={`retiredpreviousoccupation${props.num}`} placeholder='Your PREVIOUS occupation - required'
+                                    value={clientInfo.retiredPreviousOccupation}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                        setClientInfo({ ...clientInfo, retiredPreviousOccupation: e.target.value });
+                                    }}
+                                />
+                                <div className="invalid-feedback">
+                                    Please enter this field
+                                </div>
+
+                                <label htmlFor='floatingInput'>
+                                    Your PREVIOUS occupation<IsRequired />
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            }
+
+            {
+                clientInfo.employment === 'OTHER' &&
+                <>
+                    <div className="row">
+                        <div className="col mb-3">
+                            <div className='form-floating mb-0'>
+                                <input type='text' className='form-control is-required' id={`otheroccupation${props.num}`} placeholder='Please provide details'
+                                    value={clientInfo.occupationOther}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                        setClientInfo({ ...clientInfo, occupationOther: e.target.value });
+                                    }}
+                                />
+                                <div className="invalid-feedback">
+                                    Please enter this field
+                                </div>
+
+                                <label htmlFor='floatingInput'>
+                                    Please provide details<IsRequired />
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            }
 
             {
                 clientInfo.employment === 'EMPLOYED' &&
@@ -498,7 +553,7 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                     <div className="row">
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <input type='text' className='form-control is-required' id={`employername${props.num}`} placeholder='Employer name - required'
+                                <input type='text' className='form-control' id={`employername${props.num}`} placeholder='Employer name - required'
                                     value={clientInfo.employerName}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         setClientInfo({ ...clientInfo, employerName: e.target.value });
@@ -510,14 +565,12 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
 
                                 <label htmlFor='floatingInput'>
                                     Employer name
-                                    <IsRequired />
-
                                 </label>
                             </div>
                         </div>
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <input type='tel' className='form-control is-required' id='employerphone' placeholder='Phone number'
+                                <input type='tel' className='form-control' id='employerphone' placeholder='Phone number'
                                     pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                                     value={clientInfo.employerPhone}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -530,7 +583,6 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
 
                                 <label htmlFor='floatingInput'>
                                     Phone number - format: 123-456-7890
-                                    <IsRequired />
 
                                 </label>
                             </div>
@@ -541,7 +593,7 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                     <div className="row">
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <input type='text' className='form-control is-required' id='employerstreet1' placeholder='Street address line 1'
+                                <input type='text' className='form-control' id='employerstreet1' placeholder='Street address line 1'
                                     value={clientInfo.employerStreet1}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         setClientInfo({ ...clientInfo, employerStreet1: e.target.value });
@@ -553,7 +605,6 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
 
                                 <label htmlFor='floatingInput'>
                                     Street address line 1
-                                    <IsRequired />
 
                                 </label>
                             </div>
@@ -580,7 +631,7 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                     <div className="row">
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <input type='text' className='form-control is-required' id='employercity' placeholder='City'
+                                <input type='text' className='form-control' id='employercity' placeholder='City'
                                     value={clientInfo.employerCity}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         setClientInfo({ ...clientInfo, employerCity: e.target.value });
@@ -592,13 +643,12 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
 
                                 <label htmlFor='floatingInput'>
                                     City
-                                    <IsRequired />
 
                                 </label>
                             </div>
                         </div>
                         <div className="col mb-3">
-                            <select className="form-select p-3 is-required" aria-label="Province or territory"
+                            <select className="form-select p-3" aria-label="Province or territory"
                                 ref={employerProvinceSelect}
                                 value={clientInfo.employerProvinceTerritory}
                                 onChange={(e: ChangeEvent<HTMLSelectElement>) => {
@@ -627,7 +677,7 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                     <div className="row">
                         <div className="col mb-3">
                             <div className='form-floating mb-0'>
-                                <input type='text' className='form-control is-required' id='employerpostalcode' placeholder='Postal code'
+                                <input type='text' className='form-control' id='employerpostalcode' placeholder='Postal code'
                                     value={clientInfo.employerPostalCode}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                         setClientInfo({ ...clientInfo, employerPostalCode: e.target.value });
@@ -639,7 +689,6 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
 
                                 <label htmlFor='floatingInput'>
                                     Postal code
-                                    <IsRequired />
 
                                 </label>
                             </div>

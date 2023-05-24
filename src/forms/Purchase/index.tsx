@@ -315,23 +315,27 @@ const getOutput = (purchaseInfo: PurchaseInfo): string => {
             output.push(getEntry('Province or Territory', client.mailingProvinceTerritory));
             output.push(getEntry('Postal Code', client.mailingPostalCode, true));
 
-            output.push(getEntry('Occupation', client.occupation));
-            if (client.employment === 'RETIRED') {
-                output.push(getEntry('Previous Occupation', client.retiredPreviousOccupation));
-            }
-            else if (client.employment === 'OTHER') {
-                output.push(getEntry('Other Occupation', client.occupationOther));
-            }
-            else if (client.employment === 'EMPLOYED') {
+
+            output.push(getEntry('Employment', client.employment, true));
+
+            if (client.employment === 'EMPLOYED') {
+                output.push(getEntry('Occupation', client.occupation));
                 output.push(getEntry('Employer Name', client.employerName));
                 output.push(getEntry('Employer Phone Number', client.employerPhone));
                 output.push(getEntry('Employer Street 1', client.employerStreet1));
                 output.push(getEntry('Employer Street 2', client.employerStreet2));
                 output.push(getEntry('Employer City', client.employerCity));
                 output.push(getEntry('Employer Province or Territory', client.employerProvinceTerritory));
-                output.push(getEntry('Employer Postal Code', client.employerPostalCode));
+                output.push(getEntry('Employer Postal Code', client.employerPostalCode, true));
             }
-            output.push(getEntry('', '', true));
+            else if (client.employment === 'RETIRED') {
+                output.push(getEntry('Previous Occupation', client.retiredPreviousOccupation, true));
+            }
+            else if (client.employment === 'OTHER') {
+                output.push(getEntry('Previous Occupation', client.retiredPreviousOccupation, true));
+                output.push(getEntry('Details', client.occupationOther));
+                output.push(getEntry('', '', true));
+            }
 
             let citizenShip = '';
             switch (client.citizenShip) {

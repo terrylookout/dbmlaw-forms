@@ -6,9 +6,8 @@ interface DateInputProps {
     id: string;
     value: Date | null;
     onChange: (e: Date) => void;
-    min?: Date;
-    max?: Date;
     label?: string;
+    isDoB?: boolean;
     isRequired: boolean;
     disabled?: boolean;
 }
@@ -34,7 +33,6 @@ const DeleteDate = (props: {
                 </svg>
             </span>
             : <></>
-
     );
 };
 
@@ -51,6 +49,16 @@ const DateInput = (props: DateInputProps): ReactElement => {
 
     const [dateValue, setDateValue] = useState<Date | null>(props.value);
     const [isOpen, setIsOpen] = useState(false);
+    const [max] = useState<Date>(() => {
+        const d = new Date();
+        if (props.isDoB) {
+            d.setFullYear(d.getFullYear() - 19);
+        }
+        else {
+            d.setFullYear(d.getFullYear() + 10);
+        }
+        return d;
+    });
 
     useEffect(() => {
         if (dateValue) {
@@ -110,7 +118,8 @@ const DateInput = (props: DateInputProps): ReactElement => {
                         mode='single'
                         captionLayout='dropdown'
                         fromYear={1900}
-                        toYear={2030}
+                        //toYear={props.isDoB ? max.getFullYear() : new Date().getFullYear() + 10}
+                        toDate={max}
                         onSelect={(e) => {
                             setIsOpen(!isOpen);
                             if (e) {

@@ -34,7 +34,7 @@ const IntroForm = (props: FormProps): ReactElement => {
                     </div>
                     <div className="modal-body">
 
-                        <div className='row'>
+                        <div className='row flex align-items-center'>
                             <div className='col-auto p-3 ps-5' style={{
                                 display: navigating ? 'none' : '',
                             }}>
@@ -55,8 +55,8 @@ const IntroForm = (props: FormProps): ReactElement => {
                             <div className='col' style={{
                                 display: navigating ? 'none' : '',
                             }}>
-                                <p>At this time the online file application is for <b>residential conveyancing</b> only.</p>
-                                <p>Please contact our office directly at <a href="tel:1-604-939-8321">604 939 8321</a>
+                                <p className="mt-4">At this time the online file application is for <b>residential conveyancing</b> only.</p>
+                                <p className="mt-2 mb-4">Please contact our office directly at <a href="tel:1-604-939-8321">604 939 8321</a>
                                     &nbsp;for all other matters and we will gladly assist you.</p>
 
                             </div>
