@@ -5,6 +5,7 @@ import DateInput from "../../controls/DateInput";
 import NumericInput from "../../controls/NumericInput";
 import RadioGroup from "../../controls/RadioGroup";
 import IsRequired from "../../controls/IsRequired";
+import PhoneNumber from "../../controls/PhoneNumber";
 
 
 const GetSaleDetails = ({
@@ -215,18 +216,15 @@ const GetSaleDetails = ({
                     </div>
                 </div>
                 <div className="col mb-3">
-                    <div className='form-floating mb-0'>
-                        <input type='tel' className='form-control' id='realtorphoneselling' placeholder='realtor number'
-                            value={saleInfo.realtorPhone}
-                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setSaleInfo({ ...saleInfo, realtorPhone: e.target.value });
-                            }}
-                        />
-                        <label htmlFor='floatingInput'>
-                            Phone number - format: 123-456-7890
-                        </label>
-                    </div>
+
+                    <PhoneNumber
+                        onChange={(e: string) => {
+                            setSaleInfo({ ...saleInfo, realtorPhone: e });
+                        }}
+                        value={saleInfo.realtorPhone}
+                        placeholder="Realtor phone number"
+                    />
+
                 </div>
             </div>
 

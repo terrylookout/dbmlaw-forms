@@ -6,6 +6,7 @@ import { getCountries, getProvincesTerritories, getStates } from '../Helpers';
 import IsRequired from './IsRequired';
 import RadioGroup from './RadioGroup';
 import NumericInput from './NumericInput';
+import PhoneNumber from './PhoneNumber';
 
 interface TransferAddedProps {
     text: string;
@@ -101,21 +102,15 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
 
             <div className="row">
                 <div className="col mb-3">
-                    <div className='form-floating mb-0'>
-                        <input type='tel' className='form-control is-required' id={`phone${props.num}`} placeholder='Phone number'
-                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" value={clientInfo.phoneNumber}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setClientInfo({ ...clientInfo, phoneNumber: e.target.value });
-                            }}
-                        />
-                        <div className="invalid-feedback">
-                            Please enter this field
-                        </div>
-                        <label htmlFor='floatingInput'>
-                            Phone number - format: 123-456-7890
-                            <IsRequired />
-                        </label>
-                    </div>
+
+                    <PhoneNumber
+                        onChange={(e: string) => {
+                            setClientInfo({ ...clientInfo, phoneNumber: e });
+                        }}
+                        value={clientInfo.phoneNumber}
+                        required={true}
+                    />
+
                 </div>
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>
@@ -569,23 +564,14 @@ const TransferAdded = (props: TransferAddedProps): ReactElement => {
                             </div>
                         </div>
                         <div className="col mb-3">
-                            <div className='form-floating mb-0'>
-                                <input type='tel' className='form-control' id='employerphone' placeholder='Phone number'
-                                    pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                                    value={clientInfo.employerPhone}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        setClientInfo({ ...clientInfo, employerPhone: e.target.value });
-                                    }}
-                                />
-                                <div className="invalid-feedback">
-                                    Please enter this field
-                                </div>
 
-                                <label htmlFor='floatingInput'>
-                                    Phone number - format: 123-456-7890
+                            <PhoneNumber
+                                onChange={(e: string) => {
+                                    setClientInfo({ ...clientInfo, employerPhone: e });
+                                }}
+                                value={clientInfo.employerPhone}
+                            />
 
-                                </label>
-                            </div>
                         </div>
                     </div>
 

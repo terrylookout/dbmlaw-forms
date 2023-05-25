@@ -2,6 +2,7 @@ import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
 import CircleBullet from './controls/CircleBullet';
 import { GuarantorInfo } from './ClassesInterfaces';
 import IsRequired from './controls/IsRequired';
+import PhoneNumber from './controls/PhoneNumber';
 
 interface GuarantorProps {
     text: string;
@@ -54,22 +55,15 @@ const Guarantor = (props: GuarantorProps): ReactElement => {
 
             <div className="row">
                 <div className="col mb-3">
-                    <div className='form-floating mb-0'>
-                        <input type='tel' className='form-control is-required' id={`guarantorphone${props.num}`} placeholder='Phone number'
-                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" value={guarantorInfo.phoneNumber}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setGuarantorInfo({ ...guarantorInfo, phoneNumber: e.target.value });
-                            }}
-                        />
-                        <div className="invalid-feedback">
-                            Please enter this field
-                        </div>
-
-                        <label htmlFor='floatingInput'>
-                            Phone number - format: 123-456-7890
-                            <IsRequired />
-                        </label>
-                    </div>
+                    <PhoneNumber
+                        disabled={false}
+                        onChange={(e: string) => {
+                            setGuarantorInfo({ ...guarantorInfo, phoneNumber: e });
+                        }}
+                        placeholder='Phone number'
+                        required={true}
+                        value={guarantorInfo.phoneNumber}
+                    />
                 </div>
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>

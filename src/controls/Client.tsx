@@ -107,7 +107,7 @@ const Client = (props: ClientProps): ReactElement => {
                 <div className="col mb-3">
                     <PhoneNumber
                         disabled={false}
-                        placeholder='Phone number - format: 123-456-7890'
+                        placeholder='Phone number '
                         required={true}
                         value={clientInfo.phoneNumber}
                         onChange={(value: string) => {
@@ -517,22 +517,15 @@ const Client = (props: ClientProps): ReactElement => {
                                     </div>
                                 </div>
                                 <div className="col mb-3">
-                                    <div className='form-floating mb-0'>
-                                        <input type='tel' className='form-control' id='employerphone' placeholder='Phone number'
-                                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                                            value={clientInfo.employerPhone}
-                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                setClientInfo({ ...clientInfo, employerPhone: e.target.value });
-                                            }}
-                                        />
-                                        <div className="invalid-feedback">
-                                            Please enter this field
-                                        </div>
-
-                                        <label htmlFor='floatingInput'>
-                                            Phone number - format: 123-456-7890
-                                        </label>
-                                    </div>
+                                    <PhoneNumber
+                                        disabled={false}
+                                        placeholder='Phone number '
+                                        required={false}
+                                        value={clientInfo.employerPhone}
+                                        onChange={(value: string) => {
+                                            setClientInfo({ ...clientInfo, employerPhone: value });
+                                        }}
+                                    />
                                 </div>
                             </div>
 

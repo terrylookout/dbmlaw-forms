@@ -4,6 +4,7 @@ import { ClientInfo } from '../ClassesInterfaces';
 import { getCountries, getProvincesTerritories, getStates } from '../Helpers';
 import IsRequired from './IsRequired';
 import RadioGroup from './RadioGroup';
+import PhoneNumber from './PhoneNumber';
 
 interface BorrowerProps {
     text: string;
@@ -83,21 +84,16 @@ const Owner = (props: BorrowerProps): ReactElement => {
 
             <div className="row">
                 <div className="col mb-3">
-                    <div className='form-floating mb-0'>
-                        <input type='tel' className='form-control is-required' id={`phone${props.num}`} placeholder='Phone number'
-                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" value={clientInfo.phoneNumber}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setClientInfo({ ...clientInfo, phoneNumber: e.target.value });
-                            }}
-                        />
-                        <div className="invalid-feedback">
-                            Please enter the phone number.
-                        </div>
 
-                        <label htmlFor='floatingInput'>
-                            Phone number - format: 123-456-7890 <IsRequired />
-                        </label>
-                    </div>
+                    <PhoneNumber
+                        onChange={(e: string) => {
+                            setClientInfo({ ...clientInfo, phoneNumber: e });
+                        }}
+                        placeholder='Phone number'
+                        value={clientInfo.phoneNumber}
+                        required={true}
+                    />
+
                 </div>
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>

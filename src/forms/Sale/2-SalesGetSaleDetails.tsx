@@ -5,6 +5,7 @@ import { SalesChildProps } from ".";
 import NumericInput from "../../controls/NumericInput";
 import IsRequired from "../../controls/IsRequired";
 import RadioGroup from "../../controls/RadioGroup";
+import PhoneNumber from "../../controls/PhoneNumber";
 
 const SalesGetSaleDetails = (props: SalesChildProps): ReactElement => {
 
@@ -33,7 +34,6 @@ const SalesGetSaleDetails = (props: SalesChildProps): ReactElement => {
                             disabled={props.saleInfo.closingDateTBD}
                             id={`closingdate`}
                             value={props.saleInfo.closingDateTBD ? null : props.saleInfo.closingDate}
-                            min={new Date((new Date()).setFullYear(new Date().getFullYear() - 5))}
                             label='Closing date'
                             onChange={(e) => {
                                 if (e) {
@@ -208,18 +208,14 @@ const SalesGetSaleDetails = (props: SalesChildProps): ReactElement => {
                     </div>
                 </div>
                 <div className="col mb-3">
-                    <div className='form-floating mb-0'>
-                        <input type='tel' className='form-control' id='realtorphoneselling' placeholder='Phone number'
-                            value={props.saleInfo.realtorPhone}
-                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                props.setSaleInfo({ ...props.saleInfo, realtorPhone: e.target.value });
-                            }}
-                        />
-                        <label htmlFor='floatingInput'>
-                            Phone number - format: 123-456-7890
-                        </label>
-                    </div>
+
+                    <PhoneNumber
+                        onChange={(e: string) => {
+                            props.setSaleInfo({ ...props.saleInfo, realtorPhone: e });
+                        }}
+                        value={props.saleInfo.realtorPhone}
+                    />
+
                 </div>
             </div>
 

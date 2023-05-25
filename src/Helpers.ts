@@ -41,19 +41,25 @@ export const sendEmail = async (formTitle: string, messageBody: string): Promise
         newMessageBody += '</html>'
     }
 
-    const sendResult: EmailJSResponseStatus = await emailjs.send(
-        'service_keeosye',
-        'template_coruqjt', {
-        formtitle: formTitle,
-        message: newMessageBody,
-    }, 'QrfLKkXmnG6mF2P_1',
-    );
+    if (window.location.hostname.toLowerCase() !== 'localhost' &&
+        import.meta.env.MODE !== 'development') {
 
-    console.log(formTitle, sendResult);
-    return Promise.resolve(sendResult.status);
+        const sendResult: EmailJSResponseStatus = await emailjs.send(
+            'service_keeosye',
+            'template_coruqjt', {
+            formtitle: formTitle,
+            message: newMessageBody,
+        }, 'QrfLKkXmnG6mF2P_1',
+        );
 
-    // console.log(newMessageBody);
-    // return Promise.resolve(200);
+        console.log(formTitle, sendResult);
+        return Promise.resolve(sendResult.status);
+    }
+    else {
+        console.log(newMessageBody);
+        return Promise.resolve(200);
+    }
+
 }
 
 export const getCountries = (lang = 'en') => {
@@ -125,9 +131,24 @@ export const checkInputs = (): boolean => {
                     (input as HTMLInputElement).classList.remove('is-invalid');
                 }
 
+
+                // phone needs a bit more
+                if (input.className.indexOf('phone-input') > -1) {
+                    const i = input as HTMLInputElement;
+
+                    if (i.value) {
+                        const match = i!.value!.match(/\d/g);
+                        if (match && match.length !== 10) {
+                            (input as HTMLInputElement).classList.add('is-invalid');
+                            okToGo = false;
+                        }
+                    }
+                }
             }
         })
     }
+
+
 
     const radioGroups = document.querySelectorAll('.rdo-group-dbm');
 

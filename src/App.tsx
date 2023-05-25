@@ -24,6 +24,7 @@ const App = (): ReactElement => {
   }, []);
 
   useEffect(() => {
+
     if (selectedForm === 'NONE') {
       const backdrop = document.querySelector('.modal-backdrop');
       if (backdrop) {
@@ -37,7 +38,7 @@ const App = (): ReactElement => {
       <div>
 
         <TopMenu
-          buildDateString='May 23 2023 F' />
+          buildDateString='May 25 2023 C' />
 
         {
           <div>

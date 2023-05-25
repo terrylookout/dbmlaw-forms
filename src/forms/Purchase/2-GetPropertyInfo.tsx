@@ -7,6 +7,7 @@ import Guarantor from "../../Guarantor";
 import RadioGroup from "../../controls/RadioGroup";
 import NumericInput from "../../controls/NumericInput";
 import IsRequired from "../../controls/IsRequired";
+import PhoneNumber from "../../controls/PhoneNumber";
 
 interface PurchaseGetPropertyInfoDetailsProps extends PurchaseFormChildProps {
     numberOfGuarantors: number;
@@ -422,18 +423,14 @@ const GetPropertyInfo = ({
                     </div>
                 </div>
                 <div className='col mb-3'>
-                    <div className='form-floating mb-0'>
-                        <input type='tel' className='form-control' id='realtorphone' placeholder='Phone number'
-                            value={purchaseInfo.realtorPhone}
-                            pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}'
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setPurchaseInfo({ ...purchaseInfo, realtorPhone: e.target.value });
-                            }}
-                        />
-                        <label htmlFor='floatingInput'>
-                            Phone number - format: 123-456-7890
-                        </label>
-                    </div>
+
+                    <PhoneNumber
+                        onChange={(e: string) => {
+                            setPurchaseInfo({ ...purchaseInfo, realtorPhone: e });
+                        }}
+                        value={purchaseInfo.realtorPhone}
+                    />
+
                 </div>
             </div>
 
@@ -529,17 +526,14 @@ const GetPropertyInfo = ({
                         </div>
 
                         <div className='col mb-3'>
-                            <div className='form-floating mb-0'>
-                                <input type='tel' className='form-control' id='lenderphone' placeholder='Phone number'
-                                    pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}' value={purchaseInfo.brokerBankerPhone}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                        setPurchaseInfo({ ...purchaseInfo, brokerBankerPhone: e.target.value });
-                                    }}
-                                />
-                                <label htmlFor='floatingInput'>
-                                    Phone number - format: 123-456-7890
-                                </label>
-                            </div>
+
+                            <PhoneNumber
+                                onChange={(e: string) => {
+                                    setPurchaseInfo({ ...purchaseInfo, brokerBankerPhone: e });
+                                }}
+                                value={purchaseInfo.brokerBankerPhone}
+                            />
+
                         </div>
                     </div>
 
@@ -717,18 +711,15 @@ const GetPropertyInfo = ({
                     </div>
                 </div>
                 <div className='col mb-3'>
-                    <div className='form-floating mb-0'>
-                        <input type='tel' className='form-control' id='insurancenumber' placeholder='Agent number'
-                            value={purchaseInfo.insuranceAgentPhone}
-                            pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}'
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setPurchaseInfo({ ...purchaseInfo, insuranceAgentPhone: e.target.value });
-                            }}
-                        />
-                        <label htmlFor='floatingInput'>
-                            Phone number - format: 123-456-7890
-                        </label>
-                    </div>
+
+                    <PhoneNumber
+                        onChange={(e: string) => {
+                            setPurchaseInfo({ ...purchaseInfo, insuranceAgentPhone: e });
+                        }}
+                        placeholder="Agent phone number"
+                        value={purchaseInfo.insuranceAgentPhone}
+                    />
+
                 </div>
             </div>
 

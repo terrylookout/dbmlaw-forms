@@ -9,7 +9,13 @@ export const SubmitConfirm = (props: {
 
     return (
         <>
-            <p>
+            {
+                (import.meta.env.MODE === 'development' || window.location.hostname.toLowerCase() === 'localhost') &&
+                <p className="fw-bold">
+                    NOTE: RUNNING IN DEVELOPMENT MODE, FORM WILL NOT BE SUBMITTED - CHECK CONSOLE FOR RESULTS
+                </p>
+            }
+            <p className="mt-5 mb-5 fw-bold">
                 {props.text}
             </p>
 

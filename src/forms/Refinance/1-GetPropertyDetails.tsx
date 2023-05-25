@@ -2,6 +2,7 @@ import { ChangeEvent } from "react";
 import CircleBullet from "../../controls/CircleBullet";
 import { RefinanceProps } from ".";
 import IsRequired from "../../controls/IsRequired";
+import PhoneNumber from "../../controls/PhoneNumber";
 
 
 const GetPropertyDetails = ({
@@ -180,18 +181,15 @@ const GetPropertyDetails = ({
                     </div>
                 </div>
                 <div className='col mb-3'>
-                    <div className='form-floating mb-0'>
-                        <input type='tel' className='form-control' id='insurancenumber' placeholder='Agent number'
-                            value={refinanceInfo.insuranceAgentPhone}
-                            pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}'
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setRefinanceInfo({ ...refinanceInfo, insuranceAgentPhone: e.target.value });
-                            }}
-                        />
-                        <label htmlFor='insurancenumber'>
-                            Phone number - format: 123-456-7890
-                        </label>
-                    </div>
+
+                    <PhoneNumber
+                        onChange={(e: string) => {
+                            setRefinanceInfo({ ...refinanceInfo, insuranceAgentPhone: e });
+                        }}
+                        value={refinanceInfo.insuranceAgentPhone}
+                        placeholder="Agent phone number"
+                    />
+
                 </div>
             </div>
         </>
