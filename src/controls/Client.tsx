@@ -7,6 +7,7 @@ import { v4 as uuid } from "uuid";
 import RadioGroup from './RadioGroup';
 import NumericInput from './NumericInput';
 import IsRequired from './IsRequired';
+import PhoneNumber from './PhoneNumber';
 
 interface ClientProps {
     text: string;
@@ -104,21 +105,15 @@ const Client = (props: ClientProps): ReactElement => {
 
             <div className="row">
                 <div className="col mb-3">
-                    <div className='form-floating mb-0'>
-                        <input type='tel' className='form-control is-required' id={`phone${props.num}`} placeholder='Phone number'
-                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" value={clientInfo.phoneNumber}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setClientInfo({ ...clientInfo, phoneNumber: e.target.value });
-                            }}
-                        />
-                        <div className="invalid-feedback">
-                            Please enter this field
-                        </div>
-                        <label htmlFor='floatingInput'>
-                            Phone number - format: 123-456-7890
-                            <IsRequired />
-                        </label>
-                    </div>
+                    <PhoneNumber
+                        disabled={false}
+                        placeholder='Phone number - format: 123-456-7890'
+                        required={true}
+                        value={clientInfo.phoneNumber}
+                        onChange={(value: string) => {
+                            setClientInfo({ ...clientInfo, phoneNumber: value });
+                        }}
+                    />
                 </div>
                 <div className="col mb-3">
                     <div className='form-floating mb-0'>

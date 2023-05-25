@@ -13,6 +13,7 @@ interface NumericInputProps {
 const NumericInput = (props: NumericInputProps) => {
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault();
         const text = e.target.value;
         const reg = /^(?:[0-9]+(?:\.[0-9]{0,2})?)?$/;
         if (reg.test(text)) {
@@ -22,14 +23,13 @@ const NumericInput = (props: NumericInputProps) => {
 
     return (
         <div className='form-floating mb-0'>
-
-            <input type='text'
+            <input
+                type='text'
                 className={`numeric-input form-control ${props.required !== undefined && props.required ? 'is-required' : ''}`}
                 id={props.id}
                 disabled={props.disabled}
                 value={props.value}
                 placeholder={props.placeholder}
-                pattern="/^(?:[0-9]+(?:\.[0-9]{0,2})?)?$/"
                 onChange={handleChange}
             />
             {
